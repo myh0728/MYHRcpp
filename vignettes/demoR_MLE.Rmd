@@ -1,0 +1,248 @@
+---
+title: "Maximum Likelihood Estimation of Generalized Linear Models"
+output: pdf_document
+vignette: >
+  %\VignetteIndexEntry{demoR_MLE}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      collapse = TRUE,
+                      comment = "#>")
+```
+
+```{=tex}
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\pr}{\mathrm{pr}}
+\newcommand{\var}{\mathrm{var}}
+\newcommand{\cov}{\mathrm{cov}}
+\newcommand{\cond}{\,|\,}
+\newcommand{\T}{\intercal}
+\newcommand{\diff}{\mathrm{d}}
+\newcommand{\bbR}{\mathbb{R}}
+\newcommand{\bfxy}[1]{\mathbf{#1}}
+\newcommand{\bfX}{\mathbf{X}}
+\newcommand{\bfx}{\mathbf{x}}
+```
+
+# Package
+
+```{r}
+library(MYHRcpp)
+```
+
+# Notations
+
+1.  $Y\in\mathbb{R}$ is the response of interest.
+2.  $\bfX\in\mathbb{R}^p$ is the covariate vector.
+
+# Normal regression model
+
+The normal regression model assumes that $Y$ conditional on $\bfX=\bfx$ follows a normal distribution with mean $\alpha_0+\bfx^\T\beta_0$ and variance $\sigma_0^2$.
+
+## Simulated data
+
+The function `simGLM.normal()` is used to generate simulated data from the normal regression model.
+
+```{r}
+n <- 50
+p <- 3
+alpha0 <- 1
+beta0 <- rep(0.2, p)
+sigma0 <- 0.1
+
+set.seed(321)
+X <- rnorm(n*p, mean = 0, sd = 1)
+dim(X) <- c(n, p)
+data.test <- simGLM.normal(Xi = X,
+                           alpha0 = alpha0,
+                           beta0 = beta0,
+                           sigma0 = sigma0)
+data.test[1:5, ]
+data.test <- simGLM.normal(Xi = X,
+                           alpha0 = alpha0,
+                           beta0 = beta0,
+                           sigma0 = sigma0,
+                           seed = 123)
+data.test[1:5, ]
+```
+
+## Estimation
+
+The function `MLE.normal()` is used to find the maximum likelihood estimators for $\alpha_0$, $\beta_0$, and $\sigma_0$.
+
+```{r}
+test1.MLE <- MLE.normal(X = data.test[paste("covariate", 1:p, sep=".")],
+                        Y = data.test["response"])
+test1.MLE
+
+test2.MLE <- MLE.normal(X = data.test[paste("covariate", 1:p, sep=".")],
+                        Y = data.test["response"],
+                        initial = c(-1, rep(1, p), 1),
+                        wi.boot = rep(1, n),
+                        do.SE = TRUE,
+                        X.future = matrix(0, nrow = 1, ncol = p))
+test2.MLE
+
+# simulations
+
+SN <- 10
+BN <- 10
+
+test.MLE.MC <- array(0, c(p+2, 3, SN))
+dimnames(test.MLE.MC) <- list(c("alpha", paste("beta", 1:p, sep = ""), "sigma"),
+                              c("coefficient", "SE", "BSE"),
+                              NULL)
+
+for (sn in 1:SN)
+{
+  set.seed(531+sn)
+
+  X <- rnorm(n*p, mean = 0, sd = 1)
+  dim(X) <- c(n, p)
+  data.test <- simGLM.normal(Xi = X,
+                             alpha0 = alpha0,
+                             beta0 = beta0,
+                             sigma0 = sigma0,
+                             seed = 123+sn)
+
+  test.MLE <- MLE.normal(X = data.test[paste("covariate", 1:p, sep=".")],
+                         Y = data.test["response"],
+                         do.SE = TRUE)
+  test.MLE.MC[, "coefficient", sn] <- test.MLE$parameter
+  test.MLE.MC[, "SE", sn] <- diag(test.MLE$Cov.coef)^0.5
+
+  test.MLE.boot <- array(0, c(p+2, BN))
+  for (bn in 1:BN)
+  {
+    set.seed(sn+bn+123)
+
+    rw <- rexp(n, rate = 1)
+    rw <- n*rw/sum(rw)
+
+    test.MLE.boot[, bn] <-
+      MLE.normal(X = data.test[paste("covariate", 1:p, sep=".")],
+                 Y = data.test["response"],
+                 wi.boot = rw)$parameter
+
+    #print(paste("simulation", sn, "boot", bn, sep = ""))
+  }
+  test.MLE.MC[, "BSE", sn] <- apply(test.MLE.boot, 1, sd)
+
+  #print(sn)
+}
+
+test.MLE.MC.summary <- array(0, c(p+2, 4))
+dimnames(test.MLE.MC.summary) <-
+  list(c("alpha", paste("beta", 1:p, sep = ""), "sigma"),
+       c("coefficient", "SD", "SE", "BSE"))
+test.MLE.MC.summary[, c("coefficient", "SE", "BSE")] <-
+  apply(test.MLE.MC, c(1, 2), mean)
+test.MLE.MC.summary[, "SD"] <-
+  apply(test.MLE.MC, c(1, 2), sd)[, "coefficient"]
+test.MLE.MC.summary
+```
+
+# Logistic regression model
+
+The logistic regression model assume that $Y\in\{0,1\}$ conditional on $\bfX=\bfx$ follows a Bernoulli distribution with $$\pr(Y=1)=\frac{\exp(\alpha_0+\bfx^\T\beta_0)}{1+\exp(\alpha_0+\bfx^\T\beta_0)}.$$
+
+## Simulated data
+
+The function `simGLM.logistic()` is used to generate simulated data from the logistic regression model.
+
+```{r}
+n <- 50
+p <- 3
+alpha0 <- 0.1
+beta0 <- rep(0.2, p)
+
+set.seed(321)
+X <- rnorm(n*p, mean = 0, sd = 1)
+dim(X) <- c(n, p)
+data.test <- simGLM.logistic(X = X,
+                             alpha0 = alpha0,
+                             beta0 = beta0)
+data.test[1:5, ]
+data.test <- simGLM.logistic(X = X,
+                             alpha0 = alpha0,
+                             beta0 = beta0,
+                             seed = 123)
+data.test[1:5, ]
+```
+
+## Estimation
+
+The function `MLE.logistic()` is used to find the maximum likelihood estimators for $\alpha_0$ and $\beta_0$.
+
+```{r}
+test1.MLE <- MLE.logistic(X = data.test[paste("covariate", 1:p, sep=".")],
+                          Y = data.test["response"])
+test1.MLE
+
+test2.MLE <- MLE.logistic(X = data.test[paste("covariate", 1:p, sep=".")],
+                          Y = data.test["response"],
+                          initial = c(0.1, rep(0.2, p)),
+                          do.SE = TRUE,
+                          X.future = matrix(0, nrow = 1, ncol = p))
+test2.MLE
+
+# simulations
+
+SN <- 10
+BN <- 10
+
+test.MLE.MC <- array(0, c(p+1, 3, SN))
+dimnames(test.MLE.MC) <- list(c("alpha", paste("beta", 1:p, sep = "")),
+                              c("coefficient", "SE", "BSE"),
+                              NULL)
+
+for (sn in 1:SN)
+{
+  set.seed(531+sn)
+
+  X <- rnorm(n*p, mean = 0, sd = 1)
+  dim(X) <- c(n, p)
+  data.test <- simGLM.logistic(Xi = X,
+                               alpha0 = alpha0,
+                               beta0 = beta0,
+                               seed = 123+sn)
+
+  test.MLE <- MLE.logistic(X = data.test[paste("covariate", 1:p, sep=".")],
+                           Y = data.test["response"],
+                           do.SE = TRUE, diff.tol = 1e-3)
+  test.MLE.MC[, "coefficient", sn] <- test.MLE$parameter
+  test.MLE.MC[, "SE", sn] <- diag(test.MLE$Cov.coef)^0.5
+
+  test.MLE.boot <- array(0, c(p+1, BN))
+  for (bn in 1:BN)
+  {
+    set.seed(sn+bn+123)
+
+    rw <- rexp(n, rate = 1)
+    rw <- n*rw/sum(rw)
+
+    test.MLE.boot[, bn] <-
+      MLE.logistic(X = data.test[paste("covariate", 1:p, sep=".")],
+                   Y = data.test["response"],
+                   wi.boot = rw)$parameter
+
+    #print(paste("simulation", sn, "boot", bn, sep = ""))
+  }
+  test.MLE.MC[, "BSE", sn] <- apply(test.MLE.boot, 1, sd)
+
+  #print(sn)
+}
+
+test.MLE.MC.summary <- array(0, c(p+1, 4))
+dimnames(test.MLE.MC.summary) <-
+  list(c("alpha", paste("beta", 1:p, sep = "")),
+       c("coefficient", "SD", "SE", "BSE"))
+test.MLE.MC.summary[, c("coefficient", "SE", "BSE")] <-
+  apply(test.MLE.MC, c(1, 2), mean)
+test.MLE.MC.summary[, "SD"] <-
+  apply(test.MLE.MC, c(1, 2), sd)[, "coefficient"]
+test.MLE.MC.summary
+```

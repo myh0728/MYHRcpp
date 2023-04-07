@@ -1,0 +1,84 @@
+---
+title: "Single-Index Conditional Distribution Model Fitting"
+output: pdf_document
+vignette: >
+  %\VignetteIndexEntry{demoR_SICDM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      collapse = TRUE,
+                      comment = "#>")
+```
+
+```{=tex}
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\pr}{\mathrm{pr}}
+\newcommand{\var}{\mathrm{var}}
+\newcommand{\cov}{\mathrm{cov}}
+\newcommand{\cond}{\,|\,}
+\newcommand{\T}{\intercal}
+\newcommand{\diff}{\mathrm{d}}
+\newcommand{\bbR}{\mathbb{R}}
+\newcommand{\bfxy}[1]{\mathbf{#1}}
+\newcommand{\bfX}{\mathbf{X}}
+\newcommand{\bfx}{\mathbf{x}}
+```
+
+# Package
+
+```{r setup}
+library(MYHRcpp)
+```
+
+# Data Generating
+
+1. $X\sim N_p(0,1)$.
+2. $Y=\sin(X^\T\beta_0)+\varepsilon$, where $\beta_0=(1,\dots,1)$ and $\varepsilon\sim N(0, 0.2)$.
+
+```{r}
+n <- 100
+p <- 5
+
+X <- matrix(rnorm(n*p), nrow = n, ncol = p)
+Y <- as.matrix(sin(X %*% rep(1, p))+rnorm(n, mean = 0, sd = 0.2))
+```
+
+# Cumulative Sliced Inverse Regression
+
+This is the method proposed in the following paper:
+
+- Zhu, Zhu, and Feng (2010). Dimension Reduction in Regressions Through Cumulative Slicing Estimation. \textit{Journal of the American Statistical Association}. \textbf{105}, 1455--1466.
+
+The first direction in the resulting basis estimates the coefficients of the single-index.
+
+```{r}
+SDR1 <- cumuSIR(X = X, Y = Y)
+SDR1
+```
+
+# Single-Index Conditional Distribution Model Fitting
+
+Options:
+
+- `initial`: Initial vector for $\beta_0$, which is of the same dimension as $X$
+- `kernel`: `"K2_Biweight"` or `"K4_Biweight"`
+
+```{r}
+SID1 <- SIDR(X = X, Y = Y)
+SID2 <- SIDR(X = X, Y = Y, initial = SDR1$basis[, 1])
+SID3 <- SIDR(X = X, Y = Y, initial = rep(1, p))
+SID4 <- SIDR(X = X, Y = Y, initial = rep(1, p), kernel = "K2_Biweight")
+SID5 <- SIDR(X = X, Y = Y, initial = rep(1, p), bandwidth = 1)
+```
+
+Calculation of the estimated conditional distribution function
+
+```{r}
+Fhat <- NW(X = X %*% SID1$coef, Y = Y, x = X %*% SID1$coef,
+           regression = "distribution", y = sort(Y),
+           bandwidth = SID1$bandwidth)
+```
+

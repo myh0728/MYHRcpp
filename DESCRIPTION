@@ -1,0 +1,30 @@
+Package: MYHRcpp
+Type: Package
+Title: Packed codes of Ming-Yueh Huang's work
+Version: 0.3.2
+Author: Ming-Yueh Huang
+Maintainer: Ming-Yueh Huang <myh0728@stat.sinica.edu.tw>
+Description: Topics including
+    Maximum likelihood estimation for generalized linear models
+    Generalized method of moments
+    Empirical likelihood estimation
+    Survival analysis
+    Recurrent event data analysis
+    Prior probability shift
+    Nonparametric kernel smoothing
+Depends: R (>= 4.2.1)
+License: None
+Encoding: UTF-8
+LazyData: true
+Imports:
+    Rcpp (>= 1.0.9),
+    RcppArmadillo,
+    frailtypack,
+    survival
+LinkingTo: Rcpp, RcppArmadillo
+SystemRequirements: C++11
+NeedsCompilation: yes
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
