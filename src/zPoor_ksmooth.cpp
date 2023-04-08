@@ -22,6 +22,37 @@ arma::vec KDE_rcpp(arma::mat X,
   return(Dhat);
 }
 
+// [[Rcpp::export]]
+arma::vec KDE_K2B_rcpp_chatgpt(const arma::mat& X,
+                               const arma::mat& x,
+                               const arma::vec& h){
+  const arma::uword n_n = X.n_rows;
+  const arma::uword n_k = x.n_rows;
+  arma::vec Dhat(n_k, arma::fill::zeros);
+
+  // Precompute constants for the kernel
+  const double c1 = 15.0 / 16.0;
+  const double c2 = 1.0 / 5.0;
+
+  // Loop over the points x
+  for (arma::uword k = 0; k < n_k; ++k) {
+    // Loop over the points X
+    for (arma::uword i = 0; i < n_n; ++i) {
+      // Compute the kernel value
+      const arma::vec Dik = (X.row(i) - x.row(k)).t() / h;
+      const arma::vec Kik_h = c1 * pow((1.0 - pow(Dik, 2)), 2) % (abs(Dik) < 1.0);
+
+      // Compute the contribution of this point to the estimate
+      Dhat(k) += arma::prod(Kik_h);
+    }
+  }
+
+  // Normalize the estimate
+  Dhat /= n_n;
+
+  return Dhat;
+}
+
 // Nadaraya-Watson estimation for conditional distribution
 
 // [[Rcpp::export]]
@@ -53,32 +84,29 @@ arma::mat NWF_K2B_rcpp(arma::mat X,
 }
 
 // [[Rcpp::export]]
-arma::vec KDE_K2B_rcpp_chatgpt(const arma::mat& X,
-                               const arma::mat& x,
-                               const arma::vec& h) {
-  const arma::uword n_n = X.n_rows;
-  const arma::uword n_k = x.n_rows;
-  arma::vec Dhat(n_k, arma::fill::zeros);
-
-  // Precompute constants for the kernel
-  const double c1 = 15.0 / 16.0;
-  const double c2 = 1.0 / 5.0;
-
-  // Loop over the points x
-  for (arma::uword k = 0; k < n_k; ++k) {
-    // Loop over the points X
-    for (arma::uword i = 0; i < n_n; ++i) {
-      // Compute the kernel value
-      const arma::vec Dik = (X.row(i) - x.row(k)).t() / h;
-      const arma::vec Kik_h = c1 * pow((1.0 - pow(Dik, 2)), 2) % (abs(Dik) < 1.0);
-
-      // Compute the contribution of this point to the estimate
-      Dhat(k) += arma::prod(Kik_h);
+arma::mat NWcv_K2B_rcpp_o1(arma::mat X,
+                           arma::mat Y,
+                           arma::vec h){
+  arma::uword n_n = X.n_rows;
+  arma::uword n_m = Y.n_cols;
+  arma::mat Nhat(n_n, n_m);
+  arma::vec Dhat(n_n);
+  arma::mat Yhat(n_n, n_m);
+  for (arma::uword i = 0; i < n_n; ++i){
+    for (arma::uword j = 0; j < n_n; ++j){
+      if (j != i){
+        arma::vec Dji_h = vectorise(X.row(j)-X.row(i))/h;
+        double Kji_h = prod((abs(Dji_h) < 1)%pow(1-pow(Dji_h, 2), 2)*15/16);
+        Dhat(i) += Kji_h;
+        for (arma::uword m = 0; m < n_m; ++m){
+          Nhat(i, m) += Y(j, m)*Kji_h;
+        }
+      }
+    }
+    if (Dhat(i) != 0){
+      Yhat.row(i) = Nhat.row(i)/Dhat(i);
     }
   }
-
-  // Normalize the estimate
-  Dhat /= n_n;
-
-  return Dhat;
+  return(Yhat);
 }
+

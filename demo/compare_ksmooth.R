@@ -1,3 +1,5 @@
+####################################################################
+
 n <- 100
 p <- 1
 
@@ -56,12 +58,15 @@ microbenchmark::microbenchmark(
 Yhat <- NW.cv.generic(X = X, Y = Y,
                       K = K2_Biweight, h = 1)
 Yhat_rcpp <- NWcv_K2B_rcpp(X = X, Y = Y, h = 1)
+Yhat_rcpp_o1 <- NWcv_K2B_rcpp_o1(X = X, Y = Y, h = 1)
 mean((Yhat_rcpp-Yhat)^2)
+mean((Yhat_rcpp_o1-Yhat)^2)
 
 microbenchmark::microbenchmark(
   outer = NW.cv.generic(X = X, Y = Y,
                         K = K2_Biweight, h = 1),
-  Rcpp = NWcv_K2B_rcpp(X = X, Y = Y, h = 1)
+  Rcpp = NWcv_K2B_rcpp(X = X, Y = Y, h = 1),
+  Rcpp_o1 = NWcv_K2B_rcpp_o1(X = X, Y = Y, h = 1)
 )
 
 ####################################################################
@@ -75,12 +80,15 @@ Y <- as.matrix(sin(X %*% rep(1, p))+rnorm(n, mean = 0, sd = 0.2))
 Yhat <- NW.cv.generic(X = X, Y = Y,
                       K = K2_Biweight, h = 1)
 Yhat_rcpp <- NWcv_K2B_rcpp(X = X, Y = Y, h = rep(1, 5))
+Yhat_rcpp_o1 <- NWcv_K2B_rcpp_o1(X = X, Y = Y, h = rep(1, 5))
 mean((Yhat_rcpp-Yhat)^2)
+mean((Yhat_rcpp_o1-Yhat)^2)
 
 microbenchmark::microbenchmark(
   outer = NW.cv.generic(X = X, Y = Y,
                         K = K2_Biweight, h = 1),
-  Rcpp = NWcv_K2B_rcpp(X = X, Y = Y, h = rep(1, 5))
+  Rcpp = NWcv_K2B_rcpp(X = X, Y = Y, h = rep(1, 5)),
+  Rcpp_o1 = NWcv_K2B_rcpp_o1(X = X, Y = Y, h = rep(1, 5))
 )
 
 ####################################################################

@@ -157,11 +157,15 @@ KDE_rcpp <- function(X, x, K, h) {
     .Call(`_MYHRcpp_KDE_rcpp`, X, x, K, h)
 }
 
+KDE_K2B_rcpp_chatgpt <- function(X, x, h) {
+    .Call(`_MYHRcpp_KDE_K2B_rcpp_chatgpt`, X, x, h)
+}
+
 NWF_K2B_rcpp <- function(X, Y, x, y, h) {
     .Call(`_MYHRcpp_NWF_K2B_rcpp`, X, Y, x, y, h)
 }
 
-KDE_K2B_rcpp_chatgpt <- function(X, x, h) {
-    .Call(`_MYHRcpp_KDE_K2B_rcpp_chatgpt`, X, x, h)
+NWcv_K2B_rcpp_o1 <- function(X, Y, h) {
+    .Call(`_MYHRcpp_NWcv_K2B_rcpp_o1`, X, Y, h)
 }
 

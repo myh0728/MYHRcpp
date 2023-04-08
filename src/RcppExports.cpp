@@ -524,6 +524,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// KDE_K2B_rcpp_chatgpt
+arma::vec KDE_K2B_rcpp_chatgpt(const arma::mat& X, const arma::mat& x, const arma::vec& h);
+RcppExport SEXP _MYHRcpp_KDE_K2B_rcpp_chatgpt(SEXP XSEXP, SEXP xSEXP, SEXP hSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type h(hSEXP);
+    rcpp_result_gen = Rcpp::wrap(KDE_K2B_rcpp_chatgpt(X, x, h));
+    return rcpp_result_gen;
+END_RCPP
+}
 // NWF_K2B_rcpp
 arma::mat NWF_K2B_rcpp(arma::mat X, arma::mat Y, arma::mat x, arma::mat y, arma::vec h);
 RcppExport SEXP _MYHRcpp_NWF_K2B_rcpp(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP hSEXP) {
@@ -539,16 +552,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// KDE_K2B_rcpp_chatgpt
-arma::vec KDE_K2B_rcpp_chatgpt(const arma::mat& X, const arma::mat& x, const arma::vec& h);
-RcppExport SEXP _MYHRcpp_KDE_K2B_rcpp_chatgpt(SEXP XSEXP, SEXP xSEXP, SEXP hSEXP) {
+// NWcv_K2B_rcpp_o1
+arma::mat NWcv_K2B_rcpp_o1(arma::mat X, arma::mat Y, arma::vec h);
+RcppExport SEXP _MYHRcpp_NWcv_K2B_rcpp_o1(SEXP XSEXP, SEXP YSEXP, SEXP hSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type h(hSEXP);
-    rcpp_result_gen = Rcpp::wrap(KDE_K2B_rcpp_chatgpt(X, x, h));
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type h(hSEXP);
+    rcpp_result_gen = Rcpp::wrap(NWcv_K2B_rcpp_o1(X, Y, h));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -593,8 +606,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_SKME_K4B_w_rcpp", (DL_FUNC) &_MYHRcpp_SKME_K4B_w_rcpp, 7},
     {"_MYHRcpp_testfunction", (DL_FUNC) &_MYHRcpp_testfunction, 2},
     {"_MYHRcpp_KDE_rcpp", (DL_FUNC) &_MYHRcpp_KDE_rcpp, 4},
-    {"_MYHRcpp_NWF_K2B_rcpp", (DL_FUNC) &_MYHRcpp_NWF_K2B_rcpp, 5},
     {"_MYHRcpp_KDE_K2B_rcpp_chatgpt", (DL_FUNC) &_MYHRcpp_KDE_K2B_rcpp_chatgpt, 3},
+    {"_MYHRcpp_NWF_K2B_rcpp", (DL_FUNC) &_MYHRcpp_NWF_K2B_rcpp, 5},
+    {"_MYHRcpp_NWcv_K2B_rcpp_o1", (DL_FUNC) &_MYHRcpp_NWcv_K2B_rcpp_o1, 3},
     {NULL, NULL, 0}
 };
 
