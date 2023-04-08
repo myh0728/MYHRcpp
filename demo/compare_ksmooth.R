@@ -3,28 +3,33 @@
 n <- 100
 p <- 1
 
-X <- matrix(rnorm(n*p), nrow = n, ncol = p)
+X <- matrix(rnorm(n * p), nrow = n, ncol = p)
 x <- as.matrix(seq(-3, 3, 0.1))
 
-###
+test1 <- KDE_K2B_rcpp(X = X, x = x, h = 1)
+test2 <- KDE_K2B_rcpp_chatgpt(X = X, x = x, h = 1)
+test3 <- KDE_rcpp_kernel(X = X, x = x, K = K2_Biweight, h = 1)
+test4 <- KDE_R_kernel(X = X, x = x, K = K2_Biweight, h = 1)
 
-Dhat <- KDE.generic(X = X, x = x, K = K2_Biweight, h = 1)
-Dhat_rcpp <- KDE_K2B_rcpp(X = X, x = x, h = 1)
-Dhat_rcpp1 <- KDE_K4B_rcpp(X = X, x = x, h = 1)
-Dhat_rcpp2 <- KDE_rcpp(X = X, x = x, K = K2_Biweight, h = 1)
-
-mean((Dhat-Dhat_rcpp)^2)
+sum(abs(test1 - test2))
+sum(abs(test1 - test3))
+sum(abs(test1 - test4))
 
 hist(X, freq = FALSE)
-lines(x, Dhat)
+lines(x, test1)
 lines(x, dnorm(x), col = 2)
 
-microbenchmark::microbenchmark(
-  outer = KDE.generic(X = X, x = x, K = K2_Biweight, h = 1),
-  Rcpp = KDE_K2B_rcpp(X = X, x = x, h = 1),
-  Rcpp.chatgpt = KDE_K2B_rcpp_chatgpt(X = X, x = x, h = 1),
-  Rcpp1 = KDE_rcpp(X = X, x = x, K = K2_Biweight, h = 1)
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    Rcpp = KDE_K2B_rcpp(X = X, x = x, h = 1),
+    Rcpp_chatgpt = KDE_K2B_rcpp_chatgpt(X = X, x = x, h = 1),
+    Rcpp_kernel = KDE_rcpp_kernel(X = X, x = x, K = K2_Biweight, h = 1),
+    R_kernel = KDE_R_kernel(X = X, x = x, K = K2_Biweight, h = 1)
+  )
 )
+
+
+####################################################################
 
 ####################################################################
 

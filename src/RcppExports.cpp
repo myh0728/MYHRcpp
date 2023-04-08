@@ -510,9 +510,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// KDE_rcpp
-arma::vec KDE_rcpp(arma::mat X, arma::mat x, Rcpp::Function K, arma::vec h);
-RcppExport SEXP _MYHRcpp_KDE_rcpp(SEXP XSEXP, SEXP xSEXP, SEXP KSEXP, SEXP hSEXP) {
+// KDE_rcpp_kernel
+arma::vec KDE_rcpp_kernel(arma::mat X, arma::mat x, Rcpp::Function K, arma::vec h);
+RcppExport SEXP _MYHRcpp_KDE_rcpp_kernel(SEXP XSEXP, SEXP xSEXP, SEXP KSEXP, SEXP hSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -520,7 +520,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
     Rcpp::traits::input_parameter< Rcpp::Function >::type K(KSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type h(hSEXP);
-    rcpp_result_gen = Rcpp::wrap(KDE_rcpp(X, x, K, h));
+    rcpp_result_gen = Rcpp::wrap(KDE_rcpp_kernel(X, x, K, h));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -605,7 +605,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_SKME_K4B_rcpp", (DL_FUNC) &_MYHRcpp_SKME_K4B_rcpp, 6},
     {"_MYHRcpp_SKME_K4B_w_rcpp", (DL_FUNC) &_MYHRcpp_SKME_K4B_w_rcpp, 7},
     {"_MYHRcpp_testfunction", (DL_FUNC) &_MYHRcpp_testfunction, 2},
-    {"_MYHRcpp_KDE_rcpp", (DL_FUNC) &_MYHRcpp_KDE_rcpp, 4},
+    {"_MYHRcpp_KDE_rcpp_kernel", (DL_FUNC) &_MYHRcpp_KDE_rcpp_kernel, 4},
     {"_MYHRcpp_KDE_K2B_rcpp_chatgpt", (DL_FUNC) &_MYHRcpp_KDE_K2B_rcpp_chatgpt, 3},
     {"_MYHRcpp_NWF_K2B_rcpp", (DL_FUNC) &_MYHRcpp_NWF_K2B_rcpp, 5},
     {"_MYHRcpp_NWcv_K2B_rcpp_o1", (DL_FUNC) &_MYHRcpp_NWcv_K2B_rcpp_o1, 3},

@@ -124,7 +124,7 @@ test1 <- rankAinB_for(a, b)
 test2 <- rankAinB_outer(a, b)
 test3 <- rankAinB_rcpp(a, b)
 sum(abs(test1-test2))
-sum(abs(test1-test3))
+sum(abs(test1 - test3))
 
 ggplot2::autoplot(
   microbenchmark::microbenchmark(

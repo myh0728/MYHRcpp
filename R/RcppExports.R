@@ -153,8 +153,8 @@ testfunction <- function(a, my_r_func) {
     .Call(`_MYHRcpp_testfunction`, a, my_r_func)
 }
 
-KDE_rcpp <- function(X, x, K, h) {
-    .Call(`_MYHRcpp_KDE_rcpp`, X, x, K, h)
+KDE_rcpp_kernel <- function(X, x, K, h) {
+    .Call(`_MYHRcpp_KDE_rcpp_kernel`, X, x, K, h)
 }
 
 KDE_K2B_rcpp_chatgpt <- function(X, x, h) {

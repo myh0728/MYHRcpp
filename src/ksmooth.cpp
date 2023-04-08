@@ -23,14 +23,11 @@ arma::vec KDE_K2B_rcpp(arma::mat X,
       double Kik_h = prod((abs(Dik_h) < 1) %
                           arma::pow(1.0 - arma::pow(Dik_h, 2), 2) * 15.0 / 16.0);
       Dhat(k) += Kik_h;
-
     }
-
   }
 
-  Dhat = Dhat / n_n;
+  Dhat /= n_n;
   return(Dhat);
-
 }
 
 // [[Rcpp::export]]
@@ -88,6 +85,8 @@ arma::vec KDEcv_K2B_w_rcpp(arma::mat X,
   Dhat = Dhat/(n_n-1);
   return(Dhat);
 }
+
+// Using K4_Biweight kernel
 
 // [[Rcpp::export]]
 arma::vec KDE_K4B_rcpp(arma::mat X,
@@ -172,6 +171,8 @@ arma::vec KDEcv_K4B_w_rcpp(arma::mat X,
 }
 
 // Nadaraya-Watson estimation
+
+// Using K2_Biweight kernel
 
 // [[Rcpp::export]]
 arma::mat NW_K2B_rcpp(arma::mat X,
@@ -310,6 +311,8 @@ arma::mat NWcv_K2B_w_rcpp(arma::mat X,
   }
   return(Yhat);
 }
+
+// Using K4_Biweight kernel
 
 // [[Rcpp::export]]
 arma::mat NW_K4B_rcpp(arma::mat X,
