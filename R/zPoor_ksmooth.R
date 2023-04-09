@@ -7,7 +7,7 @@ KDE_R_kernel <- function(X, x, K, h){
   Xik <- X[rep(1:number_n, times = number_k), ] -
     x[rep(1:number_k, each = number_n), ]
   dim(Xik) <- c(number_n, number_k, number_p)
-  Kik <- apply(K(aperm(Xik, c(3, 1, 2)) / h), c(2, 3), prod)
+  Kik <- apply(K(aperm(Xik, c(3, 1, 2)) / h) / h, c(2, 3), prod)
   Dhat <- colSums(Kik) / number_n
 
   return(Dhat)
@@ -22,7 +22,7 @@ KDE_w_R_kernel <- function(X, x, K, h, w){
   Xik <- X[rep(1:number_n, times = number_k), ] -
     x[rep(1:number_k, each = number_n), ]
   dim(Xik) <- c(number_n, number_k, number_p)
-  Kik <- apply(K(aperm(Xik, c(3, 1, 2)) / h), c(2, 3), prod)
+  Kik <- apply(K(aperm(Xik, c(3, 1, 2)) / h) / h, c(2, 3), prod)
   Dhat <- colSums(Kik * w) / number_n
 
   return(Dhat)
@@ -36,7 +36,7 @@ KDEcv_R_kernel <- function(X, K, h){
   Xij <- X[rep(1:number_n, times = number_n), ] -
     X[rep(1:number_n, each = number_n), ]
   dim(Xij) <- c(number_n, number_n, number_p)
-  Kij <- apply(K(aperm(Xij, c(3, 1, 2)) / h), c(2, 3), prod)
+  Kij <- apply(K(aperm(Xij, c(3, 1, 2)) / h) / h, c(2, 3), prod)
   diag(Kij) <- 0
   Dhat <- colSums(Kij) / (number_n - 1)
 

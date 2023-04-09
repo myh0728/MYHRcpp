@@ -6,11 +6,10 @@ p <- 1
 X <- matrix(rnorm(n * p), nrow = n, ncol = p)
 x <- as.matrix(seq(-3, 3, 0.1))
 
-test1 <- KDE_K2B_rcpp(X = X, x = x, h = 1)
-test2 <- KDE_K2B_rcpp_chatgpt(X = X, x = x, h = 1)
-test3 <- KDE_rcpp_kernel(X = X, x = x, K = K2_Biweight, h = 1)
-test4 <- KDE_R_kernel(X = X, x = x, K = K2_Biweight, h = 1)
-
+test1 <- KDE_K2B_rcpp(X = X, x = x, h = 1.5)
+test2 <- KDE_K2B_rcpp_chatgpt(X = X, x = x, h = 1.5)
+test3 <- KDE_rcpp_kernel(X = X, x = x, K = K2_Biweight, h = 1.5)
+test4 <- KDE_R_kernel(X = X, x = x, K = K2_Biweight, h = 1.5)
 sum(abs(test1 - test2))
 sum(abs(test1 - test3))
 sum(abs(test1 - test4))
@@ -21,10 +20,10 @@ lines(x, dnorm(x), col = 2)
 
 ggplot2::autoplot(
   microbenchmark::microbenchmark(
-    Rcpp = KDE_K2B_rcpp(X = X, x = x, h = 1),
-    Rcpp_chatgpt = KDE_K2B_rcpp_chatgpt(X = X, x = x, h = 1),
-    Rcpp_kernel = KDE_rcpp_kernel(X = X, x = x, K = K2_Biweight, h = 1),
-    R_kernel = KDE_R_kernel(X = X, x = x, K = K2_Biweight, h = 1)
+    Rcpp = KDE_K2B_rcpp(X = X, x = x, h = 1.5),
+    Rcpp_chatgpt = KDE_K2B_rcpp_chatgpt(X = X, x = x, h = 1.5),
+    Rcpp_kernel = KDE_rcpp_kernel(X = X, x = x, K = K2_Biweight, h = 1.5),
+    R_kernel = KDE_R_kernel(X = X, x = x, K = K2_Biweight, h = 1.5)
   )
 )
 
@@ -37,14 +36,14 @@ X <- matrix(rnorm(n * p), nrow = n, ncol = p)
 x <- as.matrix(seq(-3, 3, 0.1))
 w <- rexp(n)
 
-test1 <- KDE_K2B_w_rcpp(X = X, x = x, h = 1, w = w)
-test2 <- KDE_w_R_kernel(X = X, x = x, K = K2_Biweight, h = 1, w = w)
+test1 <- KDE_K2B_w_rcpp(X = X, x = x, h = 1.5, w = w)
+test2 <- KDE_w_R_kernel(X = X, x = x, K = K2_Biweight, h = 1.5, w = w)
 sum(abs(test1 - test2))
 
 ggplot2::autoplot(
   microbenchmark::microbenchmark(
-    Rcpp = KDE_K2B_w_rcpp(X = X, x = x, h = 1, w = w),
-    R_kernel = KDE_w_R_kernel(X = X, x = x, K = K2_Biweight, h = 1, w = w)
+    Rcpp = KDE_K2B_w_rcpp(X = X, x = x, h = 1.5, w = w),
+    R_kernel = KDE_w_R_kernel(X = X, x = x, K = K2_Biweight, h = 1.5, w = w)
   )
 )
 
@@ -55,17 +54,17 @@ p <- 1
 
 X <- matrix(rnorm(n * p), nrow = n, ncol = p)
 
-test1 <- KDEcv_K2B_rcpp(X = X, h = 1)
-test2 <- KDEcv_K2B_rcpp_o1(X = X, h = 1)
-test3 <- KDEcv_R_kernel(X = X, K = K2_Biweight, h = 1)
+test1 <- KDEcv_K2B_rcpp(X = X, h = 1.5)
+test2 <- KDEcv_K2B_rcpp_o1(X = X, h = 1.5)
+test3 <- KDEcv_R_kernel(X = X, K = K2_Biweight, h = 1.5)
 sum(abs(test1 - test2))
 sum(abs(test1 - test3))
 
 ggplot2::autoplot(
   microbenchmark::microbenchmark(
-    Rcpp = KDEcv_K2B_rcpp(X = X, h = 1),
-    Rcpp_o1 = KDEcv_K2B_rcpp_o1(X = X, h = 1),
-    R_kernel = KDEcv_R_kernel(X = X, K = K2_Biweight, h = 1)
+    Rcpp = KDEcv_K2B_rcpp(X = X, h = 1.5),
+    Rcpp_o1 = KDEcv_K2B_rcpp_o1(X = X, h = 1.5),
+    R_kernel = KDEcv_R_kernel(X = X, K = K2_Biweight, h = 1.5)
   )
 )
 
@@ -77,14 +76,51 @@ p <- 1
 X <- matrix(rnorm(n * p), nrow = n, ncol = p)
 w <- rexp(n)
 
-test1 <- KDEcv_K2B_w_rcpp(X = X, h = 1, w = w)
-test2 <- KDEcv_K2B_w_rcpp_o1(X = X, h = 1, w = w)
+test1 <- KDEcv_K2B_w_rcpp(X = X, h = 1.5, w = w)
+test2 <- KDEcv_K2B_w_rcpp_o1(X = X, h = 1.5, w = w)
 sum(abs(test1 - test2))
 
 ggplot2::autoplot(
   microbenchmark::microbenchmark(
-    Rcpp = KDEcv_K2B_w_rcpp(X = X, h = 1, w = w),
-    Rcpp_o1 = KDEcv_K2B_w_rcpp_o1(X = X, h = 1, w = w)
+    Rcpp = KDEcv_K2B_w_rcpp(X = X, h = 1.5, w = w),
+    Rcpp_o1 = KDEcv_K2B_w_rcpp_o1(X = X, h = 1.5, w = w)
+  )
+)
+
+####################################################################
+
+n <- 100
+p <- 1
+
+X <- matrix(rnorm(n * p), nrow = n, ncol = p)
+x <- as.matrix(seq(-3, 3, 0.1))
+
+test1 <- KDE_K4B_rcpp(X = X, x = x, h = 1.5)
+test2 <- KDE_K4B_rcpp_o1(X = X, x = x, h = 1.5)
+sum(abs(test1 - test2))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    Rcpp = KDE_K4B_rcpp(X = X, x = x, h = 1.5),
+    Rcpp_o1 = KDE_K4B_rcpp_o1(X = X, x = x, h = 1.5)
+  )
+)
+
+####################################################################
+
+n <- 100
+p <- 1
+
+X <- matrix(rnorm(n * p), nrow = n, ncol = p)
+
+test1 <- KDEcv_K4B_rcpp(X = X, h = 1.5)
+test2 <- KDEcv_K4B_rcpp_o1(X = X, h = 1.5)
+sum(abs(test1 - test2))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    Rcpp = KDEcv_K4B_rcpp(X = X, h = 1.5),
+    Rcpp_o1 = KDEcv_K4B_rcpp_o1(X = X, h = 1.5)
   )
 )
 
@@ -195,18 +231,21 @@ mean((Fhat-Fhat_rcpp)^2)
 mean((Fhat-Fhat_rcpp1)^2)
 mean((Fhat-Fhat_rcpp2)^2)
 
-microbenchmark::microbenchmark(
-  outer = NWdist.generic(X = X, Y = Y, x = x, y = y,
-                         K = K2_Biweight, h = 1),
-  outer1 = NW.generic(X = X, Y = Y.CP, x = x,
-                      K = K2_Biweight, h = 1),
-  outer2 = NW.generic(X = X, Y = CP(Y = Y, y = y), x = x,
-                      K = K2_Biweight, h = 1),
-  Rcpp = NWF_K2B_rcpp(X = X, Y = Y, x = x, y = y,
-                      h = 1),
-  Rcpp1 = NW_K2B_rcpp(X = X, Y = Y.CP, x = x, h = 1),
-  Rcpp2 = NW_K2B_rcpp(X = X, Y = CP(Y = Y, y = y), x = x, h = 1)
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    outer = NWdist.generic(X = X, Y = Y, x = x, y = y,
+                           K = K2_Biweight, h = 1),
+    outer1 = NW.generic(X = X, Y = Y.CP, x = x,
+                        K = K2_Biweight, h = 1),
+    outer2 = NW.generic(X = X, Y = CP(Y = Y, y = y), x = x,
+                        K = K2_Biweight, h = 1),
+    Rcpp = NWF_K2B_rcpp(X = X, Y = Y, x = x, y = y,
+                        h = 1),
+    Rcpp1 = NW_K2B_rcpp(X = X, Y = Y.CP, x = x, h = 1),
+    Rcpp2 = NW_K2B_rcpp(X = X, Y = CP(Y = Y, y = y), x = x, h = 1)
+  )
 )
+
 
 
 

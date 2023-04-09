@@ -57,6 +57,22 @@ sum_atRisk_rcpp <- function(summand, t_start, t_stop, t_event) {
     .Call(`_MYHRcpp_sum_atRisk_rcpp`, summand, t_start, t_stop, t_event)
 }
 
+KDE_KG_rcpp <- function(X, x, h) {
+    .Call(`_MYHRcpp_KDE_KG_rcpp`, X, x, h)
+}
+
+KDE_KG_w_rcpp <- function(X, x, h, w) {
+    .Call(`_MYHRcpp_KDE_KG_w_rcpp`, X, x, h, w)
+}
+
+KDEcv_KG_rcpp <- function(X, h) {
+    .Call(`_MYHRcpp_KDEcv_KG_rcpp`, X, h)
+}
+
+KDEcv_KG_w_rcpp <- function(X, h, w) {
+    .Call(`_MYHRcpp_KDEcv_KG_w_rcpp`, X, h, w)
+}
+
 KDE_K2B_rcpp <- function(X, x, h) {
     .Call(`_MYHRcpp_KDE_K2B_rcpp`, X, x, h)
 }
@@ -71,10 +87,6 @@ KDEcv_K2B_rcpp <- function(X, h) {
 
 KDEcv_K2B_w_rcpp <- function(X, h, w) {
     .Call(`_MYHRcpp_KDEcv_K2B_w_rcpp`, X, h, w)
-}
-
-KDEcv_K2B_w_rcpp_o1 <- function(X, h, w) {
-    .Call(`_MYHRcpp_KDEcv_K2B_w_rcpp_o1`, X, h, w)
 }
 
 KDE_K4B_rcpp <- function(X, x, h) {
@@ -167,6 +179,18 @@ KDE_K2B_rcpp_chatgpt <- function(X, x, h) {
 
 KDEcv_K2B_rcpp_o1 <- function(X, h) {
     .Call(`_MYHRcpp_KDEcv_K2B_rcpp_o1`, X, h)
+}
+
+KDEcv_K2B_w_rcpp_o1 <- function(X, h, w) {
+    .Call(`_MYHRcpp_KDEcv_K2B_w_rcpp_o1`, X, h, w)
+}
+
+KDE_K4B_rcpp_o1 <- function(X, x, h) {
+    .Call(`_MYHRcpp_KDE_K4B_rcpp_o1`, X, x, h)
+}
+
+KDEcv_K4B_rcpp_o1 <- function(X, h) {
+    .Call(`_MYHRcpp_KDEcv_K4B_rcpp_o1`, X, h)
 }
 
 NWF_K2B_rcpp <- function(X, Y, x, y, h) {
