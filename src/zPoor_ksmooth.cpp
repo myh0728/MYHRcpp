@@ -16,8 +16,8 @@ arma::vec KDE_rcpp_kernel(arma::mat X,
 
     for (size_t i = 0; i < n_n; ++i){
 
-      arma::vec Dik_h = vectorise(X.row(i) - x.row(k)) / h;
-      double Kik_h = prod(Rcpp::as<arma::vec>(K(Dik_h)));
+      arma::vec Dik_h = arma::vectorise(X.row(i) - x.row(k)) / h;
+      double Kik_h = arma::prod(Rcpp::as<arma::vec>(K(Dik_h)));
       Dhat(k) += Kik_h;
     }
   }
@@ -46,7 +46,8 @@ arma::vec KDE_K2B_rcpp_chatgpt(const arma::mat& X,
 
       // Compute the kernel value
       const arma::vec Dik = (X.row(i) - x.row(k)).t() / h;
-      const arma::vec Kik_h = c1 * pow((1.0 - pow(Dik, 2)), 2) % (abs(Dik) < 1.0);
+      const arma::vec Kik_h = c1 * arma::pow((1.0 - arma::pow(Dik, 2)), 2) %
+        (arma::abs(Dik) < 1);
 
       // Compute the contribution of this point to the estimate
       Dhat(k) += arma::prod(Kik_h);
@@ -58,6 +59,70 @@ arma::vec KDE_K2B_rcpp_chatgpt(const arma::mat& X,
 
   return Dhat;
 }
+
+// [[Rcpp::export]]
+arma::vec KDEcv_K2B_rcpp_o1(arma::mat X,
+                            arma::vec h){
+
+  arma::uword n_n = X.n_rows;
+  arma::vec Dhat(n_n);
+
+  for (size_t i = 0; i < n_n; ++i){
+
+    for (size_t j = 0; j < n_n; ++j){
+
+      if (j != i){
+
+        arma::vec Dji_h = arma::vectorise(X.row(j) - X.row(i)) / h;
+        double Kji_h = arma::prod(
+          (arma::abs(Dji_h) < 1) %
+            arma::pow(1.0 - arma::pow(Dji_h, 2), 2) * 15.0 / 16.0
+        );
+        Dhat(i) += Kji_h;
+      }
+    }
+  }
+
+  Dhat /= n_n-1;
+  return(Dhat);
+}
+
+// [[Rcpp::export]]
+arma::vec KDEcv_K2B_w_rcpp_o1(arma::mat X,
+                              arma::vec h,
+                              arma::vec w){
+  arma::uword n_n = X.n_rows;
+  arma::vec Dhat(n_n);
+
+  for (size_t i = 0; i < n_n; ++i){
+
+    for (size_t j = 0; j < n_n; ++j){
+
+      if (j != i){
+
+        arma::vec Dji_h = arma::vectorise(X.row(j) - X.row(i)) / h;
+        double Kji_h = arma::prod(
+          (arma::abs(Dji_h) < 1) %
+            arma::pow(1.0 - arma::pow(Dji_h, 2), 2) * 15.0 / 16.0
+        ) * w(j);
+        Dhat(i) += Kji_h;
+      }
+    }
+  }
+
+  Dhat /= n_n-1;
+  return(Dhat);
+}
+
+
+
+
+
+
+
+
+
+
 
 // Nadaraya-Watson estimation for conditional distribution
 

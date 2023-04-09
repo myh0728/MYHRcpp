@@ -1,5 +1,5 @@
-KDE_R_kernel <- function(X, x, K, h)
-{
+KDE_R_kernel <- function(X, x, K, h){
+
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
   number_k <- dim(x)[1]
@@ -12,6 +12,48 @@ KDE_R_kernel <- function(X, x, K, h)
 
   return(Dhat)
 }
+
+KDE_w_R_kernel <- function(X, x, K, h, w){
+
+  number_n <- dim(X)[1]
+  number_p <- dim(X)[2]
+  number_k <- dim(x)[1]
+
+  Xik <- X[rep(1:number_n, times = number_k), ] -
+    x[rep(1:number_k, each = number_n), ]
+  dim(Xik) <- c(number_n, number_k, number_p)
+  Kik <- apply(K(aperm(Xik, c(3, 1, 2)) / h), c(2, 3), prod)
+  Dhat <- colSums(Kik * w) / number_n
+
+  return(Dhat)
+}
+
+KDEcv_R_kernel <- function(X, K, h){
+
+  number_n <- dim(X)[1]
+  number_p <- dim(X)[2]
+
+  Xij <- X[rep(1:number_n, times = number_n), ] -
+    X[rep(1:number_n, each = number_n), ]
+  dim(Xij) <- c(number_n, number_n, number_p)
+  Kij <- apply(K(aperm(Xij, c(3, 1, 2)) / h), c(2, 3), prod)
+  diag(Kij) <- 0
+  Dhat <- colSums(Kij) / (number_n - 1)
+
+  return(Dhat)
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 NW.generic <- function(X, Y, x, K, h)
 {

@@ -19,9 +19,11 @@ arma::vec KDE_K2B_rcpp(arma::mat X,
 
     for (size_t i = 0; i < n_n; ++i){
 
-      arma::vec Dik_h = vectorise(X.row(i) - x.row(k)) / h;
-      double Kik_h = prod((abs(Dik_h) < 1) %
-                          arma::pow(1.0 - arma::pow(Dik_h, 2), 2) * 15.0 / 16.0);
+      arma::vec Dik_h = arma::vectorise(X.row(i) - x.row(k)) / h;
+      double Kik_h = arma::prod(
+        (arma::abs(Dik_h) < 1) %
+          arma::pow(1.0 - arma::pow(Dik_h, 2), 2) * 15.0 / 16.0
+      );
       Dhat(k) += Kik_h;
     }
   }
@@ -35,35 +37,55 @@ arma::vec KDE_K2B_w_rcpp(arma::mat X,
                          arma::mat x,
                          arma::vec h,
                          arma::vec w){
+
   arma::uword n_n = X.n_rows;
   arma::uword n_k = x.n_rows;
   arma::vec Dhat(n_k);
-  for (arma::uword k = 0; k < n_k; ++k){
-    for (arma::uword i = 0; i < n_n; ++i){
-      arma::vec Dik_h = vectorise(X.row(i)-x.row(k))/h;
-      double Kik_h = prod((abs(Dik_h) < 1)%pow(1-pow(Dik_h, 2), 2)*15/16)*w(i);
+
+  for (size_t k = 0; k < n_k; ++k){
+
+    for (size_t i = 0; i < n_n; ++i){
+
+      arma::vec Dik_h = arma::vectorise(X.row(i) - x.row(k)) / h;
+      double Kik_h = arma::prod(
+        (arma::abs(Dik_h) < 1) %
+          arma::pow(1.0 - arma::pow(Dik_h, 2), 2) * 15.0 / 16.0
+      ) * w(i);
       Dhat(k) += Kik_h;
     }
   }
-  Dhat = Dhat/n_n;
+
+  Dhat /= n_n;
   return(Dhat);
 }
 
 // [[Rcpp::export]]
 arma::vec KDEcv_K2B_rcpp(arma::mat X,
                          arma::vec h){
+
   arma::uword n_n = X.n_rows;
   arma::vec Dhat(n_n);
-  for (arma::uword i = 0; i < n_n; ++i){
-    for (arma::uword j = 0; j < n_n; ++j){
-      if (j != i){
-        arma::vec Dji_h = vectorise(X.row(j)-X.row(i))/h;
-        double Kji_h = prod((abs(Dji_h) < 1)%pow(1-pow(Dji_h, 2), 2)*15/16);
-        Dhat(i) += Kji_h;
-      }
+
+  for (size_t i = 0; i < n_n; ++i)
+  {
+
+    const auto xrow_i = X.row(i);
+
+    for (size_t j = 0; j < i; ++j)
+    {
+
+      arma::vec Dji_h = arma::vectorise(X.row(j) - xrow_i) / h;
+      double Kji_h = arma::prod(
+        (arma::abs(Dji_h) < 1) %
+          arma::pow(1.0 - arma::pow(Dji_h, 2), 2) * 15.0 / 16.0
+      );
+
+      Dhat(i) += Kji_h;
+      Dhat(j) += Kji_h;
     }
   }
-  Dhat = Dhat/(n_n-1);
+
+  Dhat /= n_n-1;
   return(Dhat);
 }
 
@@ -71,20 +93,42 @@ arma::vec KDEcv_K2B_rcpp(arma::mat X,
 arma::vec KDEcv_K2B_w_rcpp(arma::mat X,
                            arma::vec h,
                            arma::vec w){
+
   arma::uword n_n = X.n_rows;
   arma::vec Dhat(n_n);
-  for (arma::uword i = 0; i < n_n; ++i){
-    for (arma::uword j = 0; j < n_n; ++j){
-      if (j != i){
-        arma::vec Dji_h = vectorise(X.row(j)-X.row(i))/h;
-        double Kji_h = prod((abs(Dji_h) < 1)%pow(1-pow(Dji_h, 2), 2)*15/16)*w(j);
-        Dhat(i) += Kji_h;
-      }
+
+  for (size_t i = 0; i < n_n; ++i)
+  {
+
+    const auto xrow_i = X.row(i);
+
+    for (size_t j = 0; j < i; ++j)
+    {
+
+      arma::vec Dji_h = arma::vectorise(X.row(j) - xrow_i) / h;
+      double Kji_h = arma::prod(
+        (arma::abs(Dji_h) < 1) %
+          arma::pow(1.0 - arma::pow(Dji_h, 2), 2) * 15.0 / 16.0
+      );
+
+      Dhat(i) += Kji_h * w(j);
+      Dhat(j) += Kji_h * w(i);
     }
   }
-  Dhat = Dhat/(n_n-1);
+
+  Dhat /= n_n-1;
   return(Dhat);
 }
+
+
+
+
+
+
+
+
+
+
 
 // Using K4_Biweight kernel
 

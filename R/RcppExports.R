@@ -73,6 +73,10 @@ KDEcv_K2B_w_rcpp <- function(X, h, w) {
     .Call(`_MYHRcpp_KDEcv_K2B_w_rcpp`, X, h, w)
 }
 
+KDEcv_K2B_w_rcpp_o1 <- function(X, h, w) {
+    .Call(`_MYHRcpp_KDEcv_K2B_w_rcpp_o1`, X, h, w)
+}
+
 KDE_K4B_rcpp <- function(X, x, h) {
     .Call(`_MYHRcpp_KDE_K4B_rcpp`, X, x, h)
 }
@@ -159,6 +163,10 @@ KDE_rcpp_kernel <- function(X, x, K, h) {
 
 KDE_K2B_rcpp_chatgpt <- function(X, x, h) {
     .Call(`_MYHRcpp_KDE_K2B_rcpp_chatgpt`, X, x, h)
+}
+
+KDEcv_K2B_rcpp_o1 <- function(X, h) {
+    .Call(`_MYHRcpp_KDEcv_K2B_rcpp_o1`, X, h)
 }
 
 NWF_K2B_rcpp <- function(X, Y, x, y, h) {
