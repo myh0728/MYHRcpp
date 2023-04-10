@@ -126,69 +126,55 @@ ggplot2::autoplot(
 
 ####################################################################
 
-####################################################################
-
-n <- 100
+n <- 500
 p <- 1
 
-X <- matrix(rnorm(n*p), nrow = n, ncol = p)
-Y <- as.matrix(sin(X %*% rep(1, p))+rnorm(n, mean = 0, sd = 0.2))
+X <- matrix(rnorm(n * p), nrow = n, ncol = p)
+Y <- as.matrix(sin(X %*% rep(1, p)) + rnorm(n, mean = 0, sd = 0.2))
 x <- as.matrix(seq(-3, 3, 0.1))
 
-###
+test1 <- NW_R_kernel(X = X, Y = Y, x = x, K = K2_Biweight, h = 1.5)
+test2 <- NW_K2B_rcpp(X = X, Y = Y, x = x, h = 1.5)
+test3 <- NW_K2B_rcpp_o1(X = X, Y = Y, x = x, h = 1.5)
+test4 <- NW_K2B_rcpp_o2(X = X, Y = Y, x = x, h = 1.5)
+sum(abs(test1 - test2))
+sum(abs(test1 - test3))
+sum(abs(test1 - test4))
 
-yhat <- NW.generic(X = X, Y = Y, x = x,
-                   K = K2_Biweight, h = 1)
-yhat_rcpp <- NW_K2B_rcpp(X = X, Y = Y, x = x, h = 1)
-
-mean((yhat_rcpp-yhat)^2)
-
-plot(X, Y)
-lines(x, yhat)
-
-microbenchmark::microbenchmark(
-  outer = NW.generic(X = X, Y = Y, x = x,
-                     K = K2_Biweight, h = 1),
-  Rcpp = NW_K2B_rcpp(X = X, Y = Y, x = x, h = 1),
-  ksmooth = ksmooth(x = X, y = Y, bandwidth = 1, x.points = x)
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    R = NW_R_kernel(X = X, Y = Y, x = x, K = K2_Biweight, h = 1.5),
+    Rcpp = NW_K2B_rcpp(X = X, Y = Y, x = x, h = 1.5),
+    Rcpp_o1 = NW_K2B_rcpp_o1(X = X, Y = Y, x = x, h = 1.5),
+    Rcpp_o2 = NW_K2B_rcpp_o2(X = X, Y = Y, x = x, h = 1.5)
+  )
 )
 
 ###
 
-Yhat <- NW.cv.generic(X = X, Y = Y,
-                      K = K2_Biweight, h = 1)
-Yhat_rcpp <- NWcv_K2B_rcpp(X = X, Y = Y, h = 1)
-Yhat_rcpp_o1 <- NWcv_K2B_rcpp_o1(X = X, Y = Y, h = 1)
-mean((Yhat_rcpp-Yhat)^2)
-mean((Yhat_rcpp_o1-Yhat)^2)
+n <- 500
+p <- 2
+k <- 50
 
-microbenchmark::microbenchmark(
-  outer = NW.cv.generic(X = X, Y = Y,
-                        K = K2_Biweight, h = 1),
-  Rcpp = NWcv_K2B_rcpp(X = X, Y = Y, h = 1),
-  Rcpp_o1 = NWcv_K2B_rcpp_o1(X = X, Y = Y, h = 1)
-)
+X <- matrix(rnorm(n * p), nrow = n, ncol = p)
+Y <- as.matrix(sin(X %*% rep(1, p)) + rnorm(n, mean = 0, sd = 0.2))
+x <- matrix(rnorm(k * p), nrow = k, ncol = p)
 
-####################################################################
+test1 <- NW_R_kernel(X = X, Y = Y, x = x, K = K2_Biweight, h = 1.5)
+test2 <- NW_K2B_rcpp(X = X, Y = Y, x = x, h = rep(1.5, p))
+test3 <- NW_K2B_rcpp_o1(X = X, Y = Y, x = x, h = rep(1.5, p))
+test4 <- NW_K2B_rcpp_o2(X = X, Y = Y, x = x, h = rep(1.5, p))
+sum(abs(test1 - test2))
+sum(abs(test1 - test3))
+sum(abs(test1 - test4))
 
-n <- 100
-p <- 5
-
-X <- matrix(rnorm(n*p), nrow = n, ncol = p)
-Y <- as.matrix(sin(X %*% rep(1, p))+rnorm(n, mean = 0, sd = 0.2))
-
-Yhat <- NW.cv.generic(X = X, Y = Y,
-                      K = K2_Biweight, h = 1)
-Yhat_rcpp <- NWcv_K2B_rcpp(X = X, Y = Y, h = rep(1, 5))
-Yhat_rcpp_o1 <- NWcv_K2B_rcpp_o1(X = X, Y = Y, h = rep(1, 5))
-mean((Yhat_rcpp-Yhat)^2)
-mean((Yhat_rcpp_o1-Yhat)^2)
-
-microbenchmark::microbenchmark(
-  outer = NW.cv.generic(X = X, Y = Y,
-                        K = K2_Biweight, h = 1),
-  Rcpp = NWcv_K2B_rcpp(X = X, Y = Y, h = rep(1, 5)),
-  Rcpp_o1 = NWcv_K2B_rcpp_o1(X = X, Y = Y, h = rep(1, 5))
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    R = NW_R_kernel(X = X, Y = Y, x = x, K = K2_Biweight, h = 1.5),
+    Rcpp = NW_K2B_rcpp(X = X, Y = Y, x = x, h = rep(1.5, p)),
+    Rcpp_o1 = NW_K2B_rcpp_o1(X = X, Y = Y, x = x, h = rep(1.5, p)),
+    Rcpp_o2 = NW_K2B_rcpp_o2(X = X, Y = Y, x = x, h = rep(1.5, p))
+  )
 )
 
 ####################################################################
@@ -196,58 +182,169 @@ microbenchmark::microbenchmark(
 n <- 200
 p <- 1
 
-X <- matrix(rnorm(n*p), nrow = n, ncol = p)
-Y <- as.matrix(sin(X %*% rep(1, p))+rnorm(n, mean = 0, sd = 0.2))
+X <- matrix(rnorm(n * p), nrow = n, ncol = p)
+Y <- as.matrix(sin(X %*% rep(1, p)) + rnorm(n, mean = 0, sd = 0.2))
 x <- as.matrix(seq(-3, 3, 0.1))
-y <- as.matrix(seq(min(Y), max(Y), length = 50))
-CP <- function(Y, y)
-{
-  number_n <- dim(Y)[1]
-  number_k <- dim(y)[1]
-  Y.CP <- matrix(apply(as.matrix(
-    Y[rep(1:number_n, times = length(y)), ]<=
-      y[rep(1:number_k, each = number_n), ]), 1, prod),
-    nrow = number_n, ncol = number_k)
+w <- rexp(n)
 
-  return(Y.CP)
-}
-Y.CP <- CP(Y = Y, y = y)
-
-###
-
-Fhat <- NWdist.generic(X = X, Y = Y, x = x, y = y,
-                       K = K2_Biweight, h = 1)
-Fhat1 <- NW.generic(X = X, Y = Y.CP, x = x,
-                    K = K2_Biweight, h = 1)
-Fhat2 <- NW.generic(X = X, Y = CP(Y = Y, y = y), x = x,
-                    K = K2_Biweight, h = 1)
-Fhat_rcpp <- NWF_K2B_rcpp(X = X, Y = Y, x = x, y = y,
-                          h = 1)
-Fhat_rcpp1 <- NW_K2B_rcpp(X = X, Y = Y.CP, x = x, h = 1)
-Fhat_rcpp2 <- NW_K2B_rcpp(X = X, Y = CP(Y = Y, y = y), x = x, h = 1)
-mean((Fhat-Fhat1)^2)
-mean((Fhat-Fhat2)^2)
-mean((Fhat-Fhat_rcpp)^2)
-mean((Fhat-Fhat_rcpp1)^2)
-mean((Fhat-Fhat_rcpp2)^2)
+test1 <- NW_w_R_kernel(X = X, Y = Y, x = x, K = K2_Biweight, h = 1.5, w = w)
+test2 <- NW_K2B_w_rcpp(X = X, Y = Y, x = x, h = 1.5, w = w)
+sum(abs(test1 - test2))
 
 ggplot2::autoplot(
   microbenchmark::microbenchmark(
-    outer = NWdist.generic(X = X, Y = Y, x = x, y = y,
-                           K = K2_Biweight, h = 1),
-    outer1 = NW.generic(X = X, Y = Y.CP, x = x,
-                        K = K2_Biweight, h = 1),
-    outer2 = NW.generic(X = X, Y = CP(Y = Y, y = y), x = x,
-                        K = K2_Biweight, h = 1),
-    Rcpp = NWF_K2B_rcpp(X = X, Y = Y, x = x, y = y,
-                        h = 1),
-    Rcpp1 = NW_K2B_rcpp(X = X, Y = Y.CP, x = x, h = 1),
-    Rcpp2 = NW_K2B_rcpp(X = X, Y = CP(Y = Y, y = y), x = x, h = 1)
+    R = NW_w_R_kernel(X = X, Y = Y, x = x, K = K2_Biweight, h = 1.5, w = w),
+    Rcpp = NW_K2B_w_rcpp(X = X, Y = Y, x = x, h = 1.5, w = w)
   )
 )
 
+####################################################################
 
+n <- 200
+p <- 1
 
+X <- matrix(rnorm(n * p), nrow = n, ncol = p)
+Y <- as.matrix(sin(X %*% rep(1, p)) + rnorm(n, mean = 0, sd = 0.2))
 
+test1 <- NWcv_R_kernel(X = X, Y = Y, K = K2_Biweight, h = 1.5)
+test2 <- NWcv_K2B_rcpp(X = X, Y = Y, h = 1.5)
+test3 <- NWcv_K2B_rcpp_o1(X = X, Y = Y, h = 1.5)
+test4 <- NWcv_K2B_rcpp_o2(X = X, Y = Y, h = 1.5)
+test5 <- NWcv_K2B_rcpp_o3(X = X, Y = Y, h = 1.5)
+sum(abs(test1 - test2))
+sum(abs(test1 - test3))
+sum(abs(test1 - test4))
+sum(abs(test1 - test5))
 
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    R = NWcv_R_kernel(X = X, Y = Y, K = K2_Biweight, h = 1.5),
+    Rcpp = NWcv_K2B_rcpp(X = X, Y = Y, h = 1.5),
+    Rcpp_o1 = NWcv_K2B_rcpp_o1(X = X, Y = Y, h = 1.5),
+    Rcpp_o2 = NWcv_K2B_rcpp_o2(X = X, Y = Y, h = 1.5),
+    Rcpp_o3 = NWcv_K2B_rcpp_o3(X = X, Y = Y, h = 1.5)
+  )
+)
+
+####################################################################
+
+n <- 200
+p <- 1
+
+X <- matrix(rnorm(n * p), nrow = n, ncol = p)
+Y <- as.matrix(sin(X %*% rep(1, p)) + rnorm(n, mean = 0, sd = 0.2))
+w <- rexp(n)
+
+test1 <- NWcv_w_R_kernel(X = X, Y = Y, K = K2_Biweight, h = 1.5, w = w)
+test2 <- NWcv_K2B_w_rcpp(X = X, Y = Y, h = 1.5, w = w)
+sum(abs(test1 - test2))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    R = NWcv_w_R_kernel(X = X, Y = Y, K = K2_Biweight, h = 1.5, w = w),
+    Rcpp = NWcv_K2B_w_rcpp(X = X, Y = Y, h = 1.5, w = w)
+  )
+)
+
+####################################################################
+
+n <- 200
+p <- 1
+
+X <- matrix(rnorm(n * p), nrow = n, ncol = p)
+Y <- as.matrix(sin(X %*% rep(1, p)) + rnorm(n, mean = 0, sd = 0.2))
+x <- as.matrix(seq(-3, 3, 0.1))
+w <- rexp(n)
+
+test1 <- NW_R_kernel(X = X, Y = Y, x = x, K = K4_Biweight, h = 1.5)
+test2 <- NW_K4B_rcpp(X = X, Y = Y, x = x, h = 1.5)
+sum(abs(test1 - test2))
+
+test1 <- NW_w_R_kernel(X = X, Y = Y, x = x, K = K4_Biweight, h = 1.5, w = w)
+test2 <- NW_K4B_w_rcpp(X = X, Y = Y, x = x, h = 1.5, w = w)
+sum(abs(test1 - test2))
+
+test1 <- NWcv_R_kernel(X = X, Y = Y, K = K4_Biweight, h = 1.5)
+test2 <- NWcv_K4B_rcpp(X = X, Y = Y, h = 1.5)
+sum(abs(test1 - test2))
+
+test1 <- NWcv_w_R_kernel(X = X, Y = Y, K = K4_Biweight, h = 1.5, w = w)
+test2 <- NWcv_K4B_w_rcpp(X = X, Y = Y, h = 1.5, w = w)
+sum(abs(test1 - test2))
+
+###
+
+test1 <- NW_R_kernel(X = X, Y = Y, x = x, K = K2_Gaussian, h = 1.5)
+test2 <- NW_KG_rcpp(X = X, Y = Y, x = x, h = 1.5)
+sum(abs(test1 - test2))
+
+test1 <- NW_w_R_kernel(X = X, Y = Y, x = x, K = K2_Gaussian, h = 1.5, w = w)
+test2 <- NW_KG_w_rcpp(X = X, Y = Y, x = x, h = 1.5, w = w)
+sum(abs(test1 - test2))
+
+test1 <- NWcv_R_kernel(X = X, Y = Y, K = K2_Gaussian, h = 1.5)
+test2 <- NWcv_KG_rcpp(X = X, Y = Y, h = 1.5)
+sum(abs(test1 - test2))
+
+test1 <- NWcv_w_R_kernel(X = X, Y = Y, K = K2_Gaussian, h = 1.5, w = w)
+test2 <- NWcv_KG_w_rcpp(X = X, Y = Y, h = 1.5, w = w)
+sum(abs(test1 - test2))
+
+####################################################################
+
+n <- 1000
+p <- 1
+
+X <- matrix(rnorm(n * p), nrow = n, ncol = p)
+Y <- as.matrix(sin(X %*% rep(1, p)) + rnorm(n, mean = 0, sd = 0.2))
+x <- as.matrix(seq(-3, 3, 0.1))
+y <- as.matrix(seq(min(Y), max(Y), length = 50))
+
+test1 <- NWD_R_kernel(X = X, Y = Y, x = x, y = y, K = K2_Biweight, h = 1.5)
+test2 <- NWD_uni_R_kernel(X = X, Y = as.vector(Y), x = x, y = as.vector(y),
+                          K = K2_Biweight, h = 1.5)
+test3 <- NWD_K2B_rcpp(X = X, Y = Y, x = x, y = y, h = 1.5)
+test4 <- NW_K2B_rcpp(X = X, Y = ctingP_rcpp(Y, y), x = x, h = 1.5)
+test5 <- NW_K2B_rcpp(X = X, Y = ctingP_uni_rcpp(as.vector(Y), as.vector(y)),
+                     x = x, h = 1.5)
+test6 <- NW_R_kernel(X = X, Y = ctingP_rcpp(Y, y), x = x, K = K2_Biweight, h = 1.5)
+test7 <- NW_R_kernel(X = X, Y = ctingP_uni_rcpp(as.vector(Y), as.vector(y)),
+                     x = x, K = K2_Biweight, h = 1.5)
+test8 <- NW_K2B_rcpp_n1(X = X, Y = ctingP_rcpp(Y, y), x = x, h = 1.5)
+test9 <- NW_K2B_rcpp_n1(X = X, Y = ctingP_uni_rcpp(as.vector(Y), as.vector(y)),
+                        x = x, h = 1.5)
+sum(abs(test1 - test2))
+sum(abs(test1 - test3))
+sum(abs(test1 - test4))
+sum(abs(test1 - test5))
+sum(abs(test1 - test6))
+sum(abs(test1 - test7))
+sum(abs(test1 - test8))
+sum(abs(test1 - test9))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    R = NWD_R_kernel(X = X, Y = Y, x = x, y = y, K = K2_Biweight, h = 1.5),
+    R_uni = NWD_uni_R_kernel(X = X, Y = as.vector(Y), x = x, y = as.vector(y),
+                             K = K2_Biweight, h = 1.5),
+    Rcpp = NWD_K2B_rcpp(X = X, Y = Y, x = x, y = y, h = 1.5),
+    Rcpp_v0 = NW_K2B_rcpp(X = X, Y = ctingP_rcpp(Y, y), x = x, h = 1.5),
+    Rcpp_v1 = NW_K2B_rcpp(X = X, Y = ctingP_uni_rcpp(as.vector(Y), as.vector(y)),
+                          x = x, h = 1.5),
+    R_v0 = NW_R_kernel(X = X, Y = ctingP_rcpp(Y, y), x = x, K = K2_Biweight, h = 1.5),
+    R_v1 = NW_R_kernel(X = X, Y = ctingP_uni_rcpp(as.vector(Y), as.vector(y)),
+                       x = x, K = K2_Biweight, h = 1.5),
+    Rcpp_n0 = NW_K2B_rcpp_n1(X = X, Y = ctingP_rcpp(Y, y), x = x, h = 1.5),
+    Rcpp_n1 = NW_K2B_rcpp_n1(X = X, Y = ctingP_uni_rcpp(as.vector(Y), as.vector(y)),
+                             x = x, h = 1.5)
+  )
+)
+
+####################################################################
+
+####################################################################
+
+####################################################################
+
+####################################################################
 
