@@ -4,28 +4,45 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 arma::mat eXsq_rcpp(arma::mat data_X){
+
   arma::uword n_p = data_X.n_cols;
   arma::mat eXsq(n_p, n_p);
-  for (arma::uword i = 0; i < n_p; ++i){
-    for (arma::uword j = 0; j <= i; ++j){
+
+  for (size_t i = 0; i < n_p; ++i){
+
+    for (size_t j = 0; j <= i; ++j){
+
       eXsq(i, j) = eXsq(j, i) = mean(data_X.col(i) % data_X.col(j));
     }
   }
+
   return eXsq;
 }
 
 // [[Rcpp::export]]
 arma::mat eXsq_w_rcpp(arma::mat data_X,
                       arma::vec weight){
+
   arma::uword n_p = data_X.n_cols;
   arma::mat eXsq(n_p, n_p);
-  for (arma::uword i = 0; i < n_p; ++i){
-    for (arma::uword j = 0; j <= i; ++j){
+
+  for (size_t i = 0; i < n_p; ++i){
+
+    for (size_t j = 0; j <= i; ++j){
+
       eXsq(i, j) = eXsq(j, i) = mean(data_X.col(i) % data_X.col(j) % weight);
     }
   }
+
   return eXsq;
 }
+
+
+
+
+
+
+
 
 // [[Rcpp::export]]
 arma::mat Xsq_lowtri_rcpp(arma::mat data_X){
