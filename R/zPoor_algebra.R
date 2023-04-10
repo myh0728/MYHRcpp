@@ -7,7 +7,7 @@ countAinB_outer <- function(A, B){
 
 countAinB_W_outer <- function(A, B, W){
 
-  cts <- colSums(outer(B, A, FUN = "==")*W)
+  cts <- colSums(outer(B, A, FUN = "==") * W)
 
   return(cts)
 }
@@ -27,9 +27,9 @@ rankAinB_for <- function(A, B){
 
     for (j in 1:length(B)){
 
-      if (A[i]>=B[j]){
+      if (A[i] >= B[j]){
 
-        rk[i] <- rk[i]+1
+        rk[i] <- rk[i] + 1
 
       }else
 

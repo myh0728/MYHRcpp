@@ -57,6 +57,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// ctingP_rcpp
+arma::mat ctingP_rcpp(arma::mat Y, arma::mat y);
+RcppExport SEXP _MYHRcpp_ctingP_rcpp(SEXP YSEXP, SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(ctingP_rcpp(Y, y));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ctingP_uni_rcpp
+arma::mat ctingP_uni_rcpp(arma::vec Y, arma::vec y);
+RcppExport SEXP _MYHRcpp_ctingP_uni_rcpp(SEXP YSEXP, SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(ctingP_uni_rcpp(Y, y));
+    return rcpp_result_gen;
+END_RCPP
+}
 // pinv_rcpp
 arma::mat pinv_rcpp(arma::mat M_A);
 RcppExport SEXP _MYHRcpp_pinv_rcpp(SEXP M_ASEXP) {
@@ -673,6 +697,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_eXsq_w_rcpp", (DL_FUNC) &_MYHRcpp_eXsq_w_rcpp, 2},
     {"_MYHRcpp_Xsq_lowtri_rcpp", (DL_FUNC) &_MYHRcpp_Xsq_lowtri_rcpp, 1},
     {"_MYHRcpp_twoXYsym_lowtri_rcpp", (DL_FUNC) &_MYHRcpp_twoXYsym_lowtri_rcpp, 2},
+    {"_MYHRcpp_ctingP_rcpp", (DL_FUNC) &_MYHRcpp_ctingP_rcpp, 2},
+    {"_MYHRcpp_ctingP_uni_rcpp", (DL_FUNC) &_MYHRcpp_ctingP_uni_rcpp, 2},
     {"_MYHRcpp_pinv_rcpp", (DL_FUNC) &_MYHRcpp_pinv_rcpp, 1},
     {"_MYHRcpp_solve_rcpp", (DL_FUNC) &_MYHRcpp_solve_rcpp, 2},
     {"_MYHRcpp_inv_sympd_rcpp", (DL_FUNC) &_MYHRcpp_inv_sympd_rcpp, 1},

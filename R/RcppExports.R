@@ -17,6 +17,14 @@ twoXYsym_lowtri_rcpp <- function(data_X, data_Y) {
     .Call(`_MYHRcpp_twoXYsym_lowtri_rcpp`, data_X, data_Y)
 }
 
+ctingP_rcpp <- function(Y, y) {
+    .Call(`_MYHRcpp_ctingP_rcpp`, Y, y)
+}
+
+ctingP_uni_rcpp <- function(Y, y) {
+    .Call(`_MYHRcpp_ctingP_uni_rcpp`, Y, y)
+}
+
 pinv_rcpp <- function(M_A) {
     .Call(`_MYHRcpp_pinv_rcpp`, M_A)
 }
