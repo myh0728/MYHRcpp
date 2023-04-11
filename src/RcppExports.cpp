@@ -175,6 +175,54 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// outer_minus_rcpp
+arma::mat outer_minus_rcpp(arma::vec a, arma::vec b);
+RcppExport SEXP _MYHRcpp_outer_minus_rcpp(SEXP aSEXP, SEXP bSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type a(aSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type b(bSEXP);
+    rcpp_result_gen = Rcpp::wrap(outer_minus_rcpp(a, b));
+    return rcpp_result_gen;
+END_RCPP
+}
+// outer_plus_rcpp
+arma::mat outer_plus_rcpp(arma::vec a, arma::vec b);
+RcppExport SEXP _MYHRcpp_outer_plus_rcpp(SEXP aSEXP, SEXP bSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type a(aSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type b(bSEXP);
+    rcpp_result_gen = Rcpp::wrap(outer_plus_rcpp(a, b));
+    return rcpp_result_gen;
+END_RCPP
+}
+// outer_leq_rcpp
+arma::mat outer_leq_rcpp(arma::vec a, arma::vec b);
+RcppExport SEXP _MYHRcpp_outer_leq_rcpp(SEXP aSEXP, SEXP bSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type a(aSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type b(bSEXP);
+    rcpp_result_gen = Rcpp::wrap(outer_leq_rcpp(a, b));
+    return rcpp_result_gen;
+END_RCPP
+}
+// outer_geq_rcpp
+arma::mat outer_geq_rcpp(arma::vec a, arma::vec b);
+RcppExport SEXP _MYHRcpp_outer_geq_rcpp(SEXP aSEXP, SEXP bSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type a(aSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type b(bSEXP);
+    rcpp_result_gen = Rcpp::wrap(outer_geq_rcpp(a, b));
+    return rcpp_result_gen;
+END_RCPP
+}
 // atRisk_integral_rcpp
 arma::mat atRisk_integral_rcpp(arma::mat integrand, arma::vec t_start, arma::vec t_stop, arma::vec t_event);
 RcppExport SEXP _MYHRcpp_atRisk_integral_rcpp(SEXP integrandSEXP, SEXP t_startSEXP, SEXP t_stopSEXP, SEXP t_eventSEXP) {
@@ -642,6 +690,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// outer_times_rcpp
+arma::mat outer_times_rcpp(arma::vec a, arma::vec b);
+RcppExport SEXP _MYHRcpp_outer_times_rcpp(SEXP aSEXP, SEXP bSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type a(aSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type b(bSEXP);
+    rcpp_result_gen = Rcpp::wrap(outer_times_rcpp(a, b));
+    return rcpp_result_gen;
+END_RCPP
+}
+// outer_leq_rcpp_v1
+arma::umat outer_leq_rcpp_v1(arma::vec a, arma::vec b);
+RcppExport SEXP _MYHRcpp_outer_leq_rcpp_v1(SEXP aSEXP, SEXP bSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type a(aSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type b(bSEXP);
+    rcpp_result_gen = Rcpp::wrap(outer_leq_rcpp_v1(a, b));
+    return rcpp_result_gen;
+END_RCPP
+}
 // KDE_rcpp_kernel
 arma::vec KDE_rcpp_kernel(arma::mat X, arma::mat x, Rcpp::Function K, arma::vec h);
 RcppExport SEXP _MYHRcpp_KDE_rcpp_kernel(SEXP XSEXP, SEXP xSEXP, SEXP KSEXP, SEXP hSEXP) {
@@ -815,6 +887,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// NWD_K2B_rcpp_u1
+arma::mat NWD_K2B_rcpp_u1(arma::mat X, arma::mat Y, arma::mat x, arma::mat y, arma::vec h);
+RcppExport SEXP _MYHRcpp_NWD_K2B_rcpp_u1(SEXP XSEXP, SEXP YSEXP, SEXP xSEXP, SEXP ySEXP, SEXP hSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type y(ySEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type h(hSEXP);
+    rcpp_result_gen = Rcpp::wrap(NWD_K2B_rcpp_u1(X, Y, x, y, h));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_eXsq_rcpp", (DL_FUNC) &_MYHRcpp_eXsq_rcpp, 1},
@@ -831,6 +918,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_countAinB_rcpp", (DL_FUNC) &_MYHRcpp_countAinB_rcpp, 2},
     {"_MYHRcpp_countAinB_W_rcpp", (DL_FUNC) &_MYHRcpp_countAinB_W_rcpp, 3},
     {"_MYHRcpp_rankAinB_rcpp", (DL_FUNC) &_MYHRcpp_rankAinB_rcpp, 2},
+    {"_MYHRcpp_outer_minus_rcpp", (DL_FUNC) &_MYHRcpp_outer_minus_rcpp, 2},
+    {"_MYHRcpp_outer_plus_rcpp", (DL_FUNC) &_MYHRcpp_outer_plus_rcpp, 2},
+    {"_MYHRcpp_outer_leq_rcpp", (DL_FUNC) &_MYHRcpp_outer_leq_rcpp, 2},
+    {"_MYHRcpp_outer_geq_rcpp", (DL_FUNC) &_MYHRcpp_outer_geq_rcpp, 2},
     {"_MYHRcpp_atRisk_integral_rcpp", (DL_FUNC) &_MYHRcpp_atRisk_integral_rcpp, 4},
     {"_MYHRcpp_sum_atRisk_rcpp", (DL_FUNC) &_MYHRcpp_sum_atRisk_rcpp, 4},
     {"_MYHRcpp_KDE_KG_rcpp", (DL_FUNC) &_MYHRcpp_KDE_KG_rcpp, 3},
@@ -865,6 +956,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_SKME_K4B_rcpp", (DL_FUNC) &_MYHRcpp_SKME_K4B_rcpp, 6},
     {"_MYHRcpp_SKME_K4B_w_rcpp", (DL_FUNC) &_MYHRcpp_SKME_K4B_w_rcpp, 7},
     {"_MYHRcpp_testfunction", (DL_FUNC) &_MYHRcpp_testfunction, 2},
+    {"_MYHRcpp_outer_times_rcpp", (DL_FUNC) &_MYHRcpp_outer_times_rcpp, 2},
+    {"_MYHRcpp_outer_leq_rcpp_v1", (DL_FUNC) &_MYHRcpp_outer_leq_rcpp_v1, 2},
     {"_MYHRcpp_KDE_rcpp_kernel", (DL_FUNC) &_MYHRcpp_KDE_rcpp_kernel, 4},
     {"_MYHRcpp_KDE_K2B_rcpp_chatgpt", (DL_FUNC) &_MYHRcpp_KDE_K2B_rcpp_chatgpt, 3},
     {"_MYHRcpp_KDEcv_K2B_rcpp_o1", (DL_FUNC) &_MYHRcpp_KDEcv_K2B_rcpp_o1, 2},
@@ -878,6 +971,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_NWcv_K2B_rcpp_o2", (DL_FUNC) &_MYHRcpp_NWcv_K2B_rcpp_o2, 3},
     {"_MYHRcpp_NWcv_K2B_rcpp_o3", (DL_FUNC) &_MYHRcpp_NWcv_K2B_rcpp_o3, 3},
     {"_MYHRcpp_NWD_K2B_rcpp", (DL_FUNC) &_MYHRcpp_NWD_K2B_rcpp, 5},
+    {"_MYHRcpp_NWD_K2B_rcpp_u1", (DL_FUNC) &_MYHRcpp_NWD_K2B_rcpp_u1, 5},
     {NULL, NULL, 0}
 };
 

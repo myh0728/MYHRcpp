@@ -134,3 +134,80 @@ arma::vec rankAinB_rcpp(arma::vec A,
   return result;
 }
 
+// [[Rcpp::export]]
+arma::mat outer_minus_rcpp(arma::vec a,
+                           arma::vec b){
+
+  arma::uword l_a = a.n_elem;
+  arma::uword l_b = b.n_elem;
+  arma::mat outer(l_a, l_b);
+
+  for (size_t i = 0; i < l_a; ++i){
+
+    for (size_t j = 0; j < l_b; ++j){
+
+      outer(i, j) = a(i) - b(j);
+    }
+  }
+
+  return outer;
+}
+
+// [[Rcpp::export]]
+arma::mat outer_plus_rcpp(arma::vec a,
+                          arma::vec b){
+
+  arma::uword l_a = a.n_elem;
+  arma::uword l_b = b.n_elem;
+  arma::mat outer(l_a, l_b);
+
+  for (size_t i = 0; i < l_a; ++i){
+
+    for (size_t j = 0; j < l_b; ++j){
+
+      outer(i, j) = a(i) + b(j);
+    }
+  }
+
+  return outer;
+}
+
+// [[Rcpp::export]]
+arma::mat outer_leq_rcpp(arma::vec a,
+                         arma::vec b){
+
+  arma::uword l_a = a.n_elem;
+  arma::uword l_b = b.n_elem;
+  arma::mat outer(l_a, l_b);
+
+  for (size_t i = 0; i < l_a; ++i){
+
+    for (size_t j = 0; j < l_b; ++j){
+
+      outer(i, j) = (a(i) <= b(j));
+    }
+  }
+
+  return outer;
+}
+
+// [[Rcpp::export]]
+arma::mat outer_geq_rcpp(arma::vec a,
+                         arma::vec b){
+
+  arma::uword l_a = a.n_elem;
+  arma::uword l_b = b.n_elem;
+  arma::mat outer(l_a, l_b);
+
+  for (size_t i = 0; i < l_a; ++i){
+
+    for (size_t j = 0; j < l_b; ++j){
+
+      outer(i, j) = (a(i) >= b(j));
+    }
+  }
+
+  return outer;
+}
+
+

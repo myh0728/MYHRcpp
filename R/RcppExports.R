@@ -57,6 +57,22 @@ rankAinB_rcpp <- function(A, B) {
     .Call(`_MYHRcpp_rankAinB_rcpp`, A, B)
 }
 
+outer_minus_rcpp <- function(a, b) {
+    .Call(`_MYHRcpp_outer_minus_rcpp`, a, b)
+}
+
+outer_plus_rcpp <- function(a, b) {
+    .Call(`_MYHRcpp_outer_plus_rcpp`, a, b)
+}
+
+outer_leq_rcpp <- function(a, b) {
+    .Call(`_MYHRcpp_outer_leq_rcpp`, a, b)
+}
+
+outer_geq_rcpp <- function(a, b) {
+    .Call(`_MYHRcpp_outer_geq_rcpp`, a, b)
+}
+
 atRisk_integral_rcpp <- function(integrand, t_start, t_stop, t_event) {
     .Call(`_MYHRcpp_atRisk_integral_rcpp`, integrand, t_start, t_stop, t_event)
 }
@@ -193,6 +209,14 @@ testfunction <- function(a, my_r_func) {
     .Call(`_MYHRcpp_testfunction`, a, my_r_func)
 }
 
+outer_times_rcpp <- function(a, b) {
+    .Call(`_MYHRcpp_outer_times_rcpp`, a, b)
+}
+
+outer_leq_rcpp_v1 <- function(a, b) {
+    .Call(`_MYHRcpp_outer_leq_rcpp_v1`, a, b)
+}
+
 KDE_rcpp_kernel <- function(X, x, K, h) {
     .Call(`_MYHRcpp_KDE_rcpp_kernel`, X, x, K, h)
 }
@@ -243,5 +267,9 @@ NWcv_K2B_rcpp_o3 <- function(X, Y, h) {
 
 NWD_K2B_rcpp <- function(X, Y, x, y, h) {
     .Call(`_MYHRcpp_NWD_K2B_rcpp`, X, Y, x, y, h)
+}
+
+NWD_K2B_rcpp_u1 <- function(X, Y, x, y, h) {
+    .Call(`_MYHRcpp_NWD_K2B_rcpp_u1`, X, Y, x, y, h)
 }
 

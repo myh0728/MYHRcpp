@@ -313,6 +313,7 @@ test7 <- NW_R_kernel(X = X, Y = ctingP_uni_rcpp(as.vector(Y), as.vector(y)),
 test8 <- NW_K2B_rcpp_n1(X = X, Y = ctingP_rcpp(Y, y), x = x, h = 1.5)
 test9 <- NW_K2B_rcpp_n1(X = X, Y = ctingP_uni_rcpp(as.vector(Y), as.vector(y)),
                         x = x, h = 1.5)
+test10 <- NWD_K2B_rcpp_u1(X = X, Y = Y, x = x, y = y, h = 1.5)
 sum(abs(test1 - test2))
 sum(abs(test1 - test3))
 sum(abs(test1 - test4))
@@ -321,6 +322,7 @@ sum(abs(test1 - test6))
 sum(abs(test1 - test7))
 sum(abs(test1 - test8))
 sum(abs(test1 - test9))
+sum(abs(test1 - test10))
 
 ggplot2::autoplot(
   microbenchmark::microbenchmark(
@@ -328,6 +330,7 @@ ggplot2::autoplot(
     R_uni = NWD_uni_R_kernel(X = X, Y = as.vector(Y), x = x, y = as.vector(y),
                              K = K2_Biweight, h = 1.5),
     Rcpp = NWD_K2B_rcpp(X = X, Y = Y, x = x, y = y, h = 1.5),
+    Rcpp_u1 = NWD_K2B_rcpp_u1(X = X, Y = Y, x = x, y = y, h = 1.5),
     Rcpp_v0 = NW_K2B_rcpp(X = X, Y = ctingP_rcpp(Y, y), x = x, h = 1.5),
     Rcpp_v1 = NW_K2B_rcpp(X = X, Y = ctingP_uni_rcpp(as.vector(Y), as.vector(y)),
                           x = x, h = 1.5),

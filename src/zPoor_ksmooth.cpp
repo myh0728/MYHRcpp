@@ -455,5 +455,46 @@ arma::mat NWD_K2B_rcpp(arma::mat X,
   return(Fhat);
 }
 
+// [[Rcpp::export]]
+arma::mat NWD_K2B_rcpp_u1(arma::mat X,
+                          arma::mat Y,
+                          arma::mat x,
+                          arma::mat y,
+                          arma::vec h){
 
+  arma::uword n_n = X.n_rows;
+  arma::uword n_k = x.n_rows;
+  arma::uword n_m = y.n_rows;
+  arma::mat Nhat(n_k, n_m);
+  arma::vec Dhat(n_k);
+  arma::mat Fhat(n_k, n_m);
+
+  for (size_t i = 0; i < n_n; ++i){
+
+    for (size_t k = 0; k < n_k; ++k){
+
+      arma::vec Dik_h = arma::vectorise(X.row(i) - x.row(k)) / h;
+      double Kik_h = arma::prod(
+        (arma::abs(Dik_h) < 1) %
+          arma::square(1.0 - arma::square(Dik_h)) * 15.0 / 16.0
+      );
+      Dhat(k) += Kik_h;
+
+      for (size_t m = 0; m < n_m; ++m){
+
+        Nhat(k, m) += arma::prod(Y.row(i) <= y.row(m)) * Kik_h;
+      }
+    }
+  }
+
+  for (size_t k = 0; k < n_k; ++k){
+
+    if (Dhat(k) != 0){
+
+      Fhat.row(k) = Nhat.row(k) / Dhat(k);
+    }
+  }
+
+  return(Fhat);
+}
 

@@ -65,3 +65,11 @@ ctingP_uni_R <- function(Y, y){
   return(CP)
 }
 
+ctingP_uni_R_outer <- function(Y, y){
+
+  CP <- outer(Y, y, FUN = "<=")
+
+  return(CP)
+}
+
+

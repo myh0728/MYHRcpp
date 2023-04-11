@@ -66,14 +66,17 @@ test1 <- ctingP_R(Y, y)
 test2 <- ctingP_uni_R(as.vector(Y), as.vector(y))
 test3 <- ctingP_rcpp(Y, y)
 test4 <- ctingP_uni_rcpp(as.vector(Y), as.vector(y))
+test5 <- ctingP_uni_R_outer(as.vector(Y), as.vector(y))
 sum(abs(test1 - test2))
 sum(abs(test1 - test3))
 sum(abs(test1 - test4))
+sum(abs(test1 - test5))
 
 ggplot2::autoplot(
   microbenchmark::microbenchmark(
     R = ctingP_R(Y, y),
     R_uni = ctingP_uni_R(as.vector(Y), as.vector(y)),
+    R_uni_outer = ctingP_uni_R_outer(as.vector(Y), as.vector(y)),
     Rcpp = ctingP_rcpp(Y, y),
     Rcpp_uni = ctingP_uni_rcpp(as.vector(Y), as.vector(y))
   )

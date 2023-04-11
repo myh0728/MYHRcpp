@@ -135,6 +135,47 @@ ggplot2::autoplot(
 )
 
 ###########################################
+
+a <- 1:1000
+b <- 1000:1
+
+test1 <- outer(a, b, FUN = "*")
+test2 <- outer_prod_rcpp(a, b)
+sum(abs(test1 - test2))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    outer = outer(a, b, FUN = "*"),
+    Rcpp = outer_prod_rcpp(a, b)
+  )
+)
+
+test1 <- outer(a, b, FUN = "-")
+test2 <- outer_minus_rcpp(a, b)
+sum(abs(test1 - test2))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    outer = outer(a, b, FUN = "-"),
+    Rcpp = outer_minus_rcpp(a, b)
+  )
+)
+
+test1 <- outer(a, b, FUN = "<=")
+test2 <- outer_leq_rcpp(a, b)
+test3 <- outer_leq_rcpp_v1(a, b)
+sum(abs(test1 - test2))
+sum(abs(test1 - test3))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    outer = outer(a, b, FUN = "<="),
+    Rcpp = outer_leq_rcpp(a, b),
+    Rcpp_v1 = outer_leq_rcpp_v1(a, b)
+  )
+)
+
+###########################################
 ###########################################
 
 K2_Epanechnikov_ifelse <- function(u)
