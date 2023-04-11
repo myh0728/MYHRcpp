@@ -19,10 +19,14 @@ dG1.profile.normal <- function(X1, Y1, X2, Y2,
     dH1.2 <- as.vector(f.yx_2.12 %*% r)
     r_new <- 1/(colSums(f.yx_2.12/dH1.2)+number_n1)
     r_new <- r_new/sum(r_new)
-    if (sum((r_new-r)^2)>stop.tol)
+    if (sum(is.na(r_new))==0)
     {
-      r <- r_new
-      # print(iter)
+      if (sum((r_new-r)^2)>stop.tol)
+      {
+        r <- r_new
+        # print(iter)
+      }else
+        break
     }else
       break
   }
@@ -51,10 +55,14 @@ lL.profile.normal <- function(X1, Y1, X2, Y2,
     dH1.2 <- as.vector(f.yx_2.12 %*% r)
     r_new <- 1/(colSums(f.yx_2.12/dH1.2)+number_n1)
     r_new <- r_new/sum(r_new)
-    if (sum((r_new-r)^2)>stop.tol)
+    if (sum(is.na(r_new))==0)
     {
-      r <- r_new
-      # print(iter)
+      if (sum((r_new-r)^2)>stop.tol)
+      {
+        r <- r_new
+        # print(iter)
+      }else
+        break
     }else
       break
   }

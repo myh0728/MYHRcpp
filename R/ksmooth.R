@@ -8,53 +8,55 @@ LOOCV <- function(X, Y, regression = "mean",
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
 
-  if (regression=="mean")
-  {
-    if (kernel=="K2_Biweight")
-    {
-      if (is.null(wi.boot))
-      {
-        cv.h <- function(h.log)
-        {
-          cv <- sum((Y-NWcv_K2B_rcpp(X = X, Y = Y,
-                                     h = rep(exp(h.log), number_p)))^2)
+  if (regression=="mean"){
+
+    if (kernel=="K2_Biweight"){
+
+      if (is.null(wi.boot)){
+
+        cv.h <- function(h.log){
+
+          cv <- sum((Y - NWcv_K2B_rcpp(
+            X = X, Y = Y, h = rep(exp(h.log), number_p)
+          )) ^ 2)
           return(cv)
         }
-      }else
-      {
+      }else{
+
         wi.boot <- as.vector(wi.boot)
-        cv.h <- function(h.log)
-        {
-          cv <- sum((Y-NWcv_K2B_w_rcpp(X = X, Y = Y,
-                                       h = rep(exp(h.log), number_p),
-                                       w = wi.boot))^2)
+        cv.h <- function(h.log){
+
+          cv <- sum((Y - NWcv_K2B_w_rcpp(
+            X = X, Y = Y, h = rep(exp(h.log), number_p), w = wi.boot
+          )) ^ 2)
           return(cv)
         }
       }
-    }else if (kernel=="K4_Biweight")
-    {
-      if (is.null(wi.boot))
-      {
-        cv.h <- function(h.log)
-        {
-          cv <- sum((Y-NWcv_K4B_rcpp(X = X, Y = Y,
-                                     h = rep(exp(h.log), number_p)))^2)
+    }else if (kernel=="K4_Biweight"){
+
+      if (is.null(wi.boot)){
+
+        cv.h <- function(h.log){
+
+          cv <- sum((Y - NWcv_K4B_rcpp(
+            X = X, Y = Y, h = rep(exp(h.log), number_p))
+          )^2)
           return(cv)
         }
-      }else
-      {
+      }else{
+
         wi.boot <- as.vector(wi.boot)
-        cv.h <- function(h.log)
-        {
-          cv <- sum((Y-NWcv_K4B_w_rcpp(X = X, Y = Y,
-                                       h = rep(exp(h.log), number_p),
-                                       w = wi.boot))^2)
+        cv.h <- function(h.log){
+
+          cv <- sum((Y - NWcv_K4B_w_rcpp(
+            X = X, Y = Y, h = rep(exp(h.log), number_p), w = wi.boot
+          ))^2)
           return(cv)
         }
       }
     }
-  }else if (regression=="distribution")
-  {
+  }else if (regression=="distribution"){
+
     Y.CP <- matrix(apply(as.matrix(
       Y[rep(1:number_n, times = number_n), ]<=
         Y[rep(1:number_n, each = number_n), ]), 1, prod),
