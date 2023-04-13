@@ -3,7 +3,7 @@
 n <- 1000
 p <- 10
 
-A <- matrix(rnorm(n*p), n, p)
+A <- matrix(rnorm(n * p), n, p)
 
 test1 <- eXsq_rcpp(A)
 test2 <- eXsq_R(A)
@@ -21,7 +21,7 @@ ggplot2::autoplot(
 n <- 1000
 p <- 10
 
-A <- matrix(rnorm(n*p), n, p)
+A <- matrix(rnorm(n * p), n, p)
 w <- rexp(n)
 
 test1 <- eXsq_w_rcpp(A, w)
@@ -40,7 +40,7 @@ ggplot2::autoplot(
 n <- 1000
 p <- 10
 
-A <- matrix(rnorm(n*p), n, p)
+A <- matrix(rnorm(n * p), n, p)
 
 test1 <- Xsq_lowtri_rcpp(A)
 test2 <- Xsq_lowtri_R(A)
@@ -56,17 +56,36 @@ ggplot2::autoplot(
 #######################################################
 
 n <- 1000
+p <- 10
+
+A <- matrix(rnorm(n * p), n, p)
+B <- matrix(rnorm(n * p), n, p)
+
+test1 <- twoXYsym_lowtri_rcpp(A, B)
+test2 <- twoXYsym_lowtri_R(A, B)
+sum(abs(test1 - test2))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    R = twoXYsym_lowtri_R(A, B),
+    Rcpp = twoXYsym_lowtri_rcpp(A, B)
+  )
+)
+
+#######################################################
+
+n <- 1000
 p <- 1
 k <- 50
 
-Y <- matrix(rnorm(n*p), n, p)
-y <- matrix(rnorm(k*p), k, p)
+Y <- matrix(rnorm(n * p), n, p)
+y <- matrix(rnorm(k * p), k, p)
 
 test1 <- ctingP_R(Y, y)
 test2 <- ctingP_uni_R(as.vector(Y), as.vector(y))
-test3 <- ctingP_rcpp(Y, y)
-test4 <- ctingP_uni_rcpp(as.vector(Y), as.vector(y))
-test5 <- ctingP_uni_R_outer(as.vector(Y), as.vector(y))
+test3 <- ctingP_uni_R_outer(as.vector(Y), as.vector(y))
+test4 <- ctingP_rcpp(Y, y)
+test5 <- ctingP_uni_rcpp(as.vector(Y), as.vector(y))
 sum(abs(test1 - test2))
 sum(abs(test1 - test3))
 sum(abs(test1 - test4))

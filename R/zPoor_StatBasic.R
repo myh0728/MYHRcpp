@@ -30,7 +30,7 @@ Xsq_lowtri_R <- function(data_X){
   number_n <- dim(data_X)[1]
   number_p <- dim(data_X)[2]
 
-  Xsq <- data_X[, rep(1:number_p, times = number_p)]*
+  Xsq <- data_X[, rep(1:number_p, times = number_p)] *
     data_X[, rep(1:number_p, each = number_p)]
 
   A <- matrix(1:(number_p ^ 2), number_p, number_p)
@@ -38,6 +38,25 @@ Xsq_lowtri_R <- function(data_X){
   Xsq_lowtri <- Xsq[, index.lowtri]
 
   return(Xsq_lowtri)
+}
+
+twoXYsym_lowtri_R <- function(data_X,
+                              data_Y){
+
+  number_n <- dim(data_X)[1]
+  number_p <- dim(data_X)[2]
+
+  XY <- data_X[, rep(1:number_p, times = number_p)] *
+    data_Y[, rep(1:number_p, each = number_p)]
+  YX <- data_Y[, rep(1:number_p, times = number_p)] *
+    data_X[, rep(1:number_p, each = number_p)]
+  twoXYsym <- XY + YX
+
+  A <- matrix(1:(number_p ^ 2), number_p, number_p)
+  index.lowtri <- A[lower.tri(A, diag = TRUE)]
+  twoXYsym_lowtri <- twoXYsym[, index.lowtri]
+
+  return(twoXYsym_lowtri)
 }
 
 ctingP_R <- function(Y, y){

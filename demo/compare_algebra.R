@@ -175,20 +175,14 @@ ggplot2::autoplot(
   )
 )
 
-###########################################
-###########################################
-
-K2_Epanechnikov_ifelse <- function(u)
-{
-  ifelse(abs(u) <= 1, 3 / 4 * (1 - u ^ 2), 0)
-}
-
-a <- seq(-2, 2, 0.01)
-sum(abs(K2_Epanechnikov(a) - K2_Epanechnikov_ifelse(a)))
+test1 <- outer(a, b, FUN = ">=")
+test2 <- outer_geq_rcpp(a, b)
+sum(abs(test1 - test2))
 
 ggplot2::autoplot(
   microbenchmark::microbenchmark(
-    indicator = K2_Epanechnikov(a),
-    ifelse = K2_Epanechnikov_ifelse(a)
+    outer = outer(a, b, FUN = ">="),
+    Rcpp = outer_geq_rcpp(a, b)
   )
 )
+

@@ -8,10 +8,10 @@ LOOCV <- function(X, Y, regression = "mean",
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
 
-  if (regression=="mean"){
-
-    if (kernel=="K2_Biweight"){
-
+  if (regression=="mean")
+    {
+    if (kernel=="K2_Biweight")
+      {
       if (is.null(wi.boot)){
 
         cv.h <- function(h.log){
@@ -32,8 +32,8 @@ LOOCV <- function(X, Y, regression = "mean",
           return(cv)
         }
       }
-    }else if (kernel=="K4_Biweight"){
-
+    }else if (kernel=="K4_Biweight")
+      {
       if (is.null(wi.boot)){
 
         cv.h <- function(h.log){
@@ -54,13 +54,39 @@ LOOCV <- function(X, Y, regression = "mean",
           return(cv)
         }
       }
-    }
-  }else if (regression=="distribution"){
+    }else if (kernel=="Gaussian")
+      {
+      if (is.null(wi.boot)){
 
-    Y.CP <- matrix(apply(as.matrix(
-      Y[rep(1:number_n, times = number_n), ]<=
-        Y[rep(1:number_n, each = number_n), ]), 1, prod),
-      nrow = number_n, ncol = number_n)
+        cv.h <- function(h.log){
+
+          cv <- sum((Y - NWcv_KG_rcpp(
+            X = X, Y = Y, h = rep(exp(h.log), number_p))
+          )^2)
+          return(cv)
+        }
+      }else{
+
+        wi.boot <- as.vector(wi.boot)
+        cv.h <- function(h.log){
+
+          cv <- sum((Y - NWcv_KG_w_rcpp(
+            X = X, Y = Y, h = rep(exp(h.log), number_p), w = wi.boot
+          ))^2)
+          return(cv)
+        }
+      }
+    }
+  }else if (regression=="distribution")
+    {
+    if (dim(Y)[2] == 1)
+    {
+      Y.CP <- ctingP_uni_rcpp(as.vector(Y), as.vector(Y))
+
+    }else
+    {
+      Y.CP <- ctingP_rcpp(Y, Y)
+    }
 
     if (kernel=="K2_Biweight")
     {
@@ -68,8 +94,9 @@ LOOCV <- function(X, Y, regression = "mean",
       {
         cv.h <- function(h.log)
         {
-          cv <- sum((Y.CP-NWcv_K2B_rcpp(X = X, Y = Y.CP,
-                                        h = rep(exp(h.log), number_p)))^2)
+          cv <- sum((Y.CP - NWcv_K2B_rcpp(
+            X = X, Y = Y.CP, h = rep(exp(h.log), number_p)
+          )) ^ 2)
           return(cv)
         }
       }else
@@ -77,9 +104,9 @@ LOOCV <- function(X, Y, regression = "mean",
         wi.boot <- as.vector(wi.boot)
         cv.h <- function(h.log)
         {
-          cv <- sum((Y.CP-NWcv_K2B_w_rcpp(X = X, Y = Y.CP,
-                                          h = rep(exp(h.log), number_p),
-                                          w = wi.boot))^2)
+          cv <- sum((Y.CP - NWcv_K2B_w_rcpp(
+            X = X, Y = Y.CP, h = rep(exp(h.log), number_p), w = wi.boot
+          )) ^ 2)
           return(cv)
         }
       }
@@ -89,9 +116,9 @@ LOOCV <- function(X, Y, regression = "mean",
       {
         cv.h <- function(h.log)
         {
-          cv <- sum((Y.CP-pmin(pmax(
-            NWcv_K4B_rcpp(X = X, Y = Y.CP,
-                          h = rep(exp(h.log), number_p)), 0), 1))^2)
+          cv <- sum((Y.CP - pmin(pmax(
+            NWcv_K4B_rcpp(X = X, Y = Y.CP, h = rep(exp(h.log), number_p)), 0
+          ), 1)) ^ 2)
           return(cv)
         }
       }else
@@ -99,10 +126,35 @@ LOOCV <- function(X, Y, regression = "mean",
         wi.boot <- as.vector(wi.boot)
         cv.h <- function(h.log)
         {
-          cv <- sum((Y.CP-pmin(pmax(
+          cv <- sum((Y.CP - pmin(pmax(
             NWcv_K4B_w_rcpp(X = X, Y = Y.CP,
                             h = rep(exp(h.log), number_p),
-                            w = wi.boot), 0), 1))^2)
+                            w = wi.boot), 0
+          ), 1)) ^ 2)
+          return(cv)
+        }
+      }
+    }else if (kernel=="Gaussian")
+    {
+      if (is.null(wi.boot))
+      {
+        cv.h <- function(h.log)
+        {
+          cv <- sum((Y.CP - pmin(pmax(
+            NWcv_KG_rcpp(X = X, Y = Y.CP, h = rep(exp(h.log), number_p)), 0
+          ), 1)) ^ 2)
+          return(cv)
+        }
+      }else
+      {
+        wi.boot <- as.vector(wi.boot)
+        cv.h <- function(h.log)
+        {
+          cv <- sum((Y.CP - pmin(pmax(
+            NWcv_KG_w_rcpp(X = X, Y = Y.CP,
+                            h = rep(exp(h.log), number_p),
+                            w = wi.boot), 0
+          ), 1)) ^ 2)
           return(cv)
         }
       }
@@ -113,6 +165,13 @@ LOOCV <- function(X, Y, regression = "mean",
 
   return(exp(esti$par))
 }
+
+
+
+
+
+
+
 
 NW <- function(X, Y, x = NULL, regression = "mean",
                y = NULL,

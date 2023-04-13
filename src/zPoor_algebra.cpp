@@ -23,7 +23,7 @@ arma::mat outer_times_rcpp(arma::vec a,
 
 // [[Rcpp::export]]
 arma::umat outer_leq_rcpp_v1(arma::vec a,
-                            arma::vec b){
+                             arma::vec b){
 
   arma::uword l_a = a.n_elem;
   arma::uword l_b = b.n_elem;
@@ -39,3 +39,4 @@ arma::umat outer_leq_rcpp_v1(arma::vec a,
 
   return outer;
 }
+

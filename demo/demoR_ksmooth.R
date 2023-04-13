@@ -1,8 +1,8 @@
-n <- 100
+n <- 1000
 p <- 1
 
-X <- matrix(rnorm(n*p), nrow = n, ncol = p)
-Y <- as.matrix(sin(X %*% rep(1, p))+rnorm(n, mean = 0, sd = 0.2))
+X <- matrix(rnorm(n * p), nrow = n, ncol = p)
+Y <- as.matrix(sin(X %*% rep(1, p)) + rnorm(n, mean = 0, sd = 0.2))
 x <- as.matrix(seq(-3, 3, 0.1))
 
 ### selecting bandwidth using leave-one-out cross-validation

@@ -43,6 +43,21 @@ KDEcv_R_kernel <- function(X, K, h){
   return(Dhat)
 }
 
+KDEcv_w_R_kernel <- function(X, K, h, w){
+
+  number_n <- dim(X)[1]
+  number_p <- dim(X)[2]
+
+  Xij <- X[rep(1:number_n, times = number_n), ] -
+    X[rep(1:number_n, each = number_n), ]
+  dim(Xij) <- c(number_n, number_n, number_p)
+  Kij <- apply(K(aperm(Xij, c(3, 1, 2)) / h) / h, c(2, 3), prod)
+  diag(Kij) <- 0
+  Dhat <- colSums(Kij * w) / (number_n - 1)
+
+  return(Dhat)
+}
+
 NW_R_kernel <- function(X, Y, x, K, h){
 
   number_n <- dim(Y)[1]
@@ -152,6 +167,15 @@ NWD_uni_R_kernel <- function(X, Y, x, y, K, h){
 
   return(Yhat)
 }
+
+
+
+
+
+
+
+
+
 
 
 
