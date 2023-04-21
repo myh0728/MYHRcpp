@@ -7,27 +7,55 @@ x <- as.matrix(seq(-3, 3, 0.1))
 
 ### selecting bandwidth using leave-one-out cross-validation
 
-hhat <- LOOCV(X = X, Y = Y)
-hhat1 <- LOOCV(X = X, Y = Y, regression = "mean")
-hhat2 <- LOOCV(X = X, Y = Y, regression = "distribution")
-hhat3 <- LOOCV(X = X, Y = Y, kernel = "K4_Biweight")
-hhat4 <- LOOCV(X = X, Y = Y, kernel = "K4_Biweight", regression = "distribution")
-
-c(hhat1, hhat2, hhat3, hhat4)
-
-# microbenchmark::microbenchmark(
-#   mean = LOOCV(X = X, Y = Y, regression = "mean"),
-#   dist = LOOCV(X = X, Y = Y, regression = "distribution")
-# )
+LOOCV(X = X, Y = Y)
+LOOCV(X = X, Y = Y, regression = "mean")
+LOOCV(X = X, Y = Y, regression = "mean", kernel = "K4_Biweight")
+LOOCV(X = X, Y = Y, regression = "mean", kernel = "Gaussian")
+LOOCV(X = X, Y = Y, regression = "distribution")
+LOOCV(X = X, Y = Y, regression = "distribution",
+      distribution.control = list(mode = "sample",
+                                  SN = 100,
+                                  seed = 123))
+LOOCV(X = X, Y = Y, regression = "distribution",
+      distribution.control = list(mode = "quantile",
+                                  QN = 100))
+LOOCV(X = X, Y = Y, regression = "distribution",
+      distribution.control = list(mode = "empirical"))
 
 ### Nadaraya-Watson estimator
 
-yhat <- NW(X = X, Y = Y, x = x)
-yhat1 <- NW(X = X, Y = Y, x = x, regression = "mean")
-yhat2 <- NW(X = X, Y = Y, x = x, regression = "distribution", y = sort(Y))
-yhat3 <- NW(X = X, Y = Y)
-yhat4 <- NW(X = X, Y = Y, regression = "distribution")
-yhat5 <- NW(X = X, Y = Y, regression = "distribution", y = sort(Y))
+yhat0 <- NW(X = X, Y = Y)
+yhat1 <- NW(X = X, Y = Y, x = x)
+yhat2 <- NW(X = X, Y = Y, x = x, regression = "mean")
+yhat3 <- NW(X = X, Y = Y, x = x, regression = "mean",
+            kernel = "K4_Biweight")
+yhat4 <- NW(X = X, Y = Y, x = x, regression = "mean",
+            kernel = "K4_Biweight", bandwidth = 0.5)
+yhat5 <- NW(X = X, Y = Y, x = x, regression = "distribution")
+yhat6 <- NW(X = X, Y = Y, x = x, regression = "distribution",
+            y = sort(unique(Y)))
+yhat7 <- NW(X = X, Y = Y, x = x, regression = "distribution",
+            y = sort(unique(Y)),
+            distribution.control = list(mode = "sample",
+                                        SN = 100,
+                                        seed = 123))
+yhat8 <- NW(X = X, Y = Y, x = x, regression = "distribution",
+            y = sort(unique(Y)),
+            distribution.control = list(mode = "quantile",
+                                        QN = 50))
+yhat9 <- NW(X = X, Y = Y, x = x, regression = "distribution",
+            y = sort(unique(Y)),
+            distribution.control = list(mode = "empirical"))
+
+
+
+
+
+
+
+
+
+
 
 plot(X, Y, cex = 0.5)
 lines(x, yhat)

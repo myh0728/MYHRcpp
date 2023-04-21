@@ -1,7 +1,7 @@
 Package: MYHRcpp
 Type: Package
 Title: Packed codes of Ming-Yueh Huang's work
-Version: 0.3.2
+Version: 0.4.0
 Author: Ming-Yueh Huang
 Maintainer: Ming-Yueh Huang <myh0728@stat.sinica.edu.tw>
 Description: Topics including

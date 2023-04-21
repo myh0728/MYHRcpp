@@ -1,6 +1,13 @@
+# distribution.control = list(mode = "sample", SN = 100, seed = 123)
+# distribution.control = list(mode = "quantile", QN = 100)
+# distribution.control = list(mode = "empirical")
+
 LOOCV <- function(X, Y, regression = "mean",
                   kernel = "K2_Biweight",
-                  wi.boot = NULL)
+                  wi.boot = NULL,
+                  distribution.control = list(mode = "sample",
+                                              SN = 100,
+                                              seed = 123))
 {
   X <- as.matrix(X)
   Y <- as.matrix(Y)
@@ -16,7 +23,7 @@ LOOCV <- function(X, Y, regression = "mean",
 
         cv.h <- function(h.log){
 
-          cv <- sum((Y - NWcv_K2B_rcpp(
+          cv <- mean((Y - NWcv_K2B_rcpp(
             X = X, Y = Y, h = rep(exp(h.log), number_p)
           )) ^ 2)
           return(cv)
@@ -26,7 +33,7 @@ LOOCV <- function(X, Y, regression = "mean",
         wi.boot <- as.vector(wi.boot)
         cv.h <- function(h.log){
 
-          cv <- sum((Y - NWcv_K2B_w_rcpp(
+          cv <- mean((Y - NWcv_K2B_w_rcpp(
             X = X, Y = Y, h = rep(exp(h.log), number_p), w = wi.boot
           )) ^ 2)
           return(cv)
@@ -38,7 +45,7 @@ LOOCV <- function(X, Y, regression = "mean",
 
         cv.h <- function(h.log){
 
-          cv <- sum((Y - NWcv_K4B_rcpp(
+          cv <- mean((Y - NWcv_K4B_rcpp(
             X = X, Y = Y, h = rep(exp(h.log), number_p))
           )^2)
           return(cv)
@@ -48,7 +55,7 @@ LOOCV <- function(X, Y, regression = "mean",
         wi.boot <- as.vector(wi.boot)
         cv.h <- function(h.log){
 
-          cv <- sum((Y - NWcv_K4B_w_rcpp(
+          cv <- mean((Y - NWcv_K4B_w_rcpp(
             X = X, Y = Y, h = rep(exp(h.log), number_p), w = wi.boot
           ))^2)
           return(cv)
@@ -60,7 +67,7 @@ LOOCV <- function(X, Y, regression = "mean",
 
         cv.h <- function(h.log){
 
-          cv <- sum((Y - NWcv_KG_rcpp(
+          cv <- mean((Y - NWcv_KG_rcpp(
             X = X, Y = Y, h = rep(exp(h.log), number_p))
           )^2)
           return(cv)
@@ -70,7 +77,7 @@ LOOCV <- function(X, Y, regression = "mean",
         wi.boot <- as.vector(wi.boot)
         cv.h <- function(h.log){
 
-          cv <- sum((Y - NWcv_KG_w_rcpp(
+          cv <- mean((Y - NWcv_KG_w_rcpp(
             X = X, Y = Y, h = rep(exp(h.log), number_p), w = wi.boot
           ))^2)
           return(cv)
@@ -81,11 +88,40 @@ LOOCV <- function(X, Y, regression = "mean",
     {
     if (dim(Y)[2] == 1)
     {
-      Y.CP <- ctingP_uni_rcpp(as.vector(Y), as.vector(Y))
+      if (distribution.control$mode == "empirical")
+      {
+        Y.CP <- ctingP_uni_rcpp(as.vector(Y), as.vector(Y))
 
+      }else if (distribution.control$mode == "quantile")
+      {
+        q.seq <- seq(0, 1, length = distribution.control$QN)
+        Y.CP <- ctingP_uni_rcpp(as.vector(Y),
+                                quantile(Y, probs = q.seq))
+
+      }else if (distribution.control$mode == "sample")
+      {
+        set.seed(distribution.control$seed)
+        y.sample <- sample(Y, size = distribution.control$SN)
+        Y.CP <- ctingP_uni_rcpp(as.vector(Y), y.sample)
+      }
     }else
     {
-      Y.CP <- ctingP_rcpp(Y, Y)
+      if (distribution.control$mode == "empirical")
+      {
+        Y.CP <- ctingP_rcpp(Y, Y)
+
+      }else if (distribution.control$mode == "quantile")
+      {
+        distribution.control = list(mode = "sample", SN = 100, seed = 123)
+        warning("Quantile mode is not allowed for multivariate responses.")
+        warning("Sample mode is used instead.")
+
+      }else if (distribution.control$mode == "sample")
+      {
+        set.seed(distribution.control$seed)
+        index.sample <- sample(1:number_n, size = distribution.control$SN)
+        Y.CP <- ctingP_rcpp(Y, Y[index.sample, ])
+      }
     }
 
     if (kernel=="K2_Biweight")
@@ -94,7 +130,7 @@ LOOCV <- function(X, Y, regression = "mean",
       {
         cv.h <- function(h.log)
         {
-          cv <- sum((Y.CP - NWcv_K2B_rcpp(
+          cv <- mean((Y.CP - NWcv_K2B_rcpp(
             X = X, Y = Y.CP, h = rep(exp(h.log), number_p)
           )) ^ 2)
           return(cv)
@@ -104,7 +140,7 @@ LOOCV <- function(X, Y, regression = "mean",
         wi.boot <- as.vector(wi.boot)
         cv.h <- function(h.log)
         {
-          cv <- sum((Y.CP - NWcv_K2B_w_rcpp(
+          cv <- mean((Y.CP - NWcv_K2B_w_rcpp(
             X = X, Y = Y.CP, h = rep(exp(h.log), number_p), w = wi.boot
           )) ^ 2)
           return(cv)
@@ -116,7 +152,7 @@ LOOCV <- function(X, Y, regression = "mean",
       {
         cv.h <- function(h.log)
         {
-          cv <- sum((Y.CP - pmin(pmax(
+          cv <- mean((Y.CP - pmin(pmax(
             NWcv_K4B_rcpp(X = X, Y = Y.CP, h = rep(exp(h.log), number_p)), 0
           ), 1)) ^ 2)
           return(cv)
@@ -126,7 +162,7 @@ LOOCV <- function(X, Y, regression = "mean",
         wi.boot <- as.vector(wi.boot)
         cv.h <- function(h.log)
         {
-          cv <- sum((Y.CP - pmin(pmax(
+          cv <- mean((Y.CP - pmin(pmax(
             NWcv_K4B_w_rcpp(X = X, Y = Y.CP,
                             h = rep(exp(h.log), number_p),
                             w = wi.boot), 0
@@ -140,7 +176,7 @@ LOOCV <- function(X, Y, regression = "mean",
       {
         cv.h <- function(h.log)
         {
-          cv <- sum((Y.CP - pmin(pmax(
+          cv <- mean((Y.CP - pmin(pmax(
             NWcv_KG_rcpp(X = X, Y = Y.CP, h = rep(exp(h.log), number_p)), 0
           ), 1)) ^ 2)
           return(cv)
@@ -150,7 +186,7 @@ LOOCV <- function(X, Y, regression = "mean",
         wi.boot <- as.vector(wi.boot)
         cv.h <- function(h.log)
         {
-          cv <- sum((Y.CP - pmin(pmax(
+          cv <- mean((Y.CP - pmin(pmax(
             NWcv_KG_w_rcpp(X = X, Y = Y.CP,
                             h = rep(exp(h.log), number_p),
                             w = wi.boot), 0
@@ -166,18 +202,14 @@ LOOCV <- function(X, Y, regression = "mean",
   return(exp(esti$par))
 }
 
-
-
-
-
-
-
-
 NW <- function(X, Y, x = NULL, regression = "mean",
                y = NULL,
                kernel = "K2_Biweight",
                bandwidth = NULL,
-               wi.boot = NULL)
+               wi.boot = NULL,
+               distribution.control = list(mode = "sample",
+                                           SN = 100,
+                                           seed = 123))
 {
   X <- as.matrix(X)
   Y <- as.matrix(Y)
@@ -190,6 +222,7 @@ NW <- function(X, Y, x = NULL, regression = "mean",
   {
     x <- X
     number_k <- number_n
+
   }else
   {
     number_k <- length(as.matrix(x))/number_p
@@ -199,16 +232,18 @@ NW <- function(X, Y, x = NULL, regression = "mean",
   if (is.null(bandwidth))
   {
     hhat <- LOOCV(X = X, Y = Y, regression = regression,
-                  kernel = kernel, wi.boot = wi.boot)
+                  kernel = kernel, wi.boot = wi.boot,
+                  distribution.control = distribution.control)
     bandwidth <- rep(hhat, length = number_p)
+
   }else
   {
     bandwidth <- rep(bandwidth, length = number_p)
   }
 
-  if (regression=="mean")
+  if (regression == "mean")
   {
-    if (kernel=="K2_Biweight")
+    if (kernel == "K2_Biweight")
     {
       if (is.null(wi.boot))
       {
@@ -221,7 +256,7 @@ NW <- function(X, Y, x = NULL, regression = "mean",
                               h = bandwidth,
                               w = wi.boot)
       }
-    }else if (kernel=="K4_Biweight")
+    }else if (kernel == "K4_Biweight")
     {
       if (is.null(wi.boot))
       {
@@ -234,30 +269,56 @@ NW <- function(X, Y, x = NULL, regression = "mean",
                               h = bandwidth,
                               w = wi.boot)
       }
+    }else if (kernel == "Gaussian")
+    {
+      if (is.null(wi.boot))
+      {
+        yhat <- NW_KG_rcpp(X = X, Y = Y, x = x,
+                           h = bandwidth)
+      }else
+      {
+        wi.boot <- as.vector(wi.boot)
+        yhat <- NW_KG_w_rcpp(X = X, Y = Y, x = x,
+                             h = bandwidth,
+                             w = wi.boot)
+      }
     }
-  }else if (regression=="distribution")
+  }else if (regression == "distribution")
   {
     if (is.null(y))
     {
-      y <- X
-      number_l <- number_n
+      if (number_m == 1)
+      {
+        y <- sort(unique(Y))
+        number_l <- length(y)
+
+      }else
+      {
+        y <- Y
+        number_l <- number_n
+      }
     }else
     {
       number_l <- length(as.matrix(y))/dim(Y)[2]
       y <- matrix(y, nrow = number_l, ncol = dim(Y)[2])
     }
 
-    Y.CP <- matrix(apply(as.matrix(
-      Y[rep(1:number_n, times = number_l), ]<=
-        y[rep(1:number_l, each = number_n), ]), 1, prod),
-      nrow = number_n, ncol = number_l)
+    if (number_m == 1)
+    {
+      Y.CP <- ctingP_uni_rcpp(as.vector(Y), as.vector(y))
 
-    if (kernel=="K2_Biweight")
+    }else
+    {
+      Y.CP <- ctingP_rcpp(Y, y)
+    }
+
+    if (kernel == "K2_Biweight")
     {
       if (is.null(wi.boot))
       {
         yhat <- NW_K2B_rcpp(X = X, Y = Y.CP, x = x,
                             h = bandwidth)
+
       }else
       {
         wi.boot <- as.vector(wi.boot)
@@ -265,18 +326,33 @@ NW <- function(X, Y, x = NULL, regression = "mean",
                               h = bandwidth,
                               w = wi.boot)
       }
-    }else if (kernel=="K4_Biweight")
+    }else if (kernel == "K4_Biweight")
     {
       if (is.null(wi.boot))
       {
         yhat <- pmin(pmax(NW_K4B_rcpp(X = X, Y = Y.CP, x = x,
                                       h = bandwidth), 0), 1)
+
       }else
       {
         wi.boot <- as.vector(wi.boot)
         yhat <- pmin(pmax(NW_K4B_w_rcpp(X = X, Y = Y.CP, x = x,
                                         h = bandwidth,
                                         w = wi.boot), 0), 1)
+      }
+    }else if (kernel == "Gaussian")
+    {
+      if (is.null(wi.boot))
+      {
+        yhat <- NW_KG_rcpp(X = X, Y = Y.CP, x = x,
+                           h = bandwidth)
+
+      }else
+      {
+        wi.boot <- as.vector(wi.boot)
+        yhat <- NW_KG_w_rcpp(X = X, Y = Y.CP, x = x,
+                             h = bandwidth,
+                             w = wi.boot)
       }
     }
   }

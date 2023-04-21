@@ -17,25 +17,26 @@ SIMR <- function(X, Y, initial = NULL,
 
   if (is.null(initial))
   {
-    initial <- c(1, rep(0, number_p-1))
+    initial <- c(1, rep(0, number_p - 1))
+
   }else
   {
     initial <- as.vector(initial)
-    initial <- initial/initial[1]
+    initial <- initial / initial[1]
   }
 
   if (is.null(bandwidth))
   {
-    if (kernel=="K2_Biweight")
+    if (kernel == "K2_Biweight")
     {
       if (is.null(wi.boot))
       {
         cv.bh <- function(parameter)
         {
-          b <- c(1, parameter[1:(number_p-1)])
+          b <- c(1, parameter[1:(number_p - 1)])
           h <- exp(parameter[number_p])
-          cv <- mean((Y-NWcv_K2B_rcpp(X = X %*% b, Y = Y,
-                                      h = h))^2)
+          cv <- mean((Y - NWcv_K2B_rcpp(X = X %*% b, Y = Y,
+                                        h = h)) ^ 2)
           return(cv)
         }
       }else
@@ -43,23 +44,23 @@ SIMR <- function(X, Y, initial = NULL,
         wi.boot <- as.vector(wi.boot)
         cv.bh <- function(parameter)
         {
-          b <- c(1, parameter[1:(number_p-1)])
+          b <- c(1, parameter[1:(number_p - 1)])
           h <- exp(parameter[number_p])
-          cv <- mean((Y-NWcv_K2B_w_rcpp(X = X %*% b, Y = Y,
-                                        h = h, w = wi.boot))^2)
+          cv <- mean((Y - NWcv_K2B_w_rcpp(X = X %*% b, Y = Y,
+                                          h = h, w = wi.boot)) ^ 2)
           return(cv)
         }
       }
-    }else if (kernel=="K4_Biweight")
+    }else if (kernel == "K4_Biweight")
     {
       if (is.null(wi.boot))
       {
         cv.bh <- function(parameter)
         {
-          b <- c(1, parameter[1:(number_p-1)])
+          b <- c(1, parameter[1:(number_p - 1)])
           h <- exp(parameter[number_p])
-          cv <- mean((Y-NWcv_K4B_rcpp(X = X %*% b, Y = Y,
-                                      h = h))^2)
+          cv <- mean((Y - NWcv_K4B_rcpp(X = X %*% b, Y = Y,
+                                        h = h)) ^ 2)
           return(cv)
         }
       }else
@@ -67,30 +68,55 @@ SIMR <- function(X, Y, initial = NULL,
         wi.boot <- as.vector(wi.boot)
         cv.bh <- function(parameter)
         {
-          b <- c(1, parameter[1:(number_p-1)])
+          b <- c(1, parameter[1:(number_p - 1)])
           h <- exp(parameter[number_p])
-          cv <- mean((Y-NWcv_K4B_w_rcpp(X = X %*% b, Y = Y,
-                                        h = h, w = wi.boot))^2)
+          cv <- mean((Y - NWcv_K4B_w_rcpp(X = X %*% b, Y = Y,
+                                          h = h, w = wi.boot)) ^ 2)
+          return(cv)
+        }
+      }
+    }else if (kernel == "Gaussian")
+    {
+      if (is.null(wi.boot))
+      {
+        cv.bh <- function(parameter)
+        {
+          b <- c(1, parameter[1:(number_p - 1)])
+          h <- exp(parameter[number_p])
+          cv <- mean((Y - NWcv_KG_rcpp(X = X %*% b, Y = Y,
+                                       h = h)) ^ 2)
+          return(cv)
+        }
+      }else
+      {
+        wi.boot <- as.vector(wi.boot)
+        cv.bh <- function(parameter)
+        {
+          b <- c(1, parameter[1:(number_p - 1)])
+          h <- exp(parameter[number_p])
+          cv <- mean((Y - NWcv_KG_w_rcpp(X = X %*% b, Y = Y,
+                                         h = h, w = wi.boot)) ^ 2)
           return(cv)
         }
       }
     }
+
     esti <- nlminb(start = c(initial[-1], 0), objective = cv.bh)
 
-    results <- list(coef = c(1, esti$par[1:(number_p-1)]),
+    results <- list(coef = c(1, esti$par[1:(number_p - 1)]),
                     bandwidth = exp(esti$par[number_p]),
                     details = esti)
   }else
   {
-    if (kernel=="K2_Biweight")
+    if (kernel == "K2_Biweight")
     {
       if (is.null(wi.boot))
       {
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p-1)])
-          cv <- mean((Y-NWcv_K2B_rcpp(X = X %*% b, Y = Y,
-                                      h = bandwidth))^2)
+          cv <- mean((Y - NWcv_K2B_rcpp(X = X %*% b, Y = Y,
+                                        h = bandwidth)) ^ 2)
           return(cv)
         }
       }else
@@ -98,21 +124,21 @@ SIMR <- function(X, Y, initial = NULL,
         wi.boot <- as.vector(wi.boot)
         cv.b <- function(parameter)
         {
-          b <- c(1, parameter[1:(number_p-1)])
-          cv <- mean((Y-NWcv_K2B_w_rcpp(X = X %*% b, Y = Y,
-                                        h = bandwidth, w = wi.boot))^2)
+          b <- c(1, parameter[1:(number_p - 1)])
+          cv <- mean((Y - NWcv_K2B_w_rcpp(X = X %*% b, Y = Y,
+                                          h = bandwidth, w = wi.boot)) ^ 2)
           return(cv)
         }
       }
-    }else if (kernel=="K4_Biweight")
+    }else if (kernel == "K4_Biweight")
     {
       if (is.null(wi.boot))
       {
         cv.b <- function(parameter)
         {
-          b <- c(1, parameter[1:(number_p-1)])
-          cv <- mean((Y-NWcv_K4B_rcpp(X = X %*% b, Y = Y,
-                                      h = bandwidth))^2)
+          b <- c(1, parameter[1:(number_p - 1)])
+          cv <- mean((Y - NWcv_K4B_rcpp(X = X %*% b, Y = Y,
+                                        h = bandwidth)) ^ 2)
           return(cv)
         }
       }else
@@ -120,21 +146,57 @@ SIMR <- function(X, Y, initial = NULL,
         wi.boot <- as.vector(wi.boot)
         cv.b <- function(parameter)
         {
-          b <- c(1, parameter[1:(number_p-1)])
-          cv <- mean((Y-NWcv_K4B_w_rcpp(X = X %*% b, Y = Y,
-                                        h = bandwidth, w = wi.boot))^2)
+          b <- c(1, parameter[1:(number_p - 1)])
+          cv <- mean((Y - NWcv_K4B_w_rcpp(X = X %*% b, Y = Y,
+                                          h = bandwidth, w = wi.boot)) ^ 2)
+          return(cv)
+        }
+      }
+    }else if (kernel == "Gaussian")
+    {
+      if (is.null(wi.boot))
+      {
+        cv.b <- function(parameter)
+        {
+          b <- c(1, parameter[1:(number_p - 1)])
+          cv <- mean((Y - NWcv_KG_rcpp(X = X %*% b, Y = Y,
+                                       h = bandwidth)) ^ 2)
+          return(cv)
+        }
+      }else
+      {
+        wi.boot <- as.vector(wi.boot)
+        cv.b <- function(parameter)
+        {
+          b <- c(1, parameter[1:(number_p - 1)])
+          cv <- mean((Y - NWcv_KG_w_rcpp(X = X %*% b, Y = Y,
+                                         h = bandwidth, w = wi.boot)) ^ 2)
           return(cv)
         }
       }
     }
+
     esti <- nlminb(start = initial[-1], objective = cv.b)
-    results <- list(coef = c(1, esti$par[1:(number_p-1)]),
+    results <- list(coef = c(1, esti$par[1:(number_p - 1)]),
                     bandwidth = bandwidth,
                     details = esti)
   }
 
   return(results)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 MIMR <- function(X, Y, n.index,
                  initial = NULL,
