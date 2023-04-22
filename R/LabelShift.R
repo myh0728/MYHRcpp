@@ -440,12 +440,97 @@ LS.predict.normal <- function(X1, Y1 = NULL, X2, Y2,
 }
 
 LStest.normal <- function(X1, Y1, X2, Y2,
-                          initial = NULL,
-                          do.testLS = FALSE, initial.gamma.kappa = NULL,
-                          do.testNS = FALSE,
                           boot.n = 500, seed = NULL,
-                          diff.tol = 1e-5, iter.max = 20, stop.tol = 1e-5,
                           do.print = TRUE)
+{
+  X1 <- as.matrix(X1)
+  Y1 <- as.vector(Y1)
+  X2 <- as.matrix(X2)
+  Y2 <- as.vector(Y2)
+
+  number_n1 <- length(Y1)
+  number_n2 <- length(Y2)
+  number_n <- number_n1 + number_n2
+  number_p <- dim(X1)[2]
+
+  results <- NULL
+
+  esti.partial <- MLE.normal(X = X1, Y = Y1, do.SE = FALSE)
+  esti.profile <- LS.profile.normal(X1 = X1, Y1 = Y1, X2 = X2, Y2 = Y2,
+                                    do.SE = FALSE)
+  SI.1 <- as.vector(X1 %*% esti.partial$beta)
+  SI.A <- as.vector(rbind(X1, X2) %*% esti.profile$beta)
+  f.yx.2_1 <- dnorm(outer(Y2, SI.1, FUN = "-"), mean = 0,
+                    sd = esti.partial$sigma)
+
+  lL.run <- function(gamma)
+  {
+    SI.gamma.1 <- as.vector(X1 %*% gamma)
+    SI.gamma.2 <- as.vector(X2 %*% gamma)
+
+    value <- -sum(SI.gamma.2 - log(colMeans(t(f.yx.2_1) * exp(SI.gamma.1))))
+
+    return(value)
+  }
+  gamma <- nlminb(start = rep(0, number_p), objective = lL.run)$par
+
+  gamma.boot <- array(0, c(number_p, boot.n))
+
+  for (bn in 1:boot.n)
+  {
+    if (!is.null(seed))
+    {
+      set.seed(seed+bn)
+    }
+
+    Y2.boot <- sample(Y2, size = number_n2, replace = TRUE)
+    f.yx.2_A.boot <- dnorm(outer(Y2.boot, SI.A, FUN = "-"), mean = 0,
+                           sd = esti.partial$sigma)
+    w.boot <- t(t(f.yx.2_A.boot)*esti.profile$dG1)
+    w.boot <- w.boot/rowSums(w.boot)
+    X2.boot <- array(0, dim(X2))
+    for (i in 1:dim(X2.boot)[1])
+    {
+      X2.boot[i, ] <- rbind(X1, X2)[sample(1:number_n,
+                                           size = 1,
+                                           prob = w.boot[i, ]), ]
+    }
+
+    f.yx.2_1.boot <- dnorm(outer(Y2.boot, SI.1, FUN = "-"), mean = 0,
+                           sd = esti.partial$sigma)
+    lL.run <- function(gamma)
+    {
+      SI.gamma.1 <- as.vector(X1 %*% gamma)
+      SI.gamma.2.boot <- as.vector(X2.boot %*% gamma)
+
+      value <- -sum(SI.gamma.2.boot - log(colMeans(t(f.yx.2_1.boot) * exp(SI.gamma.1))))
+
+      return(value)
+    }
+
+    gamma.boot[, bn] <- nlminb(start = rep(0, number_p), objective = lL.run)$par
+
+    if (do.print)
+    {
+      print(paste("LS.boot.number", bn, sep = ""))
+    }
+  }
+
+  LS.boot.dist <- colSums((gamma.boot-gamma)^2)
+  pvalue <- mean(LS.boot.dist>sum(gamma^2))
+
+  results$pval.LS <- pvalue
+
+  return(results)
+}
+
+LStest.normal.old <- function(X1, Y1, X2, Y2,
+                              initial = NULL,
+                              do.testLS = FALSE, initial.gamma.kappa = NULL,
+                              do.testNS = FALSE,
+                              boot.n = 500, seed = NULL,
+                              diff.tol = 1e-5, iter.max = 20, stop.tol = 1e-5,
+                              do.print = TRUE)
 {
   X1 <- as.matrix(X1)
   Y1 <- as.vector(Y1)
@@ -1047,12 +1132,101 @@ LS.predict.logistic <- function(X1, Y1 = NULL, X2, Y2,
 }
 
 LStest.logistic <- function(X1, Y1, X2, Y2,
-                            initial = NULL,
-                            do.testLS = FALSE, initial.gamma.kappa = NULL,
-                            do.testNS = FALSE,
                             boot.n = 500, seed = NULL,
-                            diff.tol = 1e-5, iter.max = 20, stop.tol = 1e-5,
                             do.print = TRUE)
+{
+  X1 <- as.matrix(X1)
+  Y1 <- as.vector(Y1)
+  X2 <- as.matrix(X2)
+  Y2 <- as.vector(Y2)
+
+  number_n1 <- length(Y1)
+  number_n2 <- length(Y2)
+  number_n <- number_n1+number_n2
+  number_p <- dim(X1)[2]
+
+  results <- NULL
+
+  esti.partial <- MLE.logistic(X = X1, Y = Y1, do.SE = FALSE)
+  esti.profile <- LS.profile.logistic(X1 = X1, Y1 = Y1, X2 = X2, Y2 = Y2,
+                                      do.SE = FALSE)
+  P1.1 <- plogit(X = X1,
+                 alpha = esti.partial$alpha,
+                 beta = esti.partial$beta)
+  P1.A <- plogit(X = rbind(X1, X2),
+                 alpha = esti.profile$alpha,
+                 beta = esti.profile$beta)
+  f.yx.2_1 <- outer(Y2, P1.1, FUN = "*")+
+    outer(1-Y2, 1-P1.1, FUN = "*")
+
+  lL.run <- function(gamma)
+  {
+    SI.gamma.1 <- as.vector(X1 %*% gamma)
+    SI.gamma.2 <- as.vector(X2 %*% gamma)
+
+    value <- -sum(SI.gamma.2-
+                    log(colMeans(t(f.yx.2_1)*exp(SI.gamma.1))))
+
+    return(value)
+  }
+  gamma <- nlminb(start = rep(0, number_p), objective = lL.run)$par
+
+  gamma.boot <- array(0, c(number_p, boot.n))
+  for (bn in 1:boot.n)
+  {
+    if (!is.null(seed))
+    {
+      set.seed(seed+bn)
+    }
+
+    Y2.boot <- sample(Y2, size = number_n2, replace = TRUE)
+    f.yx.2_A.boot <- outer(Y2.boot, P1.A, FUN = "*")+
+      outer(1-Y2.boot, 1-P1.A, FUN = "*")
+    w.boot <- t(t(f.yx.2_A.boot)*esti.profile$dG1)
+    w.boot <- w.boot/rowSums(w.boot)
+    X2.boot <- array(0, dim(X2))
+    for (i in 1:dim(X2.boot)[1])
+    {
+      X2.boot[i, ] <- rbind(X1, X2)[sample(1:number_n,
+                                           size = 1,
+                                           prob = w.boot[i, ]), ]
+    }
+
+    f.yx.2_1.boot <- outer(Y2.boot, P1.1, FUN = "*")+
+      outer(1-Y2.boot, 1-P1.1, FUN = "*")
+    lL.run <- function(gamma)
+    {
+      SI.gamma.1 <- as.vector(X1 %*% gamma)
+      SI.gamma.2.boot <- as.vector(X2.boot %*% gamma)
+
+      value <- -sum(SI.gamma.2.boot-
+                      log(colMeans(t(f.yx.2_1.boot)*exp(SI.gamma.1))))
+
+      return(value)
+    }
+    gamma.boot[, bn] <- nlminb(start = rep(0, number_p), objective = lL.run)$par
+
+    if (do.print)
+    {
+      print(paste("LS.boot.number", bn, sep = ""))
+    }
+  }
+
+  LS.boot.dist <- colSums((gamma.boot-gamma)^2)
+  pvalue <- mean(LS.boot.dist>sum(gamma^2))
+
+  results$pval.LS <- pvalue
+
+  return(results)
+}
+
+LStest.logistic.old <- function(X1, Y1, X2, Y2,
+                                initial = NULL,
+                                do.testLS = FALSE, initial.gamma.kappa = NULL,
+                                do.testNS = FALSE,
+                                boot.n = 500, seed = NULL,
+                                diff.tol = 1e-5, iter.max = 20, stop.tol = 1e-5,
+                                do.print = TRUE)
 {
   X1 <- as.matrix(X1)
   Y1 <- as.vector(Y1)

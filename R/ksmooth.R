@@ -198,8 +198,10 @@ LOOCV <- function(X, Y, regression = "mean",
   }
 
   esti <- nlminb(start = 0, objective = cv.h)
+  results <- list(bandwidth = exp(esti$par),
+                  details = esti)
 
-  return(exp(esti$par))
+  return(results)
 }
 
 NW <- function(X, Y, x = NULL, regression = "mean",
@@ -233,7 +235,7 @@ NW <- function(X, Y, x = NULL, regression = "mean",
   {
     hhat <- LOOCV(X = X, Y = Y, regression = regression,
                   kernel = kernel, wi.boot = wi.boot,
-                  distribution.control = distribution.control)
+                  distribution.control = distribution.control)$bandwidth
     bandwidth <- rep(hhat, length = number_p)
 
   }else
