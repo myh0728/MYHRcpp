@@ -85,6 +85,76 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// dG1_logistic_rcpp
+arma::vec dG1_logistic_rcpp(arma::mat X, arma::vec Y, arma::uword n1, double alpha, arma::vec beta, arma::uword iter_max, double stop_tol);
+RcppExport SEXP _MYHRcpp_dG1_logistic_rcpp(SEXP XSEXP, SEXP YSEXP, SEXP n1SEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP iter_maxSEXP, SEXP stop_tolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type n1(n1SEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type iter_max(iter_maxSEXP);
+    Rcpp::traits::input_parameter< double >::type stop_tol(stop_tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(dG1_logistic_rcpp(X, Y, n1, alpha, beta, iter_max, stop_tol));
+    return rcpp_result_gen;
+END_RCPP
+}
+// lpL_logistic_rcpp
+double lpL_logistic_rcpp(arma::mat X, arma::vec Y, arma::uword n1, double alpha, arma::vec beta, arma::uword iter_max, double stop_tol);
+RcppExport SEXP _MYHRcpp_lpL_logistic_rcpp(SEXP XSEXP, SEXP YSEXP, SEXP n1SEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP iter_maxSEXP, SEXP stop_tolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type n1(n1SEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type iter_max(iter_maxSEXP);
+    Rcpp::traits::input_parameter< double >::type stop_tol(stop_tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(lpL_logistic_rcpp(X, Y, n1, alpha, beta, iter_max, stop_tol));
+    return rcpp_result_gen;
+END_RCPP
+}
+// dG1alt_logistic_rcpp
+arma::vec dG1alt_logistic_rcpp(arma::mat X, arma::vec Y, arma::uword n1, double alpha, arma::vec beta, arma::vec gamma, arma::uword iter_max, double stop_tol);
+RcppExport SEXP _MYHRcpp_dG1alt_logistic_rcpp(SEXP XSEXP, SEXP YSEXP, SEXP n1SEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP gammaSEXP, SEXP iter_maxSEXP, SEXP stop_tolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type n1(n1SEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type iter_max(iter_maxSEXP);
+    Rcpp::traits::input_parameter< double >::type stop_tol(stop_tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(dG1alt_logistic_rcpp(X, Y, n1, alpha, beta, gamma, iter_max, stop_tol));
+    return rcpp_result_gen;
+END_RCPP
+}
+// lpLalt_logistic_rcpp
+double lpLalt_logistic_rcpp(arma::mat X, arma::vec Y, arma::uword n1, double alpha, arma::vec beta, arma::vec gamma, arma::uword iter_max, double stop_tol);
+RcppExport SEXP _MYHRcpp_lpLalt_logistic_rcpp(SEXP XSEXP, SEXP YSEXP, SEXP n1SEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP gammaSEXP, SEXP iter_maxSEXP, SEXP stop_tolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type n1(n1SEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type iter_max(iter_maxSEXP);
+    Rcpp::traits::input_parameter< double >::type stop_tol(stop_tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(lpLalt_logistic_rcpp(X, Y, n1, alpha, beta, gamma, iter_max, stop_tol));
+    return rcpp_result_gen;
+END_RCPP
+}
 // DRCV_K2B_rcpp
 double DRCV_K2B_rcpp(arma::mat X, arma::mat Y_CP, arma::vec h);
 RcppExport SEXP _MYHRcpp_DRCV_K2B_rcpp(SEXP XSEXP, SEXP Y_CPSEXP, SEXP hSEXP) {
@@ -917,6 +987,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_lpL_normal_rcpp", (DL_FUNC) &_MYHRcpp_lpL_normal_rcpp, 8},
     {"_MYHRcpp_dG1alt_normal_rcpp", (DL_FUNC) &_MYHRcpp_dG1alt_normal_rcpp, 9},
     {"_MYHRcpp_lpLalt_normal_rcpp", (DL_FUNC) &_MYHRcpp_lpLalt_normal_rcpp, 9},
+    {"_MYHRcpp_dG1_logistic_rcpp", (DL_FUNC) &_MYHRcpp_dG1_logistic_rcpp, 7},
+    {"_MYHRcpp_lpL_logistic_rcpp", (DL_FUNC) &_MYHRcpp_lpL_logistic_rcpp, 7},
+    {"_MYHRcpp_dG1alt_logistic_rcpp", (DL_FUNC) &_MYHRcpp_dG1alt_logistic_rcpp, 8},
+    {"_MYHRcpp_lpLalt_logistic_rcpp", (DL_FUNC) &_MYHRcpp_lpLalt_logistic_rcpp, 8},
     {"_MYHRcpp_DRCV_K2B_rcpp", (DL_FUNC) &_MYHRcpp_DRCV_K2B_rcpp, 3},
     {"_MYHRcpp_eXsq_rcpp", (DL_FUNC) &_MYHRcpp_eXsq_rcpp, 1},
     {"_MYHRcpp_eXsq_w_rcpp", (DL_FUNC) &_MYHRcpp_eXsq_w_rcpp, 2},

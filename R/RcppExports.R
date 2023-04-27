@@ -17,6 +17,22 @@ lpLalt_normal_rcpp <- function(X, Y, n1, alpha, beta, sigma, gamma, iter_max, st
     .Call(`_MYHRcpp_lpLalt_normal_rcpp`, X, Y, n1, alpha, beta, sigma, gamma, iter_max, stop_tol)
 }
 
+dG1_logistic_rcpp <- function(X, Y, n1, alpha, beta, iter_max, stop_tol) {
+    .Call(`_MYHRcpp_dG1_logistic_rcpp`, X, Y, n1, alpha, beta, iter_max, stop_tol)
+}
+
+lpL_logistic_rcpp <- function(X, Y, n1, alpha, beta, iter_max, stop_tol) {
+    .Call(`_MYHRcpp_lpL_logistic_rcpp`, X, Y, n1, alpha, beta, iter_max, stop_tol)
+}
+
+dG1alt_logistic_rcpp <- function(X, Y, n1, alpha, beta, gamma, iter_max, stop_tol) {
+    .Call(`_MYHRcpp_dG1alt_logistic_rcpp`, X, Y, n1, alpha, beta, gamma, iter_max, stop_tol)
+}
+
+lpLalt_logistic_rcpp <- function(X, Y, n1, alpha, beta, gamma, iter_max, stop_tol) {
+    .Call(`_MYHRcpp_lpLalt_logistic_rcpp`, X, Y, n1, alpha, beta, gamma, iter_max, stop_tol)
+}
+
 DRCV_K2B_rcpp <- function(X, Y_CP, h) {
     .Call(`_MYHRcpp_DRCV_K2B_rcpp`, X, Y_CP, h)
 }

@@ -53,7 +53,7 @@ simGLM.logistic <- function(Xi,
   }
 
   Yi <- rbinom(n = number_n, size = 1,
-               prob = 1/(exp(-as.vector(alpha0+Xi %*% beta0))+1))
+               prob = 1 / (1 + exp(-as.vector(alpha0 + Xi %*% beta0))))
 
   simData <- data.frame(response = Yi,
                         covariate = Xi)
