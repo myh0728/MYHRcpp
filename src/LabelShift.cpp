@@ -22,7 +22,7 @@ arma::vec dG1_normal_rcpp(arma::mat X,
     for (size_t i2 = n1; i2 < n_n; ++i2){
 
       f_yx_2_all(i2 - n1, i) = exp(-pow(Y(i2) - SI_all(i), 2) /
-        (2.0 * pow(sigma, 2))) * 0.3989423;
+        (2.0 * pow(sigma, 2))) / sigma * 0.3989423;
     }
   }
 
@@ -78,7 +78,7 @@ double lpL_normal_rcpp(arma::mat X,
     for (size_t i2 = n1; i2 < n_n; ++i2){
 
       f_yx_2_all(i2 - n1, i) = exp(-pow(Y(i2) - SI_all(i), 2) /
-        (2.0 * pow(sigma, 2))) * 0.3989423;
+        (2.0 * pow(sigma, 2))) / sigma * 0.3989423;
 
       if (i2 == i){
 
@@ -90,7 +90,7 @@ double lpL_normal_rcpp(arma::mat X,
   for (size_t i1 = 0; i1 < n1; ++i1){
 
     f_yx_all(i1) = exp(-pow(Y(i1) - SI_all(i1), 2) /
-      (2.0 * pow(sigma, 2))) * 0.3989423;
+      (2.0 * pow(sigma, 2))) / sigma * 0.3989423;
   }
 
   arma::vec dG1 = arma::ones(n_n) / n_n;
@@ -149,7 +149,7 @@ arma::vec dG1alt_normal_rcpp(arma::mat X,
     for (size_t i2 = n1; i2 < n_n; ++i2){
 
       f_yx_2_all(i2 - n1, i) = exp(-pow(Y(i2) - SI_all(i), 2) /
-        (2.0 * pow(sigma, 2))) * 0.3989423 * exp(extLI(i));
+        (2.0 * pow(sigma, 2))) / sigma * 0.3989423 * exp(extLI(i));
     }
   }
 
@@ -207,7 +207,7 @@ double lpLalt_normal_rcpp(arma::mat X,
     for (size_t i2 = n1; i2 < n_n; ++i2){
 
       f_yx_2_all(i2 - n1, i) = exp(-pow(Y(i2) - SI_all(i), 2) /
-        (2.0 * pow(sigma, 2))) * 0.3989423 * exp(extLI(i));
+        (2.0 * pow(sigma, 2))) / sigma * 0.3989423 * exp(extLI(i));
 
       if (i2 == i){
 
@@ -219,7 +219,7 @@ double lpLalt_normal_rcpp(arma::mat X,
   for (size_t i1 = 0; i1 < n1; ++i1){
 
     f_yx_all(i1) = exp(-pow(Y(i1) - SI_all(i1), 2) /
-      (2.0 * pow(sigma, 2))) * 0.3989423 * exp(extLI(i1));
+      (2.0 * pow(sigma, 2))) / sigma * 0.3989423;
   }
 
   arma::vec dG1 = arma::ones(n_n) / n_n;
@@ -500,11 +500,11 @@ double lpLalt_logistic_rcpp(arma::mat X,
 
     if (Y(i1) == 1){
 
-      f_yx_all(i1) = logiSI_all(i1) * exp(extLI(i1));
+      f_yx_all(i1) = logiSI_all(i1);
 
     }else{
 
-      f_yx_all(i1) = (1 - logiSI_all(i1)) * exp(extLI(i1));
+      f_yx_all(i1) = (1 - logiSI_all(i1));
     }
   }
 

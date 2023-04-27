@@ -541,6 +541,7 @@ LS.profile.logistic <- function(X1, Y1, X2, Y2,
                               alpha = thetahat[1],
                               beta = thetahat[2:(number_p + 1)],
                               iter_max = iter.max, stop_tol = stop.tol)
+  dG1hat <- as.vector(dG1hat)
   names(dG1hat) <- c(paste("X1.i", 1:number_n1, sep = ""),
                      paste("X2.i", 1:number_n2, sep = ""))
 

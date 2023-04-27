@@ -172,7 +172,7 @@ test3 <- LS.profile.LASSO.logistic(X1 = X1, Y1 = Y1,
                                    initial = c(test1$alpha,
                                                test1$beta),
                                    w.adapt = test1$beta,
-                                   seq.lambda = seq(40, 50, 1))
+                                   seq.lambda = seq(0.1, 1, 0.1))
 
 rbind(c(test1$alpha, test1$beta),
       c(test2$alpha, test2$beta),
