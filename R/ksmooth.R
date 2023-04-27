@@ -1,13 +1,14 @@
-# distribution.control = list(mode = "sample", SN = 100, seed = 123)
-# distribution.control = list(mode = "quantile", QN = 100)
-# distribution.control = list(mode = "empirical")
+# dist.control = list(mode = "sample", SN = 100, seed = 123)
+# dist.control = list(mode = "quantile", QN = 100)
+# dist.control = list(mode = "empirical")
 
 LOOCV <- function(X, Y, regression = "mean",
                   kernel = "K2_Biweight",
+                  initial = 1,
                   wi.boot = NULL,
-                  distribution.control = list(mode = "sample",
-                                              SN = 100,
-                                              seed = 123))
+                  dist.control = list(mode = "sample",
+                                      SN = 100,
+                                      seed = 123))
 {
   X <- as.matrix(X)
   Y <- as.matrix(Y)
@@ -16,9 +17,9 @@ LOOCV <- function(X, Y, regression = "mean",
   number_p <- dim(X)[2]
 
   if (regression=="mean")
-    {
+  {
     if (kernel=="K2_Biweight")
-      {
+    {
       if (is.null(wi.boot)){
 
         cv.h <- function(h.log){
@@ -40,7 +41,7 @@ LOOCV <- function(X, Y, regression = "mean",
         }
       }
     }else if (kernel=="K4_Biweight")
-      {
+    {
       if (is.null(wi.boot)){
 
         cv.h <- function(h.log){
@@ -62,7 +63,7 @@ LOOCV <- function(X, Y, regression = "mean",
         }
       }
     }else if (kernel=="Gaussian")
-      {
+    {
       if (is.null(wi.boot)){
 
         cv.h <- function(h.log){
@@ -85,41 +86,41 @@ LOOCV <- function(X, Y, regression = "mean",
       }
     }
   }else if (regression=="distribution")
-    {
+  {
     if (dim(Y)[2] == 1)
     {
-      if (distribution.control$mode == "empirical")
+      if (dist.control$mode == "empirical")
       {
         Y.CP <- ctingP_uni_rcpp(as.vector(Y), as.vector(Y))
 
-      }else if (distribution.control$mode == "quantile")
+      }else if (dist.control$mode == "quantile")
       {
-        q.seq <- seq(0, 1, length = distribution.control$QN)
+        q.seq <- seq(0, 1, length = dist.control$QN)
         Y.CP <- ctingP_uni_rcpp(as.vector(Y),
                                 quantile(Y, probs = q.seq))
 
-      }else if (distribution.control$mode == "sample")
+      }else if (dist.control$mode == "sample")
       {
-        set.seed(distribution.control$seed)
-        y.sample <- sample(Y, size = distribution.control$SN)
+        set.seed(dist.control$seed)
+        y.sample <- sample(Y, size = dist.control$SN)
         Y.CP <- ctingP_uni_rcpp(as.vector(Y), y.sample)
       }
     }else
     {
-      if (distribution.control$mode == "empirical")
+      if (dist.control$mode == "empirical")
       {
         Y.CP <- ctingP_rcpp(Y, Y)
 
-      }else if (distribution.control$mode == "quantile")
+      }else if (dist.control$mode == "quantile")
       {
-        distribution.control = list(mode = "sample", SN = 100, seed = 123)
+        dist.control = list(mode = "sample", SN = 100, seed = 123)
         warning("Quantile mode is not allowed for multivariate responses.")
         warning("Sample mode is used instead.")
 
-      }else if (distribution.control$mode == "sample")
+      }else if (dist.control$mode == "sample")
       {
-        set.seed(distribution.control$seed)
-        index.sample <- sample(1:number_n, size = distribution.control$SN)
+        set.seed(dist.control$seed)
+        index.sample <- sample(1:number_n, size = dist.control$SN)
         Y.CP <- ctingP_rcpp(Y, Y[index.sample, ])
       }
     }
@@ -188,8 +189,8 @@ LOOCV <- function(X, Y, regression = "mean",
         {
           cv <- mean((Y.CP - pmin(pmax(
             NWcv_KG_w_rcpp(X = X, Y = Y.CP,
-                            h = rep(exp(h.log), number_p),
-                            w = wi.boot), 0
+                           h = rep(exp(h.log), number_p),
+                           w = wi.boot), 0
           ), 1)) ^ 2)
           return(cv)
         }
@@ -197,7 +198,7 @@ LOOCV <- function(X, Y, regression = "mean",
     }
   }
 
-  esti <- nlminb(start = 0, objective = cv.h)
+  esti <- nlminb(start = log(initial), objective = cv.h)
   results <- list(bandwidth = exp(esti$par),
                   details = esti)
 
@@ -209,9 +210,9 @@ NW <- function(X, Y, x = NULL, regression = "mean",
                kernel = "K2_Biweight",
                bandwidth = NULL,
                wi.boot = NULL,
-               distribution.control = list(mode = "sample",
-                                           SN = 100,
-                                           seed = 123))
+               dist.control = list(mode = "sample",
+                                   SN = 100,
+                                   seed = 123))
 {
   X <- as.matrix(X)
   Y <- as.matrix(Y)
@@ -235,7 +236,7 @@ NW <- function(X, Y, x = NULL, regression = "mean",
   {
     hhat <- LOOCV(X = X, Y = Y, regression = regression,
                   kernel = kernel, wi.boot = wi.boot,
-                  distribution.control = distribution.control)$bandwidth
+                  dist.control = dist.control)$bandwidth
     bandwidth <- rep(hhat, length = number_p)
 
   }else

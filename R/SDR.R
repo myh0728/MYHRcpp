@@ -101,6 +101,7 @@ cumuSAVE <- function(X, Y, eps = 1e-7)
 SIDR <- function(X, Y, Y.CP = NULL, initial = NULL,
                  kernel = "K4_Biweight",
                  bandwidth = NULL,
+                 initial.bandwidth = 1,
                  wi.boot = NULL,
                  control = list(mode = "sample",
                                 SN = 100,
@@ -240,7 +241,8 @@ SIDR <- function(X, Y, Y.CP = NULL, initial = NULL,
       }
     }
 
-    esti <- nlminb(start = c(initial[-1], 0), objective = cv.bh)
+    esti <- nlminb(start = c(initial[-1], log(initial.bandwidth)),
+                   objective = cv.bh)
 
     results <- list(coef = c(1, esti$par[1:(number_p - 1)]),
                     bandwidth = exp(esti$par[number_p]),
@@ -326,42 +328,69 @@ SIDR <- function(X, Y, Y.CP = NULL, initial = NULL,
   return(results)
 }
 
-
-
-
-
-
-
-
-
-
 MIDR <- function(X, Y, Y.CP = NULL, n.index,
                  initial = NULL,
                  kernel = "K4_Biweight",
                  bandwidth = NULL,
-                 wi.boot = NULL)
+                 initial.bandwidth = 1,
+                 wi.boot = NULL,
+                 control = list(mode = "sample",
+                                SN = 100,
+                                seed = 123))
 {
   X <- as.matrix(X)
   Y <- as.matrix(Y)
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
-  number_cr <- number_p-n.index
-  number_c <- number_cr*n.index
+  number_cr <- number_p - n.index
+  number_c <- number_cr * n.index
 
   if (is.null(Y.CP))
   {
-    # calculating induced response process 1(Y_i\leq y) at y=Y_i
-    Y.CP <- apply(as.matrix(
-      Y[rep(1:number_n, times = number_n), ])<=
-        as.matrix(Y[rep(1:number_n, each = number_n), ]), 1, prod)
-    dim(Y.CP) <- c(number_n, number_n)
+    if (dim(Y)[2] == 1)
+    {
+      if (control$mode == "empirical")
+      {
+        Y.CP <- ctingP_uni_rcpp(as.vector(Y), as.vector(Y))
+
+      }else if (control$mode == "quantile")
+      {
+        q.seq <- seq(0, 1, length = control$QN)
+        Y.CP <- ctingP_uni_rcpp(as.vector(Y),
+                                quantile(Y, probs = q.seq))
+
+      }else if (control$mode == "sample")
+      {
+        set.seed(control$seed)
+        y.sample <- sample(Y, size = control$SN)
+        Y.CP <- ctingP_uni_rcpp(as.vector(Y), y.sample)
+      }
+    }else
+    {
+      if (control$mode == "empirical")
+      {
+        Y.CP <- ctingP_rcpp(Y, Y)
+
+      }else if (control$mode == "quantile")
+      {
+        control = list(mode = "sample", SN = 100, seed = 123)
+        warning("Quantile mode is not allowed for multivariate responses.")
+        warning("Sample mode is used instead.")
+
+      }else if (control$mode == "sample")
+      {
+        set.seed(control$seed)
+        index.sample <- sample(1:number_n, size = control$SN)
+        Y.CP <- ctingP_rcpp(Y, Y[index.sample, ])
+      }
+    }
   }
 
   if (is.null(initial))
   {
     initial <- rbind(diag(n.index),
-                     matrix(0, nrow = number_p-n.index, ncol = n.index))
+                     matrix(0, nrow = number_p - n.index, ncol = n.index))
   }else
   {
     initial <- matrix(as.vector(initial),
@@ -371,7 +400,7 @@ MIDR <- function(X, Y, Y.CP = NULL, n.index,
 
   if (is.null(bandwidth))
   {
-    if (kernel=="K2_Biweight")
+    if (kernel == "K2_Biweight")
     {
       if (is.null(wi.boot))
       {
@@ -381,9 +410,9 @@ MIDR <- function(X, Y, Y.CP = NULL, n.index,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          h <- exp(parameter[number_c+1])
-          cv <- mean((Y.CP-NWcv_K2B_rcpp(X = X %*% B, Y = Y.CP,
-                                         h = rep(h, length = n.index)))^2)
+          h <- exp(parameter[number_c + 1])
+          cv <- mean((Y.CP - NWcv_K2B_rcpp(X = X %*% B, Y = Y.CP,
+                                           h = rep(h, length = n.index))) ^ 2)
           return(cv)
         }
       }else
@@ -395,14 +424,14 @@ MIDR <- function(X, Y, Y.CP = NULL, n.index,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          h <- exp(parameter[number_c+1])
-          cv <- mean((Y.CP-NWcv_K2B_w_rcpp(X = X %*% B, Y = Y.CP,
-                                           h = rep(h, length = n.index),
-                                           w = wi.boot))^2)
+          h <- exp(parameter[number_c + 1])
+          cv <- mean((Y.CP - NWcv_K2B_w_rcpp(X = X %*% B, Y = Y.CP,
+                                             h = rep(h, length = n.index),
+                                             w = wi.boot)) ^ 2)
           return(cv)
         }
       }
-    }else if (kernel=="K4_Biweight")
+    }else if (kernel == "K4_Biweight")
     {
       if (is.null(wi.boot))
       {
@@ -412,10 +441,10 @@ MIDR <- function(X, Y, Y.CP = NULL, n.index,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          h <- exp(parameter[number_c+1])
-          cv <- mean((Y.CP-pmin(pmax(
+          h <- exp(parameter[number_c + 1])
+          cv <- mean((Y.CP - pmin(pmax(
             NWcv_K4B_rcpp(X = X %*% B, Y = Y.CP,
-                          h = rep(h, length = n.index)), 0), 1))^2)
+                          h = rep(h, length = n.index)), 0), 1)) ^ 2)
           return(cv)
         }
       }else
@@ -427,27 +456,62 @@ MIDR <- function(X, Y, Y.CP = NULL, n.index,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          h <- exp(parameter[number_c+1])
-          cv <- mean((Y.CP-pmin(pmax(
+          h <- exp(parameter[number_c + 1])
+          cv <- mean((Y.CP - pmin(pmax(
             NWcv_K4B_w_rcpp(X = X %*% B, Y = Y.CP,
                             h = rep(h, length = n.index),
-                            w = wi.boot), 0), 1))^2)
+                            w = wi.boot), 0), 1)) ^ 2)
+          return(cv)
+        }
+      }
+    }else if (kernel == "Gaussian")
+    {
+      if (is.null(wi.boot))
+      {
+        cv.bh <- function(parameter)
+        {
+          B <- rbind(diag(n.index),
+                     matrix(parameter[1:number_c],
+                            nrow = number_cr,
+                            ncol = n.index))
+          h <- exp(parameter[number_c + 1])
+          cv <- mean((Y.CP - pmin(pmax(
+            NWcv_KG_rcpp(X = X %*% B, Y = Y.CP,
+                         h = rep(h, length = n.index)), 0), 1)) ^ 2)
+          return(cv)
+        }
+      }else
+      {
+        wi.boot <- as.vector(wi.boot)
+        cv.bh <- function(parameter)
+        {
+          B <- rbind(diag(n.index),
+                     matrix(parameter[1:number_c],
+                            nrow = number_cr,
+                            ncol = n.index))
+          h <- exp(parameter[number_c + 1])
+          cv <- mean((Y.CP - pmin(pmax(
+            NWcv_KG_w_rcpp(X = X %*% B, Y = Y.CP,
+                           h = rep(h, length = n.index),
+                           w = wi.boot), 0), 1)) ^ 2)
           return(cv)
         }
       }
     }
-    esti <- nlminb(start = c(as.vector(initial[(n.index+1):number_p, ]), 0),
+
+    esti <- nlminb(start = c(as.vector(initial[(n.index + 1):number_p, ]),
+                             log(initial.bandwidth)),
                    objective = cv.bh)
 
     results <- list(coef = rbind(diag(n.index),
                                  matrix(esti$par[1:number_c],
                                         nrow = number_cr,
                                         ncol = n.index)),
-                    bandwidth = exp(esti$par[number_c+1]),
+                    bandwidth = exp(esti$par[number_c + 1]),
                     details = esti)
   }else
   {
-    if (kernel=="K2_Biweight")
+    if (kernel == "K2_Biweight")
     {
       if (is.null(wi.boot))
       {
@@ -457,9 +521,9 @@ MIDR <- function(X, Y, Y.CP = NULL, n.index,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- mean((Y.CP-NWcv_K2B_rcpp(X = X %*% B, Y = Y.CP,
-                                         h = rep(bandwidth,
-                                                 length = n.index)))^2)
+          cv <- mean((Y.CP - NWcv_K2B_rcpp(X = X %*% B, Y = Y.CP,
+                                           h = rep(bandwidth,
+                                                   length = n.index))) ^ 2)
           return(cv)
         }
       }else
@@ -471,14 +535,14 @@ MIDR <- function(X, Y, Y.CP = NULL, n.index,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- mean((Y.CP-NWcv_K2B_w_rcpp(X = X %*% B, Y = Y.CP,
-                                           h = rep(bandwidth,
-                                                   length = n.index),
-                                           w = wi.boot))^2)
+          cv <- mean((Y.CP - NWcv_K2B_w_rcpp(X = X %*% B, Y = Y.CP,
+                                             h = rep(bandwidth,
+                                                     length = n.index),
+                                             w = wi.boot)) ^ 2)
           return(cv)
         }
       }
-    }else if (kernel=="K4_Biweight")
+    }else if (kernel == "K4_Biweight")
     {
       if (is.null(wi.boot))
       {
@@ -488,9 +552,9 @@ MIDR <- function(X, Y, Y.CP = NULL, n.index,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- mean((Y.CP-pmin(pmax(
+          cv <- mean((Y.CP - pmin(pmax(
             NWcv_K4B_rcpp(X = X %*% B, Y = Y.CP,
-                          h = rep(bandwidth, length = n.index)), 0), 1))^2)
+                          h = rep(bandwidth, length = n.index)), 0), 1)) ^ 2)
           return(cv)
         }
       }else
@@ -502,15 +566,47 @@ MIDR <- function(X, Y, Y.CP = NULL, n.index,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- mean((Y.CP-pmin(pmax(
+          cv <- mean((Y.CP - pmin(pmax(
             NWcv_K4B_w_rcpp(X = X %*% B, Y = Y.CP,
                             h = rep(bandwidth, length = n.index),
-                            w = wi.boot), 0), 1))^2)
+                            w = wi.boot), 0), 1)) ^ 2)
+          return(cv)
+        }
+      }
+    }else if (kernel == "Gaussian")
+    {
+      if (is.null(wi.boot))
+      {
+        cv.b <- function(parameter)
+        {
+          B <- rbind(diag(n.index),
+                     matrix(parameter[1:number_c],
+                            nrow = number_cr,
+                            ncol = n.index))
+          cv <- mean((Y.CP - pmin(pmax(
+            NWcv_KG_rcpp(X = X %*% B, Y = Y.CP,
+                         h = rep(bandwidth, length = n.index)), 0), 1)) ^ 2)
+          return(cv)
+        }
+      }else
+      {
+        wi.boot <- as.vector(wi.boot)
+        cv.b <- function(parameter)
+        {
+          B <- rbind(diag(n.index),
+                     matrix(parameter[1:number_c],
+                            nrow = number_cr,
+                            ncol = n.index))
+          cv <- mean((Y.CP - pmin(pmax(
+            NWcv_KG_w_rcpp(X = X %*% B, Y = Y.CP,
+                           h = rep(bandwidth, length = n.index),
+                           w = wi.boot), 0), 1)) ^ 2)
           return(cv)
         }
       }
     }
-    esti <- nlminb(start = as.vector(initial[(n.index+1):number_p, ]),
+
+    esti <- nlminb(start = as.vector(initial[(n.index + 1):number_p, ]),
                    objective = cv.b)
 
     results <- list(coef = rbind(diag(n.index),
@@ -532,7 +628,11 @@ MIDR <- function(X, Y, Y.CP = NULL, n.index,
 
 CVSDR <- function(X, Y, Y.CP = NULL, initial = NULL,
                   kernel = "K4_Biweight",
-                  wi.boot = NULL, stop.prop = 0.95,
+                  initial.bandwidth = 1,
+                  wi.boot = NULL, stop.prop = 1,
+                  control = list(mode = "sample",
+                                 SN = 100,
+                                 seed = 123),
                   do.print = TRUE)
 {
   X <- as.matrix(X)
@@ -543,11 +643,43 @@ CVSDR <- function(X, Y, Y.CP = NULL, initial = NULL,
 
   if (is.null(Y.CP))
   {
-    # calculating induced response process 1(Y_i\leq y) at y=Y_i
-    Y.CP <- apply(as.matrix(
-      Y[rep(1:number_n, times = number_n), ])<=
-        as.matrix(Y[rep(1:number_n, each = number_n), ]), 1, prod)
-    dim(Y.CP) <- c(number_n, number_n)
+    if (dim(Y)[2] == 1)
+    {
+      if (control$mode == "empirical")
+      {
+        Y.CP <- ctingP_uni_rcpp(as.vector(Y), as.vector(Y))
+
+      }else if (control$mode == "quantile")
+      {
+        q.seq <- seq(0, 1, length = control$QN)
+        Y.CP <- ctingP_uni_rcpp(as.vector(Y),
+                                quantile(Y, probs = q.seq))
+
+      }else if (control$mode == "sample")
+      {
+        set.seed(control$seed)
+        y.sample <- sample(Y, size = control$SN)
+        Y.CP <- ctingP_uni_rcpp(as.vector(Y), y.sample)
+      }
+    }else
+    {
+      if (control$mode == "empirical")
+      {
+        Y.CP <- ctingP_rcpp(Y, Y)
+
+      }else if (control$mode == "quantile")
+      {
+        control = list(mode = "sample", SN = 100, seed = 123)
+        warning("Quantile mode is not allowed for multivariate responses.")
+        warning("Sample mode is used instead.")
+
+      }else if (control$mode == "sample")
+      {
+        set.seed(control$seed)
+        index.sample <- sample(1:number_n, size = control$SN)
+        Y.CP <- ctingP_rcpp(Y, Y[index.sample, ])
+      }
+    }
   }
 
   if (is.null(initial))
@@ -559,7 +691,7 @@ CVSDR <- function(X, Y, Y.CP = NULL, initial = NULL,
                      c(number_p, number_p, number_p))
   }
 
-  cvh.table <- matrix(0, nrow = number_p+1, ncol = 2)
+  cvh.table <- matrix(0, nrow = number_p + 1, ncol = 2)
   dimnames(cvh.table) <- list(paste("dim", 0:number_p, sep = ""),
                               c("bandwidth", "criterion"))
   B.table <- array(0, c(number_p, number_p, number_p))
@@ -567,8 +699,8 @@ CVSDR <- function(X, Y, Y.CP = NULL, initial = NULL,
   Bhat <- matrix(0, nrow = number_p, ncol = 1)
   hhat <- 1
   cvh.table["dim0", "criterion"] <-
-    mean((Y.CP-NWcv_K2B_rcpp(X = as.matrix(rep(0, length = number_n)),
-                             Y = Y.CP, h = 1))^2)
+    mean((Y.CP - NWcv_K2B_rcpp(X = as.matrix(rep(0, length = number_n)),
+                               Y = Y.CP, h = 1)) ^ 2)
   if (do.print)
   {
     print(paste("dim", 0, " cv=", cvh.table[paste("dim", 0, sep = ""),
@@ -580,6 +712,7 @@ CVSDR <- function(X, Y, Y.CP = NULL, initial = NULL,
     esti.dd <- MIDR(X = X, Y = Y, Y.CP = Y.CP, n.index = dd,
                     initial = as.matrix(initial[, 1:dd, dd]),
                     kernel = kernel,
+                    initial.bandwidth = initial.bandwidth,
                     wi.boot = wi.boot)
     B.table[, 1:dd, dd] <- esti.dd$coef
     cvh.table[paste("dim", dd, sep = ""),
@@ -593,8 +726,8 @@ CVSDR <- function(X, Y, Y.CP = NULL, initial = NULL,
                                                "criterion"], sep = ""))
     }
 
-    if (cvh.table[paste("dim", dd, sep = ""), "criterion"]/
-        cvh.table[paste("dim", dd-1, sep = ""), "criterion"]<stop.prop)
+    if (cvh.table[paste("dim", dd, sep = ""), "criterion"] /
+        cvh.table[paste("dim", dd - 1, sep = ""), "criterion"] < stop.prop)
     {
       dimhat <- dd
       Bhat <- B.table[, 1:dd, dd]
@@ -612,5 +745,14 @@ CVSDR <- function(X, Y, Y.CP = NULL, initial = NULL,
 
   return(results)
 }
+
+
+
+
+
+
+
+
+
 
 

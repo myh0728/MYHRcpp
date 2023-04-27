@@ -1,5 +1,5 @@
-n <- 1000
-p <- 5
+n <- 500
+p <- 10
 
 X <- matrix(rnorm(n*p), nrow = n, ncol = p)
 Y <- as.matrix(sin(X %*% rep(1, p))+rnorm(n, mean = 0, sd = 0.2))
@@ -25,13 +25,3 @@ MID2 <- MIDR(X = X, Y = Y, n.index = 2)
 MIM1 <- MIMR(X = X, Y = Y, n.index = 1)
 MIM2 <- MIMR(X = X, Y = Y, n.index = 2)
 
-SDR3 <- CVSDR(X = X, Y = Y)
-SDR4 <- CVSDR(X = X, Y = Y, initial = rep(1, p))
-
-system.time(
-  SDR3 <- SIDR(X = X, Y = Y)
-)
-
-system.time(
-  SDR5 <- SIDR(X = X, Y = Y, initial = rep(1, p))
-)
