@@ -36,8 +36,7 @@ SIMR <- function(X, Y, initial = NULL,
         {
           b <- c(1, parameter[1:(number_p - 1)])
           h <- exp(parameter[number_p])
-          cv <- mean((Y - NWcv_K2B_rcpp(X = X %*% b, Y = Y,
-                                        h = h)) ^ 2)
+          cv <- CVMNW_K2B_rcpp(X = X %*% b, Y = Y, h = h)
           return(cv)
         }
       }else
@@ -47,8 +46,7 @@ SIMR <- function(X, Y, initial = NULL,
         {
           b <- c(1, parameter[1:(number_p - 1)])
           h <- exp(parameter[number_p])
-          cv <- mean((Y - NWcv_K2B_w_rcpp(X = X %*% b, Y = Y,
-                                          h = h, w = wi.boot)) ^ 2)
+          cv <- CVMNW_K2B_w_rcpp(X = X %*% b, Y = Y, h = h, w = wi.boot)
           return(cv)
         }
       }
@@ -60,8 +58,7 @@ SIMR <- function(X, Y, initial = NULL,
         {
           b <- c(1, parameter[1:(number_p - 1)])
           h <- exp(parameter[number_p])
-          cv <- mean((Y - NWcv_K4B_rcpp(X = X %*% b, Y = Y,
-                                        h = h)) ^ 2)
+          cv <- CVMNW_K4B_rcpp(X = X %*% b, Y = Y, h = h)
           return(cv)
         }
       }else
@@ -71,8 +68,7 @@ SIMR <- function(X, Y, initial = NULL,
         {
           b <- c(1, parameter[1:(number_p - 1)])
           h <- exp(parameter[number_p])
-          cv <- mean((Y - NWcv_K4B_w_rcpp(X = X %*% b, Y = Y,
-                                          h = h, w = wi.boot)) ^ 2)
+          cv <- CVMNW_K4B_w_rcpp(X = X %*% b, Y = Y, h = h, w = wi.boot)
           return(cv)
         }
       }
@@ -84,8 +80,7 @@ SIMR <- function(X, Y, initial = NULL,
         {
           b <- c(1, parameter[1:(number_p - 1)])
           h <- exp(parameter[number_p])
-          cv <- mean((Y - NWcv_KG_rcpp(X = X %*% b, Y = Y,
-                                       h = h)) ^ 2)
+          cv <- CVMNW_KG_rcpp(X = X %*% b, Y = Y, h = h)
           return(cv)
         }
       }else
@@ -95,8 +90,7 @@ SIMR <- function(X, Y, initial = NULL,
         {
           b <- c(1, parameter[1:(number_p - 1)])
           h <- exp(parameter[number_p])
-          cv <- mean((Y - NWcv_KG_w_rcpp(X = X %*% b, Y = Y,
-                                         h = h, w = wi.boot)) ^ 2)
+          cv <- CVMNW_KG_w_rcpp(X = X %*% b, Y = Y, h = h, w = wi.boot)
           return(cv)
         }
       }
@@ -117,8 +111,8 @@ SIMR <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p-1)])
-          cv <- mean((Y - NWcv_K2B_rcpp(X = X %*% b, Y = Y,
-                                        h = bandwidth)) ^ 2)
+          cv <- CVMNW_K2B_rcpp(X = X %*% b, Y = Y,
+                               h = bandwidth)
           return(cv)
         }
       }else
@@ -127,8 +121,8 @@ SIMR <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p - 1)])
-          cv <- mean((Y - NWcv_K2B_w_rcpp(X = X %*% b, Y = Y,
-                                          h = bandwidth, w = wi.boot)) ^ 2)
+          cv <- CVMNW_K2B_w_rcpp(X = X %*% b, Y = Y,
+                                 h = bandwidth, w = wi.boot)
           return(cv)
         }
       }
@@ -139,8 +133,8 @@ SIMR <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p - 1)])
-          cv <- mean((Y - NWcv_K4B_rcpp(X = X %*% b, Y = Y,
-                                        h = bandwidth)) ^ 2)
+          cv <- CVMNW_K4B_rcpp(X = X %*% b, Y = Y,
+                               h = bandwidth)
           return(cv)
         }
       }else
@@ -149,8 +143,8 @@ SIMR <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p - 1)])
-          cv <- mean((Y - NWcv_K4B_w_rcpp(X = X %*% b, Y = Y,
-                                          h = bandwidth, w = wi.boot)) ^ 2)
+          cv <- CVMNW_K4B_w_rcpp(X = X %*% b, Y = Y,
+                                 h = bandwidth, w = wi.boot)
           return(cv)
         }
       }
@@ -161,8 +155,8 @@ SIMR <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p - 1)])
-          cv <- mean((Y - NWcv_KG_rcpp(X = X %*% b, Y = Y,
-                                       h = bandwidth)) ^ 2)
+          cv <- CVMNW_KG_rcpp(X = X %*% b, Y = Y,
+                              h = bandwidth)
           return(cv)
         }
       }else
@@ -171,8 +165,8 @@ SIMR <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p - 1)])
-          cv <- mean((Y - NWcv_KG_w_rcpp(X = X %*% b, Y = Y,
-                                         h = bandwidth, w = wi.boot)) ^ 2)
+          cv <- CVMNW_KG_w_rcpp(X = X %*% b, Y = Y,
+                                h = bandwidth, w = wi.boot)
           return(cv)
         }
       }
@@ -225,9 +219,9 @@ MIMR <- function(X, Y, n.index,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          h <- exp(parameter[number_c+1])
-          cv <- mean((Y - NWcv_K2B_rcpp(X = X %*% B, Y = Y,
-                                        h = rep(h, length = n.index))) ^ 2)
+          h <- exp(parameter[number_c + 1])
+          cv <- CVMNW_K2B_rcpp(X = X %*% B, Y = Y,
+                               h = rep(h, length = n.index))
           return(cv)
         }
       }else
@@ -240,9 +234,9 @@ MIMR <- function(X, Y, n.index,
                             nrow = number_cr,
                             ncol = n.index))
           h <- exp(parameter[number_c + 1])
-          cv <- mean((Y - NWcv_K2B_w_rcpp(X = X %*% B, Y = Y,
-                                          h = rep(h, length = n.index),
-                                          w = wi.boot)) ^ 2)
+          cv <- CVMNW_K2B_w_rcpp(X = X %*% B, Y = Y,
+                                 h = rep(h, length = n.index),
+                                 w = wi.boot)
           return(cv)
         }
       }
@@ -257,8 +251,8 @@ MIMR <- function(X, Y, n.index,
                             nrow = number_cr,
                             ncol = n.index))
           h <- exp(parameter[number_c + 1])
-          cv <- mean((Y - NWcv_K4B_rcpp(X = X %*% B, Y = Y,
-                                        h = rep(h, length = n.index))) ^ 2)
+          cv <- CVMNW_K4B_rcpp(X = X %*% B, Y = Y,
+                               h = rep(h, length = n.index))
           return(cv)
         }
       }else
@@ -271,9 +265,9 @@ MIMR <- function(X, Y, n.index,
                             nrow = number_cr,
                             ncol = n.index))
           h <- exp(parameter[number_c + 1])
-          cv <- mean((Y - NWcv_K4B_w_rcpp(X = X %*% B, Y = Y,
-                                          h = rep(h, length = n.index),
-                                          w = wi.boot)) ^ 2)
+          cv <- CVMNW_K4B_w_rcpp(X = X %*% B, Y = Y,
+                                 h = rep(h, length = n.index),
+                                 w = wi.boot)
           return(cv)
         }
       }
@@ -288,8 +282,8 @@ MIMR <- function(X, Y, n.index,
                             nrow = number_cr,
                             ncol = n.index))
           h <- exp(parameter[number_c + 1])
-          cv <- mean((Y - NWcv_KG_rcpp(X = X %*% B, Y = Y,
-                                       h = rep(h, length = n.index))) ^ 2)
+          cv <- CVMNW_KG_rcpp(X = X %*% B, Y = Y,
+                              h = rep(h, length = n.index))
           return(cv)
         }
       }else
@@ -302,9 +296,9 @@ MIMR <- function(X, Y, n.index,
                             nrow = number_cr,
                             ncol = n.index))
           h <- exp(parameter[number_c + 1])
-          cv <- mean((Y - NWcv_KG_w_rcpp(X = X %*% B, Y = Y,
-                                         h = rep(h, length = n.index),
-                                         w = wi.boot)) ^ 2)
+          cv <- CVMNW_KG_w_rcpp(X = X %*% B, Y = Y,
+                                h = rep(h, length = n.index),
+                                w = wi.boot)
           return(cv)
         }
       }
@@ -332,9 +326,9 @@ MIMR <- function(X, Y, n.index,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- mean((Y - NWcv_K2B_rcpp(X = X %*% B, Y = Y,
-                                        h = rep(bandwidth,
-                                                length = n.index))) ^ 2)
+          cv <- CVMNW_K2B_rcpp(X = X %*% B, Y = Y,
+                               h = rep(bandwidth,
+                                       length = n.index))
           return(cv)
         }
       }else
@@ -346,10 +340,10 @@ MIMR <- function(X, Y, n.index,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- mean((Y - NWcv_K2B_w_rcpp(X = X %*% B, Y = Y,
-                                          h = rep(bandwidth,
-                                                  length = n.index),
-                                          w = wi.boot)) ^ 2)
+          cv <- CVMNW_K2B_w_rcpp(X = X %*% B, Y = Y,
+                                 h = rep(bandwidth,
+                                         length = n.index),
+                                 w = wi.boot)
           return(cv)
         }
       }
@@ -363,9 +357,9 @@ MIMR <- function(X, Y, n.index,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- mean((Y - NWcv_K4B_rcpp(X = X %*% B, Y = Y,
-                                        h = rep(bandwidth,
-                                                length = n.index))) ^ 2)
+          cv <- CVMNW_K4B_rcpp(X = X %*% B, Y = Y,
+                               h = rep(bandwidth,
+                                       length = n.index))
           return(cv)
         }
       }else
@@ -377,10 +371,10 @@ MIMR <- function(X, Y, n.index,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- mean((Y - NWcv_K4B_w_rcpp(X = X %*% B, Y = Y,
-                                          h = rep(bandwidth,
-                                                  length = n.index),
-                                          w = wi.boot)) ^ 2)
+          cv <- CVMNW_K4B_w_rcpp(X = X %*% B, Y = Y,
+                                 h = rep(bandwidth,
+                                         length = n.index),
+                                 w = wi.boot)
           return(cv)
         }
       }
@@ -394,9 +388,9 @@ MIMR <- function(X, Y, n.index,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- mean((Y - NWcv_KG_rcpp(X = X %*% B, Y = Y,
-                                       h = rep(bandwidth,
-                                               length = n.index))) ^ 2)
+          cv <- CVMNW_KG_rcpp(X = X %*% B, Y = Y,
+                              h = rep(bandwidth,
+                                      length = n.index))
           return(cv)
         }
       }else
@@ -408,16 +402,16 @@ MIMR <- function(X, Y, n.index,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- mean((Y - NWcv_KG_w_rcpp(X = X %*% B, Y = Y,
-                                         h = rep(bandwidth,
-                                                 length = n.index),
-                                         w = wi.boot)) ^ 2)
+          cv <- CVMNW_KG_w_rcpp(X = X %*% B, Y = Y,
+                                h = rep(bandwidth,
+                                        length = n.index),
+                                w = wi.boot)
           return(cv)
         }
       }
     }
 
-    esti <- nlminb(start = as.vector(initial[(n.index+1):number_p, ]),
+    esti <- nlminb(start = as.vector(initial[(n.index + 1):number_p, ]),
                    objective = cv.b)
 
     results <- list(coef = rbind(diag(n.index),
@@ -465,9 +459,19 @@ CVMDR <- function(X, Y, initial = NULL,
   dimhat <- 0
   Bhat <- matrix(0, nrow = number_p, ncol = 1)
   hhat <- 1
-  cvh.table["dim0", "criterion"] <-
-    mean((Y - NWcv_K2B_rcpp(X = as.matrix(rep(0, length = number_n)),
-                            Y = Y, h = 1)) ^ 2)
+  if (is.null(wi.boot))
+  {
+    cvh.table["dim0", "criterion"] <-
+      CVMNW_K2B_rcpp(X = as.matrix(rep(0, length = number_n)),
+                     Y = Y, h = 1)
+  }else
+  {
+    wi.boot <- as.vector(wi.boot)
+    cvh.table["dim0", "criterion"] <-
+      CVMNW_K2B_w_rcpp(X = as.matrix(rep(0, length = number_n)),
+                       Y = Y, h = 1, w = wi.boot)
+  }
+
   if (do.print)
   {
     print(paste("dim", 0, " cv=", cvh.table[paste("dim", 0, sep = ""),
