@@ -7,6 +7,25 @@ X <- matrix(rnorm(n * p), nrow = n, ncol = p)
 x <- as.matrix(seq(-3, 3, 0.1))
 
 test1 <- KDE_K2B_rcpp(X = X, x = x, h = 1.5)
+test2 <- KDE_K2B_w_rcpp(X = X, x = x, h = 1.5, w = rep(1, n))
+sum(abs(test1 - test2))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    no = KDE_K2B_rcpp(X = X, x = x, h = 1.5),
+    yes = KDE_K2B_w_rcpp(X = X, x = x, h = 1.5, w = rep(1, n))
+  )
+)
+
+####################################################################
+
+n <- 100
+p <- 1
+
+X <- matrix(rnorm(n * p), nrow = n, ncol = p)
+x <- as.matrix(seq(-3, 3, 0.1))
+
+test1 <- KDE_K2B_rcpp(X = X, x = x, h = 1.5)
 test2 <- KDE_rcpp_kernel(X = X, x = x, K = K2_Biweight, h = 1.5)
 test3 <- KDE_R_kernel(X = X, x = x, K = K2_Biweight, h = 1.5)
 sum(abs(test1 - test2))

@@ -835,6 +835,39 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// SKME_KG_rcpp
+arma::mat SKME_KG_rcpp(arma::vec t_stop, arma::uvec is_event, arma::vec t_event, arma::mat X, arma::mat x, arma::vec h);
+RcppExport SEXP _MYHRcpp_SKME_KG_rcpp(SEXP t_stopSEXP, SEXP is_eventSEXP, SEXP t_eventSEXP, SEXP XSEXP, SEXP xSEXP, SEXP hSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type t_stop(t_stopSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type is_event(is_eventSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type t_event(t_eventSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type h(hSEXP);
+    rcpp_result_gen = Rcpp::wrap(SKME_KG_rcpp(t_stop, is_event, t_event, X, x, h));
+    return rcpp_result_gen;
+END_RCPP
+}
+// SKME_KG_w_rcpp
+arma::mat SKME_KG_w_rcpp(arma::vec t_stop, arma::uvec is_event, arma::vec t_event, arma::mat X, arma::mat x, arma::vec h, arma::vec w);
+RcppExport SEXP _MYHRcpp_SKME_KG_w_rcpp(SEXP t_stopSEXP, SEXP is_eventSEXP, SEXP t_eventSEXP, SEXP XSEXP, SEXP xSEXP, SEXP hSEXP, SEXP wSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type t_stop(t_stopSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type is_event(is_eventSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type t_event(t_eventSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type h(hSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type w(wSEXP);
+    rcpp_result_gen = Rcpp::wrap(SKME_KG_w_rcpp(t_stop, is_event, t_event, X, x, h, w));
+    return rcpp_result_gen;
+END_RCPP
+}
 // testfunction
 arma::vec testfunction(arma::vec a, Rcpp::Function my_r_func);
 RcppExport SEXP _MYHRcpp_testfunction(SEXP aSEXP, SEXP my_r_funcSEXP) {
@@ -1043,6 +1076,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_SKME_K2B_w_rcpp", (DL_FUNC) &_MYHRcpp_SKME_K2B_w_rcpp, 7},
     {"_MYHRcpp_SKME_K4B_rcpp", (DL_FUNC) &_MYHRcpp_SKME_K4B_rcpp, 6},
     {"_MYHRcpp_SKME_K4B_w_rcpp", (DL_FUNC) &_MYHRcpp_SKME_K4B_w_rcpp, 7},
+    {"_MYHRcpp_SKME_KG_rcpp", (DL_FUNC) &_MYHRcpp_SKME_KG_rcpp, 6},
+    {"_MYHRcpp_SKME_KG_w_rcpp", (DL_FUNC) &_MYHRcpp_SKME_KG_w_rcpp, 7},
     {"_MYHRcpp_testfunction", (DL_FUNC) &_MYHRcpp_testfunction, 2},
     {"_MYHRcpp_outer_times_rcpp", (DL_FUNC) &_MYHRcpp_outer_times_rcpp, 2},
     {"_MYHRcpp_outer_leq_rcpp_v1", (DL_FUNC) &_MYHRcpp_outer_leq_rcpp_v1, 2},

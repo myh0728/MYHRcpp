@@ -241,6 +241,14 @@ SKME_K4B_w_rcpp <- function(t_stop, is_event, t_event, X, x, h, w) {
     .Call(`_MYHRcpp_SKME_K4B_w_rcpp`, t_stop, is_event, t_event, X, x, h, w)
 }
 
+SKME_KG_rcpp <- function(t_stop, is_event, t_event, X, x, h) {
+    .Call(`_MYHRcpp_SKME_KG_rcpp`, t_stop, is_event, t_event, X, x, h)
+}
+
+SKME_KG_w_rcpp <- function(t_stop, is_event, t_event, X, x, h, w) {
+    .Call(`_MYHRcpp_SKME_KG_w_rcpp`, t_stop, is_event, t_event, X, x, h, w)
+}
+
 testfunction <- function(a, my_r_func) {
     .Call(`_MYHRcpp_testfunction`, a, my_r_func)
 }
