@@ -323,6 +323,7 @@ p <- 1
 X <- matrix(rnorm(n * p), nrow = n, ncol = p)
 Y <- as.matrix(sin(X %*% rep(1, p)) + rnorm(n, mean = 0, sd = 0.2))
 Y.CP <- ctingP_uni_rcpp(as.vector(Y), as.vector(Y))
+w <- rexp(n)
 
 test1 <- CVMNW_K2B_R(X = X, Y = Y.CP, h = 1.5)
 test2 <- CVMNW_K2B_rcpp(X = X, Y = Y.CP, h = 1.5)
@@ -346,14 +347,47 @@ ggplot2::autoplot(
   )
 )
 
-test1 <- LOOCV(X = X, Y = Y)
-test2 <- LOOCV_o1(X = X, Y = Y)
+test1 <- CVMNW_K2B_w_R(X = X, Y = Y.CP, h = 1.5, w = w)
+test2 <- CVMNW_K2B_w_rcpp(X = X, Y = Y.CP, h = 1.5, w = w)
+sum(abs(test1 - test2))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    R = CVMNW_K2B_w_R(X = X, Y = Y.CP, h = 1.5, w = w),
+    Rcpp = CVMNW_K2B_w_rcpp(X = X, Y = Y.CP, h = 1.5, w = w)
+  )
+)
+
+test1 <- LOOCV(X = X, Y = Y, kernel = "Gaussian")
+test2 <- LOOCV_o1(X = X, Y = Y, kernel = "Gaussian")
 sum(abs(test1$bandwidth - test2$bandwidth))
 
 ggplot2::autoplot(
   microbenchmark::microbenchmark(
     R = LOOCV_o1(X = X, Y = Y),
     Rcpp = LOOCV(X = X, Y = Y)
+  )
+)
+
+test1 <- CVDNW_K4B_R(X = X, Y = Y.CP, h = 1.5)
+test2 <- CVDNW_K4B_rcpp(X = X, Y = Y.CP, h = 1.5)
+sum(abs(test1 - test2))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    R = CVDNW_K4B_R(X = X, Y = Y.CP, h = 1.5),
+    Rcpp = CVDNW_K4B_rcpp(X = X, Y = Y.CP, h = 1.5)
+  )
+)
+
+test1 <- CVDNW_K4B_w_R(X = X, Y = Y.CP, h = 1.5, w = w)
+test2 <- CVDNW_K4B_w_rcpp(X = X, Y = Y.CP, h = 1.5, w = w)
+sum(abs(test1 - test2))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    R = CVDNW_K4B_R(X = X, Y = Y.CP, h = 1.5),
+    Rcpp = CVDNW_K4B_rcpp(X = X, Y = Y.CP, h = 1.5)
   )
 )
 

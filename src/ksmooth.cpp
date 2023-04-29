@@ -932,6 +932,7 @@ arma::mat NWcv_KG_w_rcpp(arma::mat X,
 }
 
 // cross-validation criterion for Nadaraya-Watson estimator
+
 // conditional mean
 
 // Using K2_Biweight kernel
@@ -978,6 +979,10 @@ double CVMNW_K2B_rcpp(arma::mat X,
       if (Dhat(i) != 0){
 
         cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2);
+
+      }else{
+
+        cv += pow(Y(i, m), 2);
       }
     }
   }
@@ -987,10 +992,432 @@ double CVMNW_K2B_rcpp(arma::mat X,
   return cv;
 }
 
+// [[Rcpp::export]]
+double CVMNW_K2B_w_rcpp(arma::mat X,
+                        arma::mat Y,
+                        arma::vec h,
+                        arma::vec w){
 
+  arma::uword n_n = X.n_rows;
+  arma::uword n_m = Y.n_cols;
+  arma::mat Nhat(n_n, n_m);
+  arma::vec Dhat(n_n);
+  double cv = 0.0;;
 
+  for (size_t i = 0; i < n_n; ++i){
 
+    const auto xrow_i = X.row(i);
 
+    for (size_t j = 0; j < i; ++j)
+    {
+
+      arma::vec Dji_h = arma::vectorise(X.row(j) - xrow_i) / h;
+      double Kji_h = arma::prod(
+        (arma::abs(Dji_h) < 1.0) %
+          arma::square(1.0 - arma::square(Dji_h)) * 15.0 / 16.0
+      );
+
+      Dhat(i) += Kji_h * w(j);
+      Dhat(j) += Kji_h * w(i);
+
+      for (size_t m = 0; m < n_m; ++m){
+
+        Nhat(i, m) += Y(j, m) * Kji_h * w(j);
+        Nhat(j, m) += Y(i, m) * Kji_h * w(i);
+      }
+    }
+  }
+
+  for (size_t m = 0; m < n_m; ++m){
+
+    for (size_t i = 0; i < n_n; ++i){
+
+      if (Dhat(i) != 0){
+
+        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2) * w(i);
+
+      }else{
+
+        cv += pow(Y(i, m), 2) * w(i);
+      }
+    }
+  }
+
+  cv /= (n_n * n_m);
+
+  return cv;
+}
+
+// Using K4_Biweight kernel
+
+// [[Rcpp::export]]
+double CVMNW_K4B_rcpp(arma::mat X,
+                      arma::mat Y,
+                      arma::vec h){
+
+  arma::uword n_n = X.n_rows;
+  arma::uword n_m = Y.n_cols;
+  arma::mat Nhat(n_n, n_m);
+  arma::vec Dhat(n_n);
+  double cv = 0.0;;
+
+  for (size_t i = 0; i < n_n; ++i){
+
+    const auto xrow_i = X.row(i);
+
+    for (size_t j = 0; j < i; ++j)
+    {
+
+      arma::vec Dji_h_sq = arma::square(
+        arma::vectorise(X.row(j) - xrow_i) / h
+      );
+      double Kji_h = arma::prod(
+        (Dji_h_sq < 1) % (1.0 - Dji_h_sq * 3.0) %
+          arma::square(1.0 - Dji_h_sq) * 105.0 / 64.0
+      );
+
+      Dhat(i) += Kji_h;
+      Dhat(j) += Kji_h;
+
+      for (size_t m = 0; m < n_m; ++m){
+
+        Nhat(i, m) += Y(j, m) * Kji_h;
+        Nhat(j, m) += Y(i, m) * Kji_h;
+      }
+    }
+  }
+
+  for (size_t m = 0; m < n_m; ++m){
+
+    for (size_t i = 0; i < n_n; ++i){
+
+      if (Dhat(i) != 0){
+
+        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2);
+
+      }else{
+
+        cv += pow(Y(i, m), 2);
+      }
+    }
+  }
+
+  cv /= (n_n * n_m);
+
+  return cv;
+}
+
+// [[Rcpp::export]]
+double CVMNW_K4B_w_rcpp(arma::mat X,
+                        arma::mat Y,
+                        arma::vec h,
+                        arma::vec w){
+
+  arma::uword n_n = X.n_rows;
+  arma::uword n_m = Y.n_cols;
+  arma::mat Nhat(n_n, n_m);
+  arma::vec Dhat(n_n);
+  double cv = 0.0;;
+
+  for (size_t i = 0; i < n_n; ++i){
+
+    const auto xrow_i = X.row(i);
+
+    for (size_t j = 0; j < i; ++j)
+    {
+
+      arma::vec Dji_h_sq = arma::square(
+        arma::vectorise(X.row(j) - xrow_i) / h
+      );
+      double Kji_h = arma::prod(
+        (Dji_h_sq < 1) % (1.0 - Dji_h_sq * 3.0) %
+          arma::square(1.0 - Dji_h_sq) * 105.0 / 64.0
+      );
+
+      Dhat(i) += Kji_h * w(j);
+      Dhat(j) += Kji_h * w(i);
+
+      for (size_t m = 0; m < n_m; ++m){
+
+        Nhat(i, m) += Y(j, m) * Kji_h * w(j);
+        Nhat(j, m) += Y(i, m) * Kji_h * w(i);
+      }
+    }
+  }
+
+  for (size_t m = 0; m < n_m; ++m){
+
+    for (size_t i = 0; i < n_n; ++i){
+
+      if (Dhat(i) != 0){
+
+        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2) * w(i);
+
+      }else{
+
+        cv += pow(Y(i, m), 2) * w(i);
+      }
+    }
+  }
+
+  cv /= (n_n * n_m);
+
+  return cv;
+}
+
+// Using Gaussian kernel
+
+// [[Rcpp::export]]
+double CVMNW_KG_rcpp(arma::mat X,
+                     arma::mat Y,
+                     arma::vec h){
+
+  arma::uword n_n = X.n_rows;
+  arma::uword n_m = Y.n_cols;
+  arma::mat Nhat(n_n, n_m);
+  arma::vec Dhat(n_n);
+  double cv = 0.0;;
+
+  for (size_t i = 0; i < n_n; ++i){
+
+    const auto xrow_i = X.row(i);
+
+    for (size_t j = 0; j < i; ++j)
+    {
+
+      arma::vec Dji_h = arma::vectorise(X.row(j) - xrow_i) / h;
+      double Kji_h = arma::prod(
+        arma::exp(-arma::square(Dji_h) / 2.0) * 0.39894228
+      );
+
+      Dhat(i) += Kji_h;
+      Dhat(j) += Kji_h;
+
+      for (size_t m = 0; m < n_m; ++m){
+
+        Nhat(i, m) += Y(j, m) * Kji_h;
+        Nhat(j, m) += Y(i, m) * Kji_h;
+      }
+    }
+  }
+
+  for (size_t m = 0; m < n_m; ++m){
+
+    for (size_t i = 0; i < n_n; ++i){
+
+      if (Dhat(i) != 0){
+
+        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2);
+
+      }else{
+
+        cv += pow(Y(i, m), 2);
+      }
+    }
+  }
+
+  cv /= (n_n * n_m);
+
+  return cv;
+}
+
+// [[Rcpp::export]]
+double CVMNW_KG_w_rcpp(arma::mat X,
+                       arma::mat Y,
+                       arma::vec h,
+                       arma::vec w){
+
+  arma::uword n_n = X.n_rows;
+  arma::uword n_m = Y.n_cols;
+  arma::mat Nhat(n_n, n_m);
+  arma::vec Dhat(n_n);
+  double cv = 0.0;;
+
+  for (size_t i = 0; i < n_n; ++i){
+
+    const auto xrow_i = X.row(i);
+
+    for (size_t j = 0; j < i; ++j)
+    {
+
+      arma::vec Dji_h = arma::vectorise(X.row(j) - xrow_i) / h;
+      double Kji_h = arma::prod(
+        arma::exp(-arma::square(Dji_h) / 2.0) * 0.39894228
+      );
+
+      Dhat(i) += Kji_h * w(j);
+      Dhat(j) += Kji_h * w(i);
+
+      for (size_t m = 0; m < n_m; ++m){
+
+        Nhat(i, m) += Y(j, m) * Kji_h * w(j);
+        Nhat(j, m) += Y(i, m) * Kji_h * w(i);
+      }
+    }
+  }
+
+  for (size_t m = 0; m < n_m; ++m){
+
+    for (size_t i = 0; i < n_n; ++i){
+
+      if (Dhat(i) != 0){
+
+        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2) * w(i);
+
+      }else{
+
+        cv += pow(Y(i, m), 2) * w(i);
+      }
+    }
+  }
+
+  cv /= (n_n * n_m);
+
+  return cv;
+}
+
+// conditional distribution: trimmed to [0, 1]
+
+// Using K4_Biweight kernel
+
+// [[Rcpp::export]]
+double CVDNW_K4B_rcpp(arma::mat X,
+                      arma::mat Y,
+                      arma::vec h){
+
+  arma::uword n_n = X.n_rows;
+  arma::uword n_m = Y.n_cols;
+  arma::mat Nhat(n_n, n_m);
+  arma::vec Dhat(n_n);
+  double cv = 0.0;;
+
+  for (size_t i = 0; i < n_n; ++i){
+
+    const auto xrow_i = X.row(i);
+
+    for (size_t j = 0; j < i; ++j)
+    {
+
+      arma::vec Dji_h_sq = arma::square(
+        arma::vectorise(X.row(j) - xrow_i) / h
+      );
+      double Kji_h = arma::prod(
+        (Dji_h_sq < 1) % (1.0 - Dji_h_sq * 3.0) %
+          arma::square(1.0 - Dji_h_sq) * 105.0 / 64.0
+      );
+
+      Dhat(i) += Kji_h;
+      Dhat(j) += Kji_h;
+
+      for (size_t m = 0; m < n_m; ++m){
+
+        Nhat(i, m) += Y(j, m) * Kji_h;
+        Nhat(j, m) += Y(i, m) * Kji_h;
+      }
+    }
+  }
+
+  for (size_t m = 0; m < n_m; ++m){
+
+    for (size_t i = 0; i < n_n; ++i){
+
+      if (Dhat(i) != 0){
+
+        double Yhat_i_m = Nhat(i, m) / Dhat(i);
+
+        if (Yhat_i_m > 1){
+
+          cv += pow(Y(i, m) - 1, 2);
+
+        }else if (Yhat_i_m < 0){
+
+          cv += pow(Y(i, m), 2);
+
+        }else{
+
+          cv += pow(Y(i, m) - Yhat_i_m, 2);
+        }
+      }else{
+
+        cv += pow(Y(i, m), 2);
+      }
+    }
+  }
+
+  cv /= (n_n * n_m);
+
+  return cv;
+}
+
+// [[Rcpp::export]]
+double CVDNW_K4B_w_rcpp(arma::mat X,
+                        arma::mat Y,
+                        arma::vec h,
+                        arma::vec w){
+
+  arma::uword n_n = X.n_rows;
+  arma::uword n_m = Y.n_cols;
+  arma::mat Nhat(n_n, n_m);
+  arma::vec Dhat(n_n);
+  double cv = 0.0;;
+
+  for (size_t i = 0; i < n_n; ++i){
+
+    const auto xrow_i = X.row(i);
+
+    for (size_t j = 0; j < i; ++j)
+    {
+
+      arma::vec Dji_h_sq = arma::square(
+        arma::vectorise(X.row(j) - xrow_i) / h
+      );
+      double Kji_h = arma::prod(
+        (Dji_h_sq < 1) % (1.0 - Dji_h_sq * 3.0) %
+          arma::square(1.0 - Dji_h_sq) * 105.0 / 64.0
+      );
+
+      Dhat(i) += Kji_h * w(j);
+      Dhat(j) += Kji_h * w(i);
+
+      for (size_t m = 0; m < n_m; ++m){
+
+        Nhat(i, m) += Y(j, m) * Kji_h * w(j);
+        Nhat(j, m) += Y(i, m) * Kji_h * w(i);
+      }
+    }
+  }
+
+  for (size_t m = 0; m < n_m; ++m){
+
+    for (size_t i = 0; i < n_n; ++i){
+
+      if (Dhat(i) != 0){
+
+        double Yhat_i_m = Nhat(i, m) / Dhat(i);
+
+        if (Yhat_i_m > 1){
+
+          cv += pow(Y(i, m) - 1, 2) * w(i);
+
+        }else if (Yhat_i_m < 0){
+
+          cv += pow(Y(i, m), 2) * w(i);
+
+        }else{
+
+          cv += pow(Y(i, m) - Yhat_i_m, 2) * w(i);
+        }
+      }else{
+
+        cv += pow(Y(i, m), 2) * w(i);
+      }
+    }
+  }
+
+  cv /= (n_n * n_m);
+
+  return cv;
+}
 
 
 

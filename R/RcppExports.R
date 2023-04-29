@@ -213,6 +213,34 @@ CVMNW_K2B_rcpp <- function(X, Y, h) {
     .Call(`_MYHRcpp_CVMNW_K2B_rcpp`, X, Y, h)
 }
 
+CVMNW_K2B_w_rcpp <- function(X, Y, h, w) {
+    .Call(`_MYHRcpp_CVMNW_K2B_w_rcpp`, X, Y, h, w)
+}
+
+CVMNW_K4B_rcpp <- function(X, Y, h) {
+    .Call(`_MYHRcpp_CVMNW_K4B_rcpp`, X, Y, h)
+}
+
+CVMNW_K4B_w_rcpp <- function(X, Y, h, w) {
+    .Call(`_MYHRcpp_CVMNW_K4B_w_rcpp`, X, Y, h, w)
+}
+
+CVMNW_KG_rcpp <- function(X, Y, h) {
+    .Call(`_MYHRcpp_CVMNW_KG_rcpp`, X, Y, h)
+}
+
+CVMNW_KG_w_rcpp <- function(X, Y, h, w) {
+    .Call(`_MYHRcpp_CVMNW_KG_w_rcpp`, X, Y, h, w)
+}
+
+CVDNW_K4B_rcpp <- function(X, Y, h) {
+    .Call(`_MYHRcpp_CVDNW_K4B_rcpp`, X, Y, h)
+}
+
+CVDNW_K4B_w_rcpp <- function(X, Y, h, w) {
+    .Call(`_MYHRcpp_CVDNW_K4B_w_rcpp`, X, Y, h, w)
+}
+
 rcpp_hello <- function() {
     .Call(`_MYHRcpp_rcpp_hello`)
 }

@@ -179,6 +179,41 @@ CVMNW_K2B_R <- function(X, Y, h){
   return(cv)
 }
 
+CVMNW_K2B_w_R <- function(X, Y, h, w){
+
+  number_n <- dim(X)[1]
+  number_p <- dim(X)[2]
+
+  cv <- mean(colSums((Y - NWcv_K2B_w_rcpp(
+    X = X, Y = Y, h = rep(h, number_p), w = w
+  )) ^ 2 * w) / number_n)
+
+  return(cv)
+}
+
+CVDNW_K4B_R <- function(X, Y, h){
+
+  number_p <- dim(X)[2]
+
+  cv <- mean((Y - pmax(pmin(NWcv_K4B_rcpp(
+    X = X, Y = Y, h = rep(h, number_p)
+  ), 1), 0)) ^ 2)
+
+  return(cv)
+}
+
+CVDNW_K4B_w_R <- function(X, Y, h, w){
+
+  number_n <- dim(X)[1]
+  number_p <- dim(X)[2]
+
+  cv <- mean(colSums((Y - pmax(pmin(NWcv_K4B_w_rcpp(
+    X = X, Y = Y, h = rep(h, number_p), w = w
+  ), 1), 0)) ^ 2 * w) / number_n)
+
+  return(cv)
+}
+
 LOOCV_o1 <- function(X, Y, regression = "mean",
                      kernel = "K2_Biweight",
                      initial = 1,

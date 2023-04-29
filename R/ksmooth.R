@@ -15,7 +15,6 @@ LOOCV <- function(X, Y, regression = "mean",
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
-  number_m <- dim(Y)[2]
 
   if (regression=="mean")
   {
@@ -26,7 +25,7 @@ LOOCV <- function(X, Y, regression = "mean",
         cv.h <- function(h.log){
 
           cv <- CVMNW_K2B_rcpp(X = X, Y = Y,
-                               h = rep(exp(h.log), number_m))
+                               h = rep(exp(h.log), number_p))
           return(cv)
         }
       }else{
@@ -34,9 +33,9 @@ LOOCV <- function(X, Y, regression = "mean",
         wi.boot <- as.vector(wi.boot)
         cv.h <- function(h.log){
 
-          cv <- mean((Y - NWcv_K2B_w_rcpp(
-            X = X, Y = Y, h = rep(exp(h.log), number_p), w = wi.boot
-          )) ^ 2)
+          cv <- CVMNW_K2B_w_rcpp(X = X, Y = Y,
+                                 h = rep(exp(h.log), number_p),
+                                 w = wi.boot)
           return(cv)
         }
       }
@@ -46,9 +45,8 @@ LOOCV <- function(X, Y, regression = "mean",
 
         cv.h <- function(h.log){
 
-          cv <- mean((Y - NWcv_K4B_rcpp(
-            X = X, Y = Y, h = rep(exp(h.log), number_p))
-          )^2)
+          cv <- CVMNW_K4B_rcpp(X = X, Y = Y,
+                               h = rep(exp(h.log), number_p))
           return(cv)
         }
       }else{
@@ -56,9 +54,9 @@ LOOCV <- function(X, Y, regression = "mean",
         wi.boot <- as.vector(wi.boot)
         cv.h <- function(h.log){
 
-          cv <- mean((Y - NWcv_K4B_w_rcpp(
-            X = X, Y = Y, h = rep(exp(h.log), number_p), w = wi.boot
-          ))^2)
+          cv <- CVMNW_K4B_w_rcpp(X = X, Y = Y,
+                                 h = rep(exp(h.log), number_p),
+                                 w = wi.boot)
           return(cv)
         }
       }
@@ -68,9 +66,8 @@ LOOCV <- function(X, Y, regression = "mean",
 
         cv.h <- function(h.log){
 
-          cv <- mean((Y - NWcv_KG_rcpp(
-            X = X, Y = Y, h = rep(exp(h.log), number_p))
-          )^2)
+          cv <- CVMNW_KG_rcpp(X = X, Y = Y,
+                              h = rep(exp(h.log), number_p))
           return(cv)
         }
       }else{
@@ -78,9 +75,9 @@ LOOCV <- function(X, Y, regression = "mean",
         wi.boot <- as.vector(wi.boot)
         cv.h <- function(h.log){
 
-          cv <- mean((Y - NWcv_KG_w_rcpp(
-            X = X, Y = Y, h = rep(exp(h.log), number_p), w = wi.boot
-          ))^2)
+          cv <- CVMNW_KG_w_rcpp(X = X, Y = Y,
+                                h = rep(exp(h.log), number_p),
+                                w = wi.boot)
           return(cv)
         }
       }
@@ -131,9 +128,8 @@ LOOCV <- function(X, Y, regression = "mean",
       {
         cv.h <- function(h.log)
         {
-          cv <- mean((Y.CP - NWcv_K2B_rcpp(
-            X = X, Y = Y.CP, h = rep(exp(h.log), number_p)
-          )) ^ 2)
+          cv <- CVMNW_K2B_rcpp(X = X, Y = Y.CP,
+                               h = rep(exp(h.log), number_p))
           return(cv)
         }
       }else
@@ -141,9 +137,9 @@ LOOCV <- function(X, Y, regression = "mean",
         wi.boot <- as.vector(wi.boot)
         cv.h <- function(h.log)
         {
-          cv <- mean((Y.CP - NWcv_K2B_w_rcpp(
-            X = X, Y = Y.CP, h = rep(exp(h.log), number_p), w = wi.boot
-          )) ^ 2)
+          cv <- CVMNW_K2B_w_rcpp(X = X, Y = Y.CP,
+                                 h = rep(exp(h.log), number_p),
+                                 w = wi.boot)
           return(cv)
         }
       }
@@ -153,9 +149,8 @@ LOOCV <- function(X, Y, regression = "mean",
       {
         cv.h <- function(h.log)
         {
-          cv <- mean((Y.CP - pmin(pmax(
-            NWcv_K4B_rcpp(X = X, Y = Y.CP, h = rep(exp(h.log), number_p)), 0
-          ), 1)) ^ 2)
+          cv <- CVDNW_K4B_rcpp(X = X, Y = Y.CP,
+                               h = rep(exp(h.log), number_p))
           return(cv)
         }
       }else
@@ -163,11 +158,9 @@ LOOCV <- function(X, Y, regression = "mean",
         wi.boot <- as.vector(wi.boot)
         cv.h <- function(h.log)
         {
-          cv <- mean((Y.CP - pmin(pmax(
-            NWcv_K4B_w_rcpp(X = X, Y = Y.CP,
-                            h = rep(exp(h.log), number_p),
-                            w = wi.boot), 0
-          ), 1)) ^ 2)
+          cv <- CVDNW_K4B_w_rcpp(X = X, Y = Y.CP,
+                                 h = rep(exp(h.log), number_p),
+                                 w = wi.boot)
           return(cv)
         }
       }
@@ -177,9 +170,8 @@ LOOCV <- function(X, Y, regression = "mean",
       {
         cv.h <- function(h.log)
         {
-          cv <- mean((Y.CP - pmin(pmax(
-            NWcv_KG_rcpp(X = X, Y = Y.CP, h = rep(exp(h.log), number_p)), 0
-          ), 1)) ^ 2)
+          cv <- CVMNW_KG_rcpp(X = X, Y = Y.CP,
+                              h = rep(exp(h.log), number_p))
           return(cv)
         }
       }else
@@ -187,11 +179,9 @@ LOOCV <- function(X, Y, regression = "mean",
         wi.boot <- as.vector(wi.boot)
         cv.h <- function(h.log)
         {
-          cv <- mean((Y.CP - pmin(pmax(
-            NWcv_KG_w_rcpp(X = X, Y = Y.CP,
-                           h = rep(exp(h.log), number_p),
-                           w = wi.boot), 0
-          ), 1)) ^ 2)
+          cv <- CVMNW_KG_w_rcpp(X = X, Y = Y.CP,
+                                h = rep(exp(h.log), number_p),
+                                w = wi.boot)
           return(cv)
         }
       }
