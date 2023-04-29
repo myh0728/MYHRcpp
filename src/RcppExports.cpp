@@ -155,19 +155,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// DRCV_K2B_rcpp
-double DRCV_K2B_rcpp(arma::mat X, arma::mat Y_CP, arma::vec h);
-RcppExport SEXP _MYHRcpp_DRCV_K2B_rcpp(SEXP XSEXP, SEXP Y_CPSEXP, SEXP hSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Y_CP(Y_CPSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type h(hSEXP);
-    rcpp_result_gen = Rcpp::wrap(DRCV_K2B_rcpp(X, Y_CP, h));
-    return rcpp_result_gen;
-END_RCPP
-}
 // eXsq_rcpp
 arma::mat eXsq_rcpp(arma::mat data_X);
 RcppExport SEXP _MYHRcpp_eXsq_rcpp(SEXP data_XSEXP) {
@@ -732,6 +719,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// CVMNW_K2B_rcpp
+double CVMNW_K2B_rcpp(arma::mat X, arma::mat Y, arma::vec h);
+RcppExport SEXP _MYHRcpp_CVMNW_K2B_rcpp(SEXP XSEXP, SEXP YSEXP, SEXP hSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type h(hSEXP);
+    rcpp_result_gen = Rcpp::wrap(CVMNW_K2B_rcpp(X, Y, h));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_hello
 List rcpp_hello();
 RcppExport SEXP _MYHRcpp_rcpp_hello() {
@@ -1024,7 +1024,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_lpL_logistic_rcpp", (DL_FUNC) &_MYHRcpp_lpL_logistic_rcpp, 7},
     {"_MYHRcpp_dG1alt_logistic_rcpp", (DL_FUNC) &_MYHRcpp_dG1alt_logistic_rcpp, 8},
     {"_MYHRcpp_lpLalt_logistic_rcpp", (DL_FUNC) &_MYHRcpp_lpLalt_logistic_rcpp, 8},
-    {"_MYHRcpp_DRCV_K2B_rcpp", (DL_FUNC) &_MYHRcpp_DRCV_K2B_rcpp, 3},
     {"_MYHRcpp_eXsq_rcpp", (DL_FUNC) &_MYHRcpp_eXsq_rcpp, 1},
     {"_MYHRcpp_eXsq_w_rcpp", (DL_FUNC) &_MYHRcpp_eXsq_w_rcpp, 2},
     {"_MYHRcpp_Xsq_lowtri_rcpp", (DL_FUNC) &_MYHRcpp_Xsq_lowtri_rcpp, 1},
@@ -1069,6 +1068,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_NW_KG_w_rcpp", (DL_FUNC) &_MYHRcpp_NW_KG_w_rcpp, 5},
     {"_MYHRcpp_NWcv_KG_rcpp", (DL_FUNC) &_MYHRcpp_NWcv_KG_rcpp, 3},
     {"_MYHRcpp_NWcv_KG_w_rcpp", (DL_FUNC) &_MYHRcpp_NWcv_KG_w_rcpp, 4},
+    {"_MYHRcpp_CVMNW_K2B_rcpp", (DL_FUNC) &_MYHRcpp_CVMNW_K2B_rcpp, 3},
     {"_MYHRcpp_rcpp_hello", (DL_FUNC) &_MYHRcpp_rcpp_hello, 0},
     {"_MYHRcpp_KME_rcpp", (DL_FUNC) &_MYHRcpp_KME_rcpp, 3},
     {"_MYHRcpp_KME_w_rcpp", (DL_FUNC) &_MYHRcpp_KME_w_rcpp, 4},

@@ -15,6 +15,7 @@ LOOCV <- function(X, Y, regression = "mean",
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
+  number_m <- dim(Y)[2]
 
   if (regression=="mean")
   {
@@ -24,9 +25,8 @@ LOOCV <- function(X, Y, regression = "mean",
 
         cv.h <- function(h.log){
 
-          cv <- mean((Y - NWcv_K2B_rcpp(
-            X = X, Y = Y, h = rep(exp(h.log), number_p)
-          )) ^ 2)
+          cv <- CVMNW_K2B_rcpp(X = X, Y = Y,
+                               h = rep(exp(h.log), number_m))
           return(cv)
         }
       }else{

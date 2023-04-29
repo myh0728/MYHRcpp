@@ -942,7 +942,8 @@ double CVMNW_K2B_rcpp(arma::mat X,
                       arma::vec h){
 
   arma::uword n_n = X.n_rows;
-  arma::mat Nhat(n_n, n_n);
+  arma::uword n_m = Y.n_cols;
+  arma::mat Nhat(n_n, n_m);
   arma::vec Dhat(n_n);
   double cv = 0.0;;
 
@@ -962,7 +963,7 @@ double CVMNW_K2B_rcpp(arma::mat X,
       Dhat(i) += Kji_h;
       Dhat(j) += Kji_h;
 
-      for (size_t m = 0; m < n_n; ++m){
+      for (size_t m = 0; m < n_m; ++m){
 
         Nhat(i, m) += Y(j, m) * Kji_h;
         Nhat(j, m) += Y(i, m) * Kji_h;
@@ -970,7 +971,7 @@ double CVMNW_K2B_rcpp(arma::mat X,
     }
   }
 
-  for (size_t m = 0; m < n_n; ++m){
+  for (size_t m = 0; m < n_m; ++m){
 
     for (size_t i = 0; i < n_n; ++i){
 
@@ -980,6 +981,8 @@ double CVMNW_K2B_rcpp(arma::mat X,
       }
     }
   }
+
+  cv /= (n_n * n_m);
 
   return cv;
 }

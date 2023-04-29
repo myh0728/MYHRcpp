@@ -315,54 +315,47 @@ ggplot2::autoplot(
   )
 )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-sum(abs(test1 - test9))
-sum(abs(test1 - test10))
-
-ggplot2::autoplot(
-  microbenchmark::microbenchmark(
-    R = NWD_R_kernel(X = X, Y = Y, x = x, y = y, K = K2_Biweight, h = 1.5),
-    R_uni = NWD_uni_R_kernel(X = X, Y = as.vector(Y), x = x, y = as.vector(y),
-                             K = K2_Biweight, h = 1.5),
-    Rcpp = NWD_K2B_rcpp(X = X, Y = Y, x = x, y = y, h = 1.5),
-    Rcpp_u1 = NWD_K2B_rcpp_u1(X = X, Y = Y, x = x, y = y, h = 1.5),
-    Rcpp_v0 = NW_K2B_rcpp(X = X, Y = ctingP_rcpp(Y, y), x = x, h = 1.5),
-    Rcpp_v1 = NW_K2B_rcpp(X = X, Y = ctingP_uni_rcpp(as.vector(Y), as.vector(y)),
-                          x = x, h = 1.5),
-    R_v0 = NW_R_kernel(X = X, Y = ctingP_rcpp(Y, y), x = x, K = K2_Biweight, h = 1.5),
-    R_v1 = NW_R_kernel(X = X, Y = ctingP_uni_rcpp(as.vector(Y), as.vector(y)),
-                       x = x, K = K2_Biweight, h = 1.5),
-    Rcpp_n0 = NW_K2B_rcpp_n1(X = X, Y = ctingP_rcpp(Y, y), x = x, h = 1.5),
-    Rcpp_n1 = NW_K2B_rcpp_n1(X = X, Y = ctingP_uni_rcpp(as.vector(Y), as.vector(y)),
-                             x = x, h = 1.5)
-  )
-)
-
-ggplot2::autoplot(
-  microbenchmark::microbenchmark(
-    mean = NW_K2B_rcpp(X = X, Y = Y, x = x, h = 1.5),
-    dist = NW_K2B_rcpp(X = X, Y = ctingP_uni_rcpp(as.vector(Y), as.vector(y)),
-                       x = x, h = 1.5)
-  )
-)
-
 ####################################################################
+
+n <- 100
+p <- 1
+
+X <- matrix(rnorm(n * p), nrow = n, ncol = p)
+Y <- as.matrix(sin(X %*% rep(1, p)) + rnorm(n, mean = 0, sd = 0.2))
+Y.CP <- ctingP_uni_rcpp(as.vector(Y), as.vector(Y))
+
+test1 <- CVMNW_K2B_R(X = X, Y = Y.CP, h = 1.5)
+test2 <- CVMNW_K2B_rcpp(X = X, Y = Y.CP, h = 1.5)
+sum(abs(test1 - test2))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    R = CVMNW_K2B_R(X = X, Y = Y.CP, h = 1.5),
+    Rcpp = CVMNW_K2B_rcpp(X = X, Y = Y.CP, h = 1.5)
+  )
+)
+
+test1 <- CVMNW_K2B_R(X = X, Y = Y, h = 1.5)
+test2 <- CVMNW_K2B_rcpp(X = X, Y = Y, h = 1.5)
+sum(abs(test1 - test2))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    R = CVMNW_K2B_R(X = X, Y = Y, h = 1.5),
+    Rcpp = CVMNW_K2B_rcpp(X = X, Y = Y, h = 1.5)
+  )
+)
+
+test1 <- LOOCV(X = X, Y = Y)
+test2 <- LOOCV_o1(X = X, Y = Y)
+sum(abs(test1$bandwidth - test2$bandwidth))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    R = LOOCV_o1(X = X, Y = Y),
+    Rcpp = LOOCV(X = X, Y = Y)
+  )
+)
 
 ####################################################################
 

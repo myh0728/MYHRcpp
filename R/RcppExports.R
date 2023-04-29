@@ -33,10 +33,6 @@ lpLalt_logistic_rcpp <- function(X, Y, n1, alpha, beta, gamma, iter_max, stop_to
     .Call(`_MYHRcpp_lpLalt_logistic_rcpp`, X, Y, n1, alpha, beta, gamma, iter_max, stop_tol)
 }
 
-DRCV_K2B_rcpp <- function(X, Y_CP, h) {
-    .Call(`_MYHRcpp_DRCV_K2B_rcpp`, X, Y_CP, h)
-}
-
 eXsq_rcpp <- function(data_X) {
     .Call(`_MYHRcpp_eXsq_rcpp`, data_X)
 }
@@ -211,6 +207,10 @@ NWcv_KG_rcpp <- function(X, Y, h) {
 
 NWcv_KG_w_rcpp <- function(X, Y, h, w) {
     .Call(`_MYHRcpp_NWcv_KG_w_rcpp`, X, Y, h, w)
+}
+
+CVMNW_K2B_rcpp <- function(X, Y, h) {
+    .Call(`_MYHRcpp_CVMNW_K2B_rcpp`, X, Y, h)
 }
 
 rcpp_hello <- function() {
