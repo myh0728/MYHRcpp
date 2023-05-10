@@ -20,7 +20,8 @@ Imports:
     Rcpp (>= 1.0.9),
     RcppArmadillo,
     frailtypack,
-    survival
+    survival,
+    dfoptim
 LinkingTo: Rcpp, RcppArmadillo
 SystemRequirements: C++11
 NeedsCompilation: yes
