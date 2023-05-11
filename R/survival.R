@@ -6,7 +6,7 @@ KME <- function(t.stop, is.event,
   t.stop <- as.vector(t.stop)
   is.event <- as.vector(is.event)
 
-  t.event <- sort(unique(t.stop[is.event==1]))
+  t.event <- sort(unique(t.stop[is.event == 1]))
 
   if (!sorted)
   {
@@ -29,11 +29,11 @@ KME <- function(t.stop, is.event,
                         w = wi.boot)
   }
 
-  Shat <- cumprod(1-dLhat)
+  Shat <- cumprod(1 - dLhat)
 
   if (!is.null(t.points))
   {
-    index.points <- rankAinB_rcpp(t.points, t.event)+1
+    index.points <- rankAinB_rcpp(t.points, t.event) + 1
     Shat <- c(1, Shat)[index.points]
     dLhat <- c(0, dLhat)[index.points]
   }
@@ -58,7 +58,8 @@ SKME <- function(t.stop, is.event, X, x = NULL,
 
   if (is.null(t.event))
   {
-    t.event <- sort(unique(t.stop[is.event==1]))
+    t.event <- sort(unique(t.stop[is.event == 1]))
+
   }else
   {
     t.event <- as.vector(t.event)
@@ -71,21 +72,23 @@ SKME <- function(t.stop, is.event, X, x = NULL,
   {
     x <- X
     number_k <- number_n
+
   }else
   {
-    number_k <- length(as.matrix(x))/number_p
+    number_k <- length(as.matrix(x)) / number_p
     x <- matrix(x, nrow = number_k, ncol = number_p)
   }
 
   if (is.null(bandwidth))
   {
     bandwidth <- rep(1, length = number_p)
+
   }else
   {
     bandwidth <- rep(bandwidth, length = number_p)
   }
 
-  if (kernel=="K2_Biweight")
+  if (kernel == "K2_Biweight")
   {
     if (is.null(wi.boot))
     {
@@ -104,7 +107,7 @@ SKME <- function(t.stop, is.event, X, x = NULL,
                                h = bandwidth,
                                w = wi.boot)
     }
-  }else if (kernel=="K4_Biweight")
+  }else if (kernel == "K4_Biweight")
   {
     if (is.null(wi.boot))
     {
@@ -123,15 +126,33 @@ SKME <- function(t.stop, is.event, X, x = NULL,
                                h = bandwidth,
                                w = wi.boot)
     }
+  }else if (kernel == "Gaussian")
+  {
+    if (is.null(wi.boot))
+    {
+      dLhat <- SKME_KG_rcpp(t_stop = t.stop,
+                            is_event = is.event,
+                            t_event = t.event,
+                            X = X, x = x,
+                            h = bandwidth)
+    }else
+    {
+      wi.boot <- as.vector(wi.boot)
+      dLhat <- SKME_KG_w_rcpp(t_stop = t.stop,
+                              is_event = is.event,
+                              t_event = t.event,
+                              X = X, x = x,
+                              h = bandwidth,
+                              w = wi.boot)
+    }
   }
 
-  dLhat[is.na(dLhat)|is.infinite(dLhat)] <- 0
   dLhat <- pmin(pmax(dLhat, 0), 1)
-  Shat <- t(apply(1-dLhat, 1, cumprod))
+  Shat <- t(apply(1 - dLhat, 1, cumprod))
 
   if (!is.null(t.points))
   {
-    index.points <- rankAinB_rcpp(t.points, t.event)+1
+    index.points <- rankAinB_rcpp(t.points, t.event) + 1
     Shat <- cbind(1, Shat)[, index.points]
     dLhat <- cbind(0, dLhat)[, index.points]
   }
