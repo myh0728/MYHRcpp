@@ -71,6 +71,8 @@ arma::vec KME_w_rcpp(arma::vec t_stop,
   return(dLhat);
 }
 
+// t_stop is not required to be in ascending order
+
 // [[Rcpp::export]]
 arma::mat SKME_K2B_rcpp(arma::vec t_stop,
                         arma::uvec is_event,

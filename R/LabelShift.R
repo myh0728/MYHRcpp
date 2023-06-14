@@ -141,7 +141,7 @@ LS.profile.LASSOp.normal <- function(X1, Y1, X2, Y2,
     w.adapt <- rep(1, number_p)
   }else
   {
-    w.adapt <- 1 / pmax(abs(w.adapt), zero.tol)
+    w.adapt <- pmax(abs(w.adapt), zero.tol)
   }
 
   for (iter in 1:iter.max)
@@ -627,7 +627,7 @@ LS.profile.LASSOp.logistic <- function(X1, Y1, X2, Y2,
     w.adapt <- rep(1, number_p)
   }else
   {
-    w.adapt <- 1 / pmax(abs(w.adapt), zero.tol)
+    w.adapt <- pmax(abs(w.adapt), zero.tol)
   }
 
   for (iter in 1:iter.max)

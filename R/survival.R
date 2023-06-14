@@ -165,7 +165,7 @@ SKME <- function(t.stop, is.event, X, x = NULL,
 }
 
 SurvP.impute <- function(t.stop, is.event, covariate,
-                         t.points = NULL,
+                         t.points = NULL, t.event = NULL,
                          kernel = "K2_Biweight",
                          bandwidth = NULL,
                          wi.boot = NULL)
@@ -175,25 +175,27 @@ SurvP.impute <- function(t.stop, is.event, covariate,
 
   Shat <- SKME(t.stop = t.stop, is.event = is.event,
                X = as.matrix(covariate),
+               t.event = t.event,
                kernel = kernel, bandwidth = bandwidth,
                wi.boot = wi.boot)
 
   if (is.null(t.points))
   {
     t.points <- Shat$jumps
+
   }else
   {
     t.points <- sort(unique(as.vector(t.points)))
   }
 
-  index.t.points <- rankAinB_rcpp(t.points, Shat$jumps)+1
-  index.t.stop <- rankAinB_rcpp(t.stop, Shat$jumps)+1
+  index.t.points <- rankAinB_rcpp(t.points, Shat$jumps) + 1
+  index.t.stop <- rankAinB_rcpp(t.stop, Shat$jumps) + 1
   Shat.ext <- cbind(1, Shat$survival)
-  surv.prob <- Shat.ext[, index.t.points]/diag(Shat.ext[, index.t.stop])
+  surv.prob <- Shat.ext[, index.t.points] / diag(Shat.ext[, index.t.stop])
   surv.prob[is.na(surv.prob)|is.infinite(surv.prob)] <- 0
 
   Sit <- outer(t.stop, t.points, FUN = ">")
-  Vit <- Sit+(1-Sit)*(is.event==0)*surv.prob
+  Vit <- Sit+(1 - Sit) * (is.event == 0) * surv.prob
   dimnames(Vit) <- list(NULL,
                         t.points)
 

@@ -1,8 +1,8 @@
 n <- 100
 p <- 5
 
-Xi <- matrix(rnorm(n*p), n, p)
-Ci <- 1+rexp(n)
+Xi <- matrix(rnorm(n * p), n, p)
+Ci <- 1 + rexp(n)
 
 test.data1 <- simSurv.AFT.normal(Xi = Xi, Ci = Ci,
                                  alpha0 = 1, beta0 = rep(1, 5),
