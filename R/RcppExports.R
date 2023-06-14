@@ -321,3 +321,11 @@ NWD_K2B_rcpp_v1 <- function(X, Y, x, y, h) {
     .Call(`_MYHRcpp_NWD_K2B_rcpp_v1`, X, Y, x, y, h)
 }
 
+KME_rcpp_n1 <- function(t_stop, is_event, t_event) {
+    .Call(`_MYHRcpp_KME_rcpp_n1`, t_stop, is_event, t_event)
+}
+
+KME_w_rcpp_n1 <- function(t_stop, is_event, t_event, w) {
+    .Call(`_MYHRcpp_KME_w_rcpp_n1`, t_stop, is_event, t_event, w)
+}
+

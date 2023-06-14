@@ -2,7 +2,7 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 using namespace Rcpp;
 
-// t_stop must be in ascending order
+// t_stop is not required to be in ascending order
 
 // [[Rcpp::export]]
 arma::vec KME_rcpp(arma::vec t_stop,
@@ -14,21 +14,37 @@ arma::vec KME_rcpp(arma::vec t_stop,
   arma::vec Nhat(n_t_event);
   arma::vec Dhat(n_t_event);
 
-  for (size_t k = 0; k < n_t_event; ++k){
+  for (size_t i = 0;  i < n_n; ++i){
 
-    for (size_t i = n_n; i > 0; --i){
+    if (is_event(i) == 1){
 
-      if (t_stop(i - 1) >= t_event(k)){
+      for (size_t k = 0; k < n_t_event; ++k){
 
-        Dhat(k) += 1;
+        if (t_event(k) <= t_stop(i)){
 
-        if (t_stop(i - 1) == t_event(k) and is_event(i - 1) == 1){
+          Dhat(k) += 1;
 
-          Nhat(k) += 1;
+          if (t_event(k) == t_stop(i)){
+
+            Nhat(k) += 1;
+          }
+        }else{
+
+          break;
         }
-      }else{
+      }
+    }else{
 
-        break;
+      for (size_t k = 0; k < n_t_event; ++k){
+
+        if (t_event(k) <= t_stop(i)){
+
+          Dhat(k) += 1;
+
+        }else{
+
+          break;
+        }
       }
     }
   }
@@ -39,39 +55,53 @@ arma::vec KME_rcpp(arma::vec t_stop,
 
 // [[Rcpp::export]]
 arma::vec KME_w_rcpp(arma::vec t_stop,
-                   arma::uvec is_event,
-                   arma::vec t_event,
-                   arma::vec w){
+                     arma::uvec is_event,
+                     arma::vec t_event,
+                     arma::vec w){
 
   arma::uword n_n = t_stop.n_elem;
   arma::uword n_t_event = t_event.n_elem;
   arma::vec Nhat(n_t_event);
   arma::vec Dhat(n_t_event);
 
-  for (size_t k = 0; k < n_t_event; ++k){
+  for (size_t i = 0;  i < n_n; ++i){
 
-    for (size_t i = n_n; i > 0; --i){
+    if (is_event(i) == 1){
 
-      if (t_stop(i - 1) >= t_event(k)){
+      for (size_t k = 0; k < n_t_event; ++k){
 
-        Dhat(k) += w(i - 1);
+        if (t_event(k) <= t_stop(i)){
 
-        if (t_stop(i - 1) == t_event(k) and is_event(i - 1) == 1){
+          Dhat(k) += w(i);
 
-          Nhat(k) += w(i - 1);
+          if (t_event(k) == t_stop(i)){
+
+            Nhat(k) += w(i);
+          }
+        }else{
+
+          break;
         }
-      }else{
+      }
+    }else{
 
-        break;
+      for (size_t k = 0; k < n_t_event; ++k){
+
+        if (t_event(k) <= t_stop(i)){
+
+          Dhat(k) += w(i);
+
+        }else{
+
+          break;
+        }
       }
     }
   }
 
-  arma::vec dLhat = Nhat/Dhat;
+  arma::vec dLhat = Nhat / Dhat;
   return(dLhat);
 }
-
-// t_stop is not required to be in ascending order
 
 // [[Rcpp::export]]
 arma::mat SKME_K2B_rcpp(arma::vec t_stop,

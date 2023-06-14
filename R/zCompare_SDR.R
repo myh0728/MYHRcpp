@@ -1,10 +1,10 @@
-SIDRnew <- function(X, Y, initial = NULL,
-                    kernel = "dnorm",
-                    method = "optim",
-                    optim_method = "BFGS",
-                    abs.tol = 1e-8,
-                    bandwidth = NULL,
-                    wi.boot = NULL)
+SIDR.Daniel <- function(X, Y, initial = NULL,
+                        kernel = "dnorm",
+                        method = "optim",
+                        optim_method = "BFGS",
+                        abs.tol = 1e-8,
+                        bandwidth = NULL,
+                        wi.boot = NULL)
 {
   X <- as.matrix(X)
   Y <- as.matrix(Y)

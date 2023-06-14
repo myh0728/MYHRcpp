@@ -1109,6 +1109,33 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// KME_rcpp_n1
+arma::vec KME_rcpp_n1(arma::vec t_stop, arma::uvec is_event, arma::vec t_event);
+RcppExport SEXP _MYHRcpp_KME_rcpp_n1(SEXP t_stopSEXP, SEXP is_eventSEXP, SEXP t_eventSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type t_stop(t_stopSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type is_event(is_eventSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type t_event(t_eventSEXP);
+    rcpp_result_gen = Rcpp::wrap(KME_rcpp_n1(t_stop, is_event, t_event));
+    return rcpp_result_gen;
+END_RCPP
+}
+// KME_w_rcpp_n1
+arma::vec KME_w_rcpp_n1(arma::vec t_stop, arma::uvec is_event, arma::vec t_event, arma::vec w);
+RcppExport SEXP _MYHRcpp_KME_w_rcpp_n1(SEXP t_stopSEXP, SEXP is_eventSEXP, SEXP t_eventSEXP, SEXP wSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type t_stop(t_stopSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type is_event(is_eventSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type t_event(t_eventSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type w(wSEXP);
+    rcpp_result_gen = Rcpp::wrap(KME_w_rcpp_n1(t_stop, is_event, t_event, w));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_dG1_normal_rcpp", (DL_FUNC) &_MYHRcpp_dG1_normal_rcpp, 8},
@@ -1191,6 +1218,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_NW_K2B_rcpp_n1", (DL_FUNC) &_MYHRcpp_NW_K2B_rcpp_n1, 4},
     {"_MYHRcpp_NWD_K2B_rcpp", (DL_FUNC) &_MYHRcpp_NWD_K2B_rcpp, 5},
     {"_MYHRcpp_NWD_K2B_rcpp_v1", (DL_FUNC) &_MYHRcpp_NWD_K2B_rcpp_v1, 5},
+    {"_MYHRcpp_KME_rcpp_n1", (DL_FUNC) &_MYHRcpp_KME_rcpp_n1, 3},
+    {"_MYHRcpp_KME_w_rcpp_n1", (DL_FUNC) &_MYHRcpp_KME_w_rcpp_n1, 4},
     {NULL, NULL, 0}
 };
 
