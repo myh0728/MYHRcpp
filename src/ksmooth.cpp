@@ -940,13 +940,14 @@ arma::mat NWcv_KG_w_rcpp(arma::mat X,
 // [[Rcpp::export]]
 double CVMNW_K2B_rcpp(arma::mat X,
                       arma::mat Y,
-                      arma::vec h){
+                      arma::vec h,
+                      arma::vec p_Y){
 
   arma::uword n_n = X.n_rows;
   arma::uword n_m = Y.n_cols;
   arma::mat Nhat(n_n, n_m);
   arma::vec Dhat(n_n);
-  double cv = 0.0;;
+  double cv = 0.0;
 
   for (size_t i = 0; i < n_n; ++i){
 
@@ -978,16 +979,16 @@ double CVMNW_K2B_rcpp(arma::mat X,
 
       if (Dhat(i) != 0){
 
-        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2);
+        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2) * p_Y(m);
 
       }else{
 
-        cv += pow(Y(i, m), 2);
+        cv += pow(Y(i, m), 2) * p_Y(m);
       }
     }
   }
 
-  cv /= (n_n * n_m);
+  cv /= n_n;
 
   return cv;
 }
@@ -996,13 +997,14 @@ double CVMNW_K2B_rcpp(arma::mat X,
 double CVMNW_K2B_w_rcpp(arma::mat X,
                         arma::mat Y,
                         arma::vec h,
+                        arma::vec p_Y,
                         arma::vec w){
 
   arma::uword n_n = X.n_rows;
   arma::uword n_m = Y.n_cols;
   arma::mat Nhat(n_n, n_m);
   arma::vec Dhat(n_n);
-  double cv = 0.0;;
+  double cv = 0.0;
 
   for (size_t i = 0; i < n_n; ++i){
 
@@ -1034,16 +1036,16 @@ double CVMNW_K2B_w_rcpp(arma::mat X,
 
       if (Dhat(i) != 0){
 
-        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2) * w(i);
+        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2) * w(i) * p_Y(m);
 
       }else{
 
-        cv += pow(Y(i, m), 2) * w(i);
+        cv += pow(Y(i, m), 2) * w(i) * p_Y(m);
       }
     }
   }
 
-  cv /= (n_n * n_m);
+  cv /= n_n;
 
   return cv;
 }
@@ -1053,13 +1055,14 @@ double CVMNW_K2B_w_rcpp(arma::mat X,
 // [[Rcpp::export]]
 double CVMNW_K4B_rcpp(arma::mat X,
                       arma::mat Y,
-                      arma::vec h){
+                      arma::vec h,
+                      arma::vec p_Y){
 
   arma::uword n_n = X.n_rows;
   arma::uword n_m = Y.n_cols;
   arma::mat Nhat(n_n, n_m);
   arma::vec Dhat(n_n);
-  double cv = 0.0;;
+  double cv = 0.0;
 
   for (size_t i = 0; i < n_n; ++i){
 
@@ -1093,16 +1096,16 @@ double CVMNW_K4B_rcpp(arma::mat X,
 
       if (Dhat(i) != 0){
 
-        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2);
+        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2) * p_Y(m);
 
       }else{
 
-        cv += pow(Y(i, m), 2);
+        cv += pow(Y(i, m), 2) * p_Y(m);
       }
     }
   }
 
-  cv /= (n_n * n_m);
+  cv /= n_n;
 
   return cv;
 }
@@ -1111,13 +1114,14 @@ double CVMNW_K4B_rcpp(arma::mat X,
 double CVMNW_K4B_w_rcpp(arma::mat X,
                         arma::mat Y,
                         arma::vec h,
+                        arma::vec p_Y,
                         arma::vec w){
 
   arma::uword n_n = X.n_rows;
   arma::uword n_m = Y.n_cols;
   arma::mat Nhat(n_n, n_m);
   arma::vec Dhat(n_n);
-  double cv = 0.0;;
+  double cv = 0.0;
 
   for (size_t i = 0; i < n_n; ++i){
 
@@ -1151,16 +1155,16 @@ double CVMNW_K4B_w_rcpp(arma::mat X,
 
       if (Dhat(i) != 0){
 
-        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2) * w(i);
+        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2) * w(i) * p_Y(m);
 
       }else{
 
-        cv += pow(Y(i, m), 2) * w(i);
+        cv += pow(Y(i, m), 2) * w(i) * p_Y(m);
       }
     }
   }
 
-  cv /= (n_n * n_m);
+  cv /= n_n;
 
   return cv;
 }
@@ -1170,13 +1174,14 @@ double CVMNW_K4B_w_rcpp(arma::mat X,
 // [[Rcpp::export]]
 double CVMNW_KG_rcpp(arma::mat X,
                      arma::mat Y,
-                     arma::vec h){
+                     arma::vec h,
+                     arma::vec p_Y){
 
   arma::uword n_n = X.n_rows;
   arma::uword n_m = Y.n_cols;
   arma::mat Nhat(n_n, n_m);
   arma::vec Dhat(n_n);
-  double cv = 0.0;;
+  double cv = 0.0;
 
   for (size_t i = 0; i < n_n; ++i){
 
@@ -1207,16 +1212,16 @@ double CVMNW_KG_rcpp(arma::mat X,
 
       if (Dhat(i) != 0){
 
-        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2);
+        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2) * p_Y(m);
 
       }else{
 
-        cv += pow(Y(i, m), 2);
+        cv += pow(Y(i, m), 2) * p_Y(m);
       }
     }
   }
 
-  cv /= (n_n * n_m);
+  cv /= n_n;
 
   return cv;
 }
@@ -1225,13 +1230,14 @@ double CVMNW_KG_rcpp(arma::mat X,
 double CVMNW_KG_w_rcpp(arma::mat X,
                        arma::mat Y,
                        arma::vec h,
+                       arma::vec p_Y,
                        arma::vec w){
 
   arma::uword n_n = X.n_rows;
   arma::uword n_m = Y.n_cols;
   arma::mat Nhat(n_n, n_m);
   arma::vec Dhat(n_n);
-  double cv = 0.0;;
+  double cv = 0.0;
 
   for (size_t i = 0; i < n_n; ++i){
 
@@ -1262,34 +1268,35 @@ double CVMNW_KG_w_rcpp(arma::mat X,
 
       if (Dhat(i) != 0){
 
-        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2) * w(i);
+        cv += pow(Y(i, m) - Nhat(i, m) / Dhat(i), 2) * w(i) * p_Y(m);
 
       }else{
 
-        cv += pow(Y(i, m), 2) * w(i);
+        cv += pow(Y(i, m), 2) * w(i) * p_Y(m);
       }
     }
   }
 
-  cv /= (n_n * n_m);
+  cv /= n_n;
 
   return cv;
 }
 
-// conditional distribution: trimmed to [0, 1]
+// Trimming to [0, 1]
 
 // Using K4_Biweight kernel
 
 // [[Rcpp::export]]
-double CVDNW_K4B_rcpp(arma::mat X,
-                      arma::mat Y,
-                      arma::vec h){
+double CVMNWdist_K4B_rcpp(arma::mat X,
+                          arma::mat Y_CP,
+                          arma::vec h,
+                          arma::vec p_Y){
 
   arma::uword n_n = X.n_rows;
-  arma::uword n_m = Y.n_cols;
+  arma::uword n_m = Y_CP.n_cols;
   arma::mat Nhat(n_n, n_m);
   arma::vec Dhat(n_n);
-  double cv = 0.0;;
+  double cv = 0.0;
 
   for (size_t i = 0; i < n_n; ++i){
 
@@ -1311,8 +1318,8 @@ double CVDNW_K4B_rcpp(arma::mat X,
 
       for (size_t m = 0; m < n_m; ++m){
 
-        Nhat(i, m) += Y(j, m) * Kji_h;
-        Nhat(j, m) += Y(i, m) * Kji_h;
+        Nhat(i, m) += Y_CP(j, m) * Kji_h;
+        Nhat(j, m) += Y_CP(i, m) * Kji_h;
       }
     }
   }
@@ -1327,39 +1334,40 @@ double CVDNW_K4B_rcpp(arma::mat X,
 
         if (Yhat_i_m > 1){
 
-          cv += pow(Y(i, m) - 1, 2);
+          cv += pow(Y_CP(i, m) - 1, 2) * p_Y(m);
 
         }else if (Yhat_i_m < 0){
 
-          cv += pow(Y(i, m), 2);
+          cv += pow(Y_CP(i, m), 2) * p_Y(m);
 
         }else{
 
-          cv += pow(Y(i, m) - Yhat_i_m, 2);
+          cv += pow(Y_CP(i, m) - Yhat_i_m, 2) * p_Y(m);
         }
       }else{
 
-        cv += pow(Y(i, m), 2);
+        cv += pow(Y_CP(i, m), 2) * p_Y(m);
       }
     }
   }
 
-  cv /= (n_n * n_m);
+  cv /= n_n;
 
   return cv;
 }
 
 // [[Rcpp::export]]
-double CVDNW_K4B_w_rcpp(arma::mat X,
-                        arma::mat Y,
-                        arma::vec h,
-                        arma::vec w){
+double CVMNWdist_K4B_w_rcpp(arma::mat X,
+                            arma::mat Y_CP,
+                            arma::vec h,
+                            arma::vec p_Y,
+                            arma::vec w){
 
   arma::uword n_n = X.n_rows;
-  arma::uword n_m = Y.n_cols;
+  arma::uword n_m = Y_CP.n_cols;
   arma::mat Nhat(n_n, n_m);
   arma::vec Dhat(n_n);
-  double cv = 0.0;;
+  double cv = 0.0;
 
   for (size_t i = 0; i < n_n; ++i){
 
@@ -1381,8 +1389,8 @@ double CVDNW_K4B_w_rcpp(arma::mat X,
 
       for (size_t m = 0; m < n_m; ++m){
 
-        Nhat(i, m) += Y(j, m) * Kji_h * w(j);
-        Nhat(j, m) += Y(i, m) * Kji_h * w(i);
+        Nhat(i, m) += Y_CP(j, m) * Kji_h * w(j);
+        Nhat(j, m) += Y_CP(i, m) * Kji_h * w(i);
       }
     }
   }
@@ -1397,29 +1405,321 @@ double CVDNW_K4B_w_rcpp(arma::mat X,
 
         if (Yhat_i_m > 1){
 
-          cv += pow(Y(i, m) - 1, 2) * w(i);
+          cv += pow(Y_CP(i, m) - 1, 2) * w(i) * p_Y(m);
 
         }else if (Yhat_i_m < 0){
 
-          cv += pow(Y(i, m), 2) * w(i);
+          cv += pow(Y_CP(i, m), 2) * w(i) * p_Y(m);
 
         }else{
 
-          cv += pow(Y(i, m) - Yhat_i_m, 2) * w(i);
+          cv += pow(Y_CP(i, m) - Yhat_i_m, 2) * w(i) * p_Y(m);
         }
       }else{
 
-        cv += pow(Y(i, m), 2) * w(i);
+        cv += pow(Y_CP(i, m), 2) * w(i) * p_Y(m);
       }
     }
   }
 
-  cv /= (n_n * n_m);
+  cv /= n_n;
 
   return cv;
 }
 
+// conditional distribution with univariate response
 
+// Y must be in ascending order
 
+// Using K2_Biweight kernel
+
+// [[Rcpp::export]]
+double CVDNWuniY_K2B_rcpp(arma::mat X,
+                          arma::vec Y,
+                          arma::vec h,
+                          arma::uvec rank_y_in_Y,
+                          arma::vec p_y){
+
+  arma::uword n_n = X.n_rows;
+  arma::uword n_m = rank_y_in_Y.n_elem;
+  double cv = 0;
+
+  for (size_t i = 0; i < n_n; ++i){
+
+    arma::vec Ki_h(n_n);
+    const auto xrow_i = X.row(i);
+
+    for (size_t j = 0; j < n_n; ++j){
+
+      if (j != i){
+        arma::vec Dji_h = arma::vectorise(X.row(j) - xrow_i) / h;
+        Ki_h(j) = arma::prod(
+          (arma::abs(Dji_h) < 1.0) %
+            arma::square(1.0 - arma::square(Dji_h)) * 15.0 / 16.0
+        );
+      }
+    }
+
+    double Dhat_i = arma::sum(Ki_h);
+    arma::vec cKi_h = arma::cumsum(Ki_h);
+    arma::vec Nhat_i = cKi_h.elem(rank_y_in_Y - 1);
+
+    if (Dhat_i != 0){
+
+      // arma::vec Fhat_i = arma::clamp(Nhat_i / Dhat_i, 0.0, 1.0);
+      cv += arma::sum(arma::pow((rank_y_in_Y >= (i + 1)) - Nhat_i / Dhat_i, 2) % p_y);
+
+    }else{
+
+      cv += arma::sum((rank_y_in_Y >= (i + 1)) % p_y);
+    }
+  }
+
+  cv /= n_n;
+
+  return(cv);
+}
+
+// [[Rcpp::export]]
+double CVDNWuniY_K2B_w_rcpp(arma::mat X,
+                            arma::vec Y,
+                            arma::vec h,
+                            arma::uvec rank_y_in_Y,
+                            arma::vec p_y,
+                            arma::vec w){
+
+  arma::uword n_n = X.n_rows;
+  arma::uword n_m = rank_y_in_Y.n_elem;
+  double cv = 0;
+
+  for (size_t i = 0; i < n_n; ++i){
+
+    arma::vec Ki_h(n_n);
+    const auto xrow_i = X.row(i);
+
+    for (size_t j = 0; j < n_n; ++j){
+
+      if (j != i){
+        arma::vec Dji_h = arma::vectorise(X.row(j) - xrow_i) / h;
+        Ki_h(j) = arma::prod(
+          (arma::abs(Dji_h) < 1.0) %
+            arma::square(1.0 - arma::square(Dji_h)) * 15.0 / 16.0
+        ) * w(j);
+      }
+    }
+
+    double Dhat_i = arma::sum(Ki_h);
+    arma::vec cKi_h = arma::cumsum(Ki_h);
+    arma::vec Nhat_i = cKi_h.elem(rank_y_in_Y - 1);
+
+    if (Dhat_i != 0){
+
+      // arma::vec Fhat_i = arma::clamp(Nhat_i / Dhat_i, 0.0, 1.0);
+      cv += arma::sum(arma::pow((rank_y_in_Y >= (i + 1)) - Nhat_i / Dhat_i, 2) % p_y) * w(i);
+
+    }else{
+
+      cv += arma::sum((rank_y_in_Y >= (i + 1)) % p_y) * w(i);
+    }
+  }
+
+  cv /= n_n;
+
+  return(cv);
+}
+
+// Using K4_Biweight kernel
+
+// [[Rcpp::export]]
+double CVDNWuniY_K4B_rcpp(arma::mat X,
+                          arma::vec Y,
+                          arma::vec h,
+                          arma::uvec rank_y_in_Y,
+                          arma::vec p_y){
+
+  arma::uword n_n = X.n_rows;
+  arma::uword n_m = rank_y_in_Y.n_elem;
+  double cv = 0;
+
+  for (size_t i = 0; i < n_n; ++i){
+
+    arma::vec Ki_h(n_n);
+    const auto xrow_i = X.row(i);
+
+    for (size_t j = 0; j < n_n; ++j){
+
+      if (j != i){
+        arma::vec Dji_h_sq = arma::square(
+          arma::vectorise(X.row(j) - xrow_i) / h
+        );
+        Ki_h(j) = arma::prod(
+          (Dji_h_sq < 1) % (1.0 - Dji_h_sq * 3.0) %
+            arma::square(1.0 - Dji_h_sq) * 105.0 / 64.0
+        );
+      }
+    }
+
+    double Dhat_i = arma::sum(Ki_h);
+    arma::vec cKi_h = arma::cumsum(Ki_h);
+    arma::vec Nhat_i = cKi_h.elem(rank_y_in_Y - 1);
+
+    if (Dhat_i != 0){
+
+      arma::vec Fhat_i = arma::clamp(Nhat_i / Dhat_i, 0.0, 1.0);
+      cv += arma::sum(arma::pow((rank_y_in_Y >= (i + 1)) - Fhat_i, 2) % p_y);
+
+    }else{
+
+      cv += arma::sum((rank_y_in_Y >= (i + 1)) % p_y);
+    }
+  }
+
+  cv /= n_n;
+
+  return(cv);
+}
+
+// [[Rcpp::export]]
+double CVDNWuniY_K4B_w_rcpp(arma::mat X,
+                            arma::vec Y,
+                            arma::vec h,
+                            arma::uvec rank_y_in_Y,
+                            arma::vec p_y,
+                            arma::vec w){
+
+  arma::uword n_n = X.n_rows;
+  arma::uword n_m = rank_y_in_Y.n_elem;
+  double cv = 0;
+
+  for (size_t i = 0; i < n_n; ++i){
+
+    arma::vec Ki_h(n_n);
+    const auto xrow_i = X.row(i);
+
+    for (size_t j = 0; j < n_n; ++j){
+
+      if (j != i){
+        arma::vec Dji_h_sq = arma::square(
+          arma::vectorise(X.row(j) - xrow_i) / h
+        );
+        Ki_h(j) = arma::prod(
+          (Dji_h_sq < 1) % (1.0 - Dji_h_sq * 3.0) %
+            arma::square(1.0 - Dji_h_sq) * 105.0 / 64.0
+        ) * w(j);
+      }
+    }
+
+    double Dhat_i = arma::sum(Ki_h);
+    arma::vec cKi_h = arma::cumsum(Ki_h);
+    arma::vec Nhat_i = cKi_h.elem(rank_y_in_Y - 1);
+
+    if (Dhat_i != 0){
+
+      arma::vec Fhat_i = arma::clamp(Nhat_i / Dhat_i, 0.0, 1.0);
+      cv += arma::sum(arma::pow((rank_y_in_Y >= (i + 1)) - Fhat_i, 2) % p_y) * w(i);
+
+    }else{
+
+      cv += arma::sum((rank_y_in_Y >= (i + 1)) % p_y) * w(i);
+    }
+  }
+
+  cv /= n_n;
+
+  return(cv);
+}
+
+// Using Gaussian kernel
+
+// [[Rcpp::export]]
+double CVDNWuniY_KG_rcpp(arma::mat X,
+                         arma::vec Y,
+                         arma::vec h,
+                         arma::uvec rank_y_in_Y,
+                         arma::vec p_y){
+
+  arma::uword n_n = X.n_rows;
+  arma::uword n_m = rank_y_in_Y.n_elem;
+  double cv = 0;
+
+  for (size_t i = 0; i < n_n; ++i){
+
+    arma::vec Ki_h(n_n);
+    const auto xrow_i = X.row(i);
+
+    for (size_t j = 0; j < n_n; ++j){
+
+      if (j != i){
+        arma::vec Dji_h = arma::vectorise(X.row(j) - xrow_i) / h;
+        Ki_h(j) = arma::prod(
+          arma::exp(-arma::square(Dji_h) / 2.0) * 0.39894228
+        );
+      }
+    }
+
+    double Dhat_i = arma::sum(Ki_h);
+    arma::vec cKi_h = arma::cumsum(Ki_h);
+    arma::vec Nhat_i = cKi_h.elem(rank_y_in_Y - 1);
+
+    if (Dhat_i != 0){
+
+      cv += arma::sum(arma::pow((rank_y_in_Y >= (i + 1)) - Nhat_i / Dhat_i, 2) % p_y);
+
+    }else{
+
+      cv += arma::sum((rank_y_in_Y >= (i + 1)) % p_y);
+    }
+  }
+
+  cv /= n_n;
+
+  return(cv);
+}
+
+// [[Rcpp::export]]
+double CVDNWuniY_KG_w_rcpp(arma::mat X,
+                           arma::vec Y,
+                           arma::vec h,
+                           arma::uvec rank_y_in_Y,
+                           arma::vec p_y,
+                           arma::vec w){
+
+  arma::uword n_n = X.n_rows;
+  arma::uword n_m = rank_y_in_Y.n_elem;
+  double cv = 0;
+
+  for (size_t i = 0; i < n_n; ++i){
+
+    arma::vec Ki_h(n_n);
+    const auto xrow_i = X.row(i);
+
+    for (size_t j = 0; j < n_n; ++j){
+
+      if (j != i){
+        arma::vec Dji_h = arma::vectorise(X.row(j) - xrow_i) / h;
+        Ki_h(j) = arma::prod(
+          arma::exp(-arma::square(Dji_h) / 2.0) * 0.39894228
+        ) * w(j);
+      }
+    }
+
+    double Dhat_i = arma::sum(Ki_h);
+    arma::vec cKi_h = arma::cumsum(Ki_h);
+    arma::vec Nhat_i = cKi_h.elem(rank_y_in_Y - 1);
+
+    if (Dhat_i != 0){
+
+      cv += arma::sum(arma::pow((rank_y_in_Y >= (i + 1)) - Nhat_i / Dhat_i, 2) % p_y) * w(i);
+
+    }else{
+
+      cv += arma::sum((rank_y_in_Y >= (i + 1)) % p_y) * w(i);
+    }
+  }
+
+  cv /= n_n;
+
+  return(cv);
+}
 
 

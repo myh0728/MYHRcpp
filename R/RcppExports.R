@@ -209,36 +209,60 @@ NWcv_KG_w_rcpp <- function(X, Y, h, w) {
     .Call(`_MYHRcpp_NWcv_KG_w_rcpp`, X, Y, h, w)
 }
 
-CVMNW_K2B_rcpp <- function(X, Y, h) {
-    .Call(`_MYHRcpp_CVMNW_K2B_rcpp`, X, Y, h)
+CVMNW_K2B_rcpp <- function(X, Y, h, p_Y) {
+    .Call(`_MYHRcpp_CVMNW_K2B_rcpp`, X, Y, h, p_Y)
 }
 
-CVMNW_K2B_w_rcpp <- function(X, Y, h, w) {
-    .Call(`_MYHRcpp_CVMNW_K2B_w_rcpp`, X, Y, h, w)
+CVMNW_K2B_w_rcpp <- function(X, Y, h, p_Y, w) {
+    .Call(`_MYHRcpp_CVMNW_K2B_w_rcpp`, X, Y, h, p_Y, w)
 }
 
-CVMNW_K4B_rcpp <- function(X, Y, h) {
-    .Call(`_MYHRcpp_CVMNW_K4B_rcpp`, X, Y, h)
+CVMNW_K4B_rcpp <- function(X, Y, h, p_Y) {
+    .Call(`_MYHRcpp_CVMNW_K4B_rcpp`, X, Y, h, p_Y)
 }
 
-CVMNW_K4B_w_rcpp <- function(X, Y, h, w) {
-    .Call(`_MYHRcpp_CVMNW_K4B_w_rcpp`, X, Y, h, w)
+CVMNW_K4B_w_rcpp <- function(X, Y, h, p_Y, w) {
+    .Call(`_MYHRcpp_CVMNW_K4B_w_rcpp`, X, Y, h, p_Y, w)
 }
 
-CVMNW_KG_rcpp <- function(X, Y, h) {
-    .Call(`_MYHRcpp_CVMNW_KG_rcpp`, X, Y, h)
+CVMNW_KG_rcpp <- function(X, Y, h, p_Y) {
+    .Call(`_MYHRcpp_CVMNW_KG_rcpp`, X, Y, h, p_Y)
 }
 
-CVMNW_KG_w_rcpp <- function(X, Y, h, w) {
-    .Call(`_MYHRcpp_CVMNW_KG_w_rcpp`, X, Y, h, w)
+CVMNW_KG_w_rcpp <- function(X, Y, h, p_Y, w) {
+    .Call(`_MYHRcpp_CVMNW_KG_w_rcpp`, X, Y, h, p_Y, w)
 }
 
-CVDNW_K4B_rcpp <- function(X, Y, h) {
-    .Call(`_MYHRcpp_CVDNW_K4B_rcpp`, X, Y, h)
+CVMNWdist_K4B_rcpp <- function(X, Y_CP, h, p_Y) {
+    .Call(`_MYHRcpp_CVMNWdist_K4B_rcpp`, X, Y_CP, h, p_Y)
 }
 
-CVDNW_K4B_w_rcpp <- function(X, Y, h, w) {
-    .Call(`_MYHRcpp_CVDNW_K4B_w_rcpp`, X, Y, h, w)
+CVMNWdist_K4B_w_rcpp <- function(X, Y_CP, h, p_Y, w) {
+    .Call(`_MYHRcpp_CVMNWdist_K4B_w_rcpp`, X, Y_CP, h, p_Y, w)
+}
+
+CVDNWuniY_K2B_rcpp <- function(X, Y, h, rank_y_in_Y, p_y) {
+    .Call(`_MYHRcpp_CVDNWuniY_K2B_rcpp`, X, Y, h, rank_y_in_Y, p_y)
+}
+
+CVDNWuniY_K2B_w_rcpp <- function(X, Y, h, rank_y_in_Y, p_y, w) {
+    .Call(`_MYHRcpp_CVDNWuniY_K2B_w_rcpp`, X, Y, h, rank_y_in_Y, p_y, w)
+}
+
+CVDNWuniY_K4B_rcpp <- function(X, Y, h, rank_y_in_Y, p_y) {
+    .Call(`_MYHRcpp_CVDNWuniY_K4B_rcpp`, X, Y, h, rank_y_in_Y, p_y)
+}
+
+CVDNWuniY_K4B_w_rcpp <- function(X, Y, h, rank_y_in_Y, p_y, w) {
+    .Call(`_MYHRcpp_CVDNWuniY_K4B_w_rcpp`, X, Y, h, rank_y_in_Y, p_y, w)
+}
+
+CVDNWuniY_KG_rcpp <- function(X, Y, h, rank_y_in_Y, p_y) {
+    .Call(`_MYHRcpp_CVDNWuniY_KG_rcpp`, X, Y, h, rank_y_in_Y, p_y)
+}
+
+CVDNWuniY_KG_w_rcpp <- function(X, Y, h, rank_y_in_Y, p_y, w) {
+    .Call(`_MYHRcpp_CVDNWuniY_KG_w_rcpp`, X, Y, h, rank_y_in_Y, p_y, w)
 }
 
 rcpp_hello <- function() {
@@ -319,6 +343,14 @@ NWD_K2B_rcpp <- function(X, Y, x, y, h) {
 
 NWD_K2B_rcpp_v1 <- function(X, Y, x, y, h) {
     .Call(`_MYHRcpp_NWD_K2B_rcpp_v1`, X, Y, x, y, h)
+}
+
+CVMNW_K2B_rcpp_n1 <- function(X, Y, h, p_Y) {
+    .Call(`_MYHRcpp_CVMNW_K2B_rcpp_n1`, X, Y, h, p_Y)
+}
+
+CVDNWuniY_K2B_rcpp_n1 <- function(X, Y, h, y, p_y) {
+    .Call(`_MYHRcpp_CVDNWuniY_K2B_rcpp_n1`, X, Y, h, y, p_y)
 }
 
 KME_rcpp_n1 <- function(t_stop, is_event, t_event) {

@@ -11,27 +11,29 @@ test.data1 <- simSurv.AFT.normal(Xi = Xi, Ci = Ci,
 w <- rexp(n)
 w <- w / sum(w)
 
+###
+
 Shat <- KME.outer(t.stop = test.data1$t.stop,
                   is.event = test.data1$is.event)
-Shat1 <- KME_rcpp(t_stop = test.data1$t.stop,
+dLhat1 <- KME_rcpp(t_stop = test.data1$t.stop,
                   is_event = test.data1$is.event,
                   t_event = sort(unique(test.data1$t.stop[test.data1$is.event == 1])))
-Shat2 <- KME_rcpp_n1(t_stop = sort(test.data1$t.stop),
+dLhat2 <- KME_rcpp_n1(t_stop = sort(test.data1$t.stop),
                      is_event = test.data1$is.event[order(test.data1$t.stop)],
                      t_event = sort(unique(test.data1$t.stop[test.data1$is.event == 1])))
-mean((Shat$hazard - Shat1) ^ 2)
-mean((Shat$hazard - Shat2) ^ 2)
+mean((Shat$hazard - dLhat1) ^ 2)
+mean((Shat$hazard - dLhat2) ^ 2)
 t.event <- sort(unique(test.data1$t.stop[test.data1$is.event == 1]))
 t.stop <- sort(test.data1$t.stop)
 is.event <- test.data1$is.event[order(test.data1$t.stop)]
 w.order <- w[order(test.data1$t.stop)]
-Shat1a <- KME_rcpp_n1(t_stop = t.stop,
+dLhat1a <- KME_rcpp_n1(t_stop = t.stop,
                       is_event = is.event,
                       t_event = t.event)
-Shat2a <- KME_rcpp(t_stop = t.stop,
+dLhat2a <- KME_rcpp(t_stop = t.stop,
                    is_event = is.event,
                    t_event = t.event)
-mean((Shat1a - Shat2a) ^ 2)
+mean((dLhat1a - dLhat2a) ^ 2)
 
 microbenchmark::microbenchmark(
   outer = KME.outer(t.stop = test.data1$t.stop,
@@ -50,25 +52,25 @@ microbenchmark::microbenchmark(
                     t_event = t.event)
 )
 
-Shat1 <- KME_w_rcpp(t_stop = test.data1$t.stop,
+dLhat1 <- KME_w_rcpp(t_stop = test.data1$t.stop,
                     is_event = test.data1$is.event,
                     t_event = sort(unique(test.data1$t.stop[test.data1$is.event == 1])),
                     w = w)
-Shat2 <- KME_w_rcpp_n1(t_stop = sort(test.data1$t.stop),
+dLhat2 <- KME_w_rcpp_n1(t_stop = sort(test.data1$t.stop),
                        is_event = test.data1$is.event[order(test.data1$t.stop)],
                        t_event = sort(unique(test.data1$t.stop[test.data1$is.event == 1])),
                        w = w[order(test.data1$t.stop)])
-Shat1a <- KME_w_rcpp(t_stop = t.stop,
+dLhat1a <- KME_w_rcpp(t_stop = t.stop,
                      is_event = is.event,
                      t_event = t.event,
                      w = w.order)
-Shat2a <- KME_w_rcpp_n1(t_stop = t.stop,
+dLhat2a <- KME_w_rcpp_n1(t_stop = t.stop,
                         is_event = is.event,
                         t_event = t.event,
                         w = w.order)
-mean((Shat1 - Shat2) ^ 2)
-mean((Shat1 - Shat1a) ^ 2)
-mean((Shat2 - Shat2a) ^ 2)
+mean((dLhat1 - dLhat2) ^ 2)
+mean((dLhat1 - dLhat1a) ^ 2)
+mean((dLhat2 - dLhat2a) ^ 2)
 
 microbenchmark::microbenchmark(
   Rcpp = KME_w_rcpp(t_stop = test.data1$t.stop,
@@ -89,48 +91,37 @@ microbenchmark::microbenchmark(
                       w = w.order)
 )
 
-
-
-
-
-
-
-
-
-
-
-
-
-Shat <- KME.outer(t.stop = test.data1$t.stop,
-                  is.event = test.data1$is.event)
-Shat1 <- KME(t.stop = test.data1$t.stop,
-             is.event = test.data1$is.event)
-mean((Shat$hazard - Shat1$hazard) ^ 2)
-mean((Shat$survival - Shat1$survival) ^ 2)
-
-microbenchmark::microbenchmark(
-  outer = KME.outer(t.stop = test.data1$t.stop,
-                    is.event = test.data1$is.event),
-  Rcpp = KME(t.stop = test.data1$t.stop,
-             is.event = test.data1$is.event)
-)
-
 ###
 
 Shat <- SKME.outer(t.stop = test.data1$t.stop,
                    is.event = test.data1$is.event,
                    X = Xi, x = Xi, K = K2_Biweight, h = 1)
-Shat1 <- SKME(t.stop = test.data1$t.stop,
-              is.event = test.data1$is.event,
-              X = Xi, x = Xi, kernel = "K2_Biweight", bandwidth = 1)
-mean((Shat$survival - Shat1$survival) ^ 2)
+dLhat1 <- SKME_K2B_rcpp(t_stop = test.data1$t.stop,
+                       is_event = test.data1$is.event,
+                       t_event = sort(unique(test.data1$t.stop[test.data1$is.event == 1])),
+                       X = Xi, x = Xi, h = rep(1, length = p))
+mean(abs(Shat$hazard - dLhat1))
 
 microbenchmark::microbenchmark(
   outer = SKME.outer(t.stop = test.data1$t.stop,
                      is.event = test.data1$is.event,
                      X = Xi, x = Xi, K = K2_Biweight, h = 1),
-  Rcpp = SKME(t.stop = test.data1$t.stop,
-              is.event = test.data1$is.event,
-              X = Xi, x = Xi, kernel = "K2_Biweight", bandwidth = 1)
+  Rcpp = SKME_K2B_rcpp(t_stop = test.data1$t.stop,
+                       is_event = test.data1$is.event,
+                       t_event = sort(unique(test.data1$t.stop[test.data1$is.event == 1])),
+                       X = Xi, x = Xi, h = rep(1, length = p))
 )
+
+
+
+
+
+
+
+
+
+
+
+
+
 

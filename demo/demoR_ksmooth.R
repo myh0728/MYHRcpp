@@ -5,23 +5,6 @@ X <- matrix(rnorm(n * p), nrow = n, ncol = p)
 Y <- as.matrix(sin(X %*% rep(1, p)) + rnorm(n, mean = 0, sd = 0.2))
 x <- as.matrix(seq(-3, 3, 0.1))
 
-### selecting bandwidth using leave-one-out cross-validation
-
-LOOCV(X = X, Y = Y)
-LOOCV(X = X, Y = Y, regression = "mean")
-LOOCV(X = X, Y = Y, regression = "mean", kernel = "K4_Biweight")
-LOOCV(X = X, Y = Y, regression = "mean", kernel = "Gaussian")
-LOOCV(X = X, Y = Y, regression = "distribution")
-LOOCV(X = X, Y = Y, regression = "distribution",
-      distribution.control = list(mode = "sample",
-                                  SN = 100,
-                                  seed = 123))
-LOOCV(X = X, Y = Y, regression = "distribution",
-      distribution.control = list(mode = "quantile",
-                                  QN = 100))
-LOOCV(X = X, Y = Y, regression = "distribution",
-      distribution.control = list(mode = "empirical"))
-
 ### Nadaraya-Watson estimator
 
 yhat0 <- NW(X = X, Y = Y)
@@ -46,6 +29,35 @@ yhat8 <- NW(X = X, Y = Y, x = x, regression = "distribution",
 yhat9 <- NW(X = X, Y = Y, x = x, regression = "distribution",
             y = sort(unique(Y)),
             distribution.control = list(mode = "empirical"))
+
+
+
+
+
+
+
+
+
+
+
+##### to be revised #############################################
+
+### selecting bandwidth using leave-one-out cross-validation
+
+LOOCV(X = X, Y = Y)
+LOOCV(X = X, Y = Y, regression = "mean")
+LOOCV(X = X, Y = Y, regression = "mean", kernel = "K4_Biweight")
+LOOCV(X = X, Y = Y, regression = "mean", kernel = "Gaussian")
+LOOCV(X = X, Y = Y, regression = "distribution")
+LOOCV(X = X, Y = Y, regression = "distribution",
+      distribution.control = list(mode = "sample",
+                                  SN = 100,
+                                  seed = 123))
+LOOCV(X = X, Y = Y, regression = "distribution",
+      distribution.control = list(mode = "quantile",
+                                  QN = 100))
+LOOCV(X = X, Y = Y, regression = "distribution",
+      distribution.control = list(mode = "empirical"))
 
 
 

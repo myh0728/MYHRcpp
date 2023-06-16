@@ -15,7 +15,50 @@ test.data2 <- simSurv.PH(Xi = Xi, Ci = Ci,
 
 Shat <- KME(t.stop = test.data1$t.stop,
             is.event = test.data1$is.event)
-plot(Shat$jumps, Shat$survival, type = 's')
+plot(Shat$jumps, Shat$survival, type = 's',
+     xlab = "time", ylab = "survival",
+     ylim = c(0, 1))
+
+Shat.empirical <- colMeans(outer(test.data1$failure.time,
+                                 sort(unique(test.data1$failure.time)),
+                                 FUN = ">"))
+lines(sort(unique(test.data1$failure.time)),
+      Shat.empirical, type = 's', lty = 2)
+
+Shat.empirical.biased1 <- colMeans(
+  outer(
+    test.data1$t.stop[test.data1$is.event == 1],
+    sort(unique(test.data1$t.stop[test.data1$is.event == 1])),
+    FUN = ">"
+  )
+)
+lines(sort(unique(test.data1$t.stop[test.data1$is.event == 1])),
+      Shat.empirical.biased1,
+      type = 's', lty = 3, col = 2)
+
+Shat.empirical.biased2 <- colMeans(
+  outer(
+    test.data1$t.stop,
+    sort(unique(test.data1$t.stop)),
+    FUN = ">"
+  )
+)
+lines(sort(unique(test.data1$t.stop)),
+      Shat.empirical.biased2,
+      type = 's', lty = 3, col = 3)
+
+
+
+
+
+
+
+
+
+
+
+
+##### to be revised ##############################################
 
 Shat.cond <- SKME(t.stop = test.data1$t.stop,
                   is.event = test.data1$is.event,

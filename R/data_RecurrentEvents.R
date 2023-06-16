@@ -34,13 +34,13 @@ simRecur.GFPI <- function(Xi, Zi, Ci,
   dNit.underlying <- matrix(0, nrow = number_n, ncol = n.t.grid)
   for (i in 1:number_n)
   {
-    prob.mesh <- lambda0(t.grid)*mesh*exp(sum(Xi[i, ]*beta0))*Zi[i]
-    prob.mesh <- prob.mesh*(prob.mesh<=1)+(prob.mesh>1)
+    prob.mesh <- lambda0(t.grid) * mesh * exp(sum(Xi[i, ] * beta0)) * Zi[i]
+    prob.mesh <- prob.mesh * (prob.mesh <= 1) + (prob.mesh > 1)
     dNit.underlying[i, ] <- rbinom(n = n.t.grid, size = 1, prob = prob.mesh)
   }
 
   Yit.mesh <- outer(Ci, t.grid, FUN = ">=")
-  dNit.mesh <- dNit.underlying&Yit.mesh
+  dNit.mesh <- dNit.underlying & Yit.mesh
 
   id <- NULL
   t.start <- NULL
@@ -58,8 +58,8 @@ simRecur.GFPI <- function(Xi, Zi, Ci,
       is.event <- c(is.event, 0)
     }else
     {
-      t.event <- t.grid[which(dNit.mesh[i, ]==1)]
-      id <- c(id, rep(i, n.event+1))
+      t.event <- t.grid[which(dNit.mesh[i, ] == 1)]
+      id <- c(id, rep(i, n.event + 1))
       t.start <- c(t.start, 0, t.event)
       t.stop <- c(t.stop, t.event, Ci[i])
       is.event <- c(is.event, rep(1, n.event), 0)
@@ -103,10 +103,10 @@ simRecur.EGFPI <- function(Xi, Zi, Ci,
   dNit.underlying <- matrix(0, nrow = number_n, ncol = n.t.grid)
   for (i in 1:number_n)
   {
-    prob.mesh <- lambda0(t.grid)*mesh*exp(sum(Xi[i, ]*beta0))
-    Z.index <- (t.grid<=Z.time)
-    prob.mesh[Z.index] <- prob.mesh[Z.index]*Zi[i]
-    prob.mesh <- prob.mesh*(prob.mesh<=1)+(prob.mesh>1)
+    prob.mesh <- lambda0(t.grid) * mesh * exp(sum(Xi[i, ] * beta0))
+    Z.index <- (t.grid <= Z.time)
+    prob.mesh[Z.index] <- prob.mesh[Z.index] * Zi[i]
+    prob.mesh <- prob.mesh * (prob.mesh <= 1) + (prob.mesh > 1)
     dNit.underlying[i, ] <- rbinom(n = n.t.grid, size = 1, prob = prob.mesh)
   }
 
@@ -129,8 +129,8 @@ simRecur.EGFPI <- function(Xi, Zi, Ci,
       is.event <- c(is.event, 0)
     }else
     {
-      t.event <- t.grid[which(dNit.mesh[i, ]==1)]
-      id <- c(id, rep(i, n.event+1))
+      t.event <- t.grid[which(dNit.mesh[i, ] == 1)]
+      id <- c(id, rep(i, n.event + 1))
       t.start <- c(t.start, 0, t.event)
       t.stop <- c(t.stop, t.event, Ci[i])
       is.event <- c(is.event, rep(1, n.event), 0)
@@ -174,10 +174,10 @@ simRecur.LGFPI <- function(Xi, Zi, Ci,
   dNit.underlying <- matrix(0, nrow = number_n, ncol = n.t.grid)
   for (i in 1:number_n)
   {
-    prob.mesh <- lambda0(t.grid)*mesh*exp(sum(Xi[i, ]*beta0))
-    Z.index <- (t.grid>=Z.time)
-    prob.mesh[Z.index] <- prob.mesh[Z.index]*Zi[i]
-    prob.mesh <- prob.mesh*(prob.mesh<=1)+(prob.mesh>1)
+    prob.mesh <- lambda0(t.grid) * mesh * exp(sum(Xi[i, ] * beta0))
+    Z.index <- (t.grid >= Z.time)
+    prob.mesh[Z.index] <- prob.mesh[Z.index] * Zi[i]
+    prob.mesh <- prob.mesh * (prob.mesh <= 1) + (prob.mesh > 1)
     dNit.underlying[i, ] <- rbinom(n = n.t.grid, size = 1, prob = prob.mesh)
   }
 
@@ -200,7 +200,7 @@ simRecur.LGFPI <- function(Xi, Zi, Ci,
       is.event <- c(is.event, 0)
     }else
     {
-      t.event <- t.grid[which(dNit.mesh[i, ]==1)]
+      t.event <- t.grid[which(dNit.mesh[i, ] == 1)]
       id <- c(id, rep(i, n.event+1))
       t.start <- c(t.start, 0, t.event)
       t.stop <- c(t.stop, t.event, Ci[i])

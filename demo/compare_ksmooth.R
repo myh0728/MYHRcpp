@@ -324,39 +324,98 @@ X <- matrix(rnorm(n * p), nrow = n, ncol = p)
 Y <- as.matrix(sin(X %*% rep(1, p)) + rnorm(n, mean = 0, sd = 0.2))
 Y.CP <- ctingP_uni_rcpp(as.vector(Y), as.vector(Y))
 w <- rexp(n)
+X.sort <- as.matrix(X[order(Y), ])
+Y.sort <- Y[order(Y)]
+rank.y.in.Y <- rankAinB_rcpp(Y.sort, Y.sort)
 
-test1 <- CVMNW_K2B_R(X = X, Y = Y.CP, h = 1.5)
-test2 <- CVMNW_K2B_rcpp(X = X, Y = Y.CP, h = 1.5)
+test1 <- CVMNW_K2B_R(X = X, Y = Y.CP, h = 1.5, p_Y = rep(1 / n, n))
+test2 <- CVMNW_K2B_rcpp(X = X, Y = Y.CP, h = 1.5, p_Y = rep(1 / n, n))
+test3 <- CVDNWuniY_K2B_rcpp(X = X.sort, Y = Y.sort, h = 1.5,
+                            rank_y_in_Y = rank.y.in.Y, p_y = rep(1 / n, n))
+test4 <- CVDNWuniY_K2B_rcpp_n1(X = X, Y = Y, h = 1.5, y = Y, p_y = rep(1 / n, n))
+test5 <- CVDNWuniY_K2B_rcpp_n1(X = X.sort, Y = Y.sort, h = 1.5, y = Y.sort, p_y = rep(1 / n, n))
+
+sum(abs(test1 - test2))
+sum(abs(test1 - test3))
+sum(abs(test1 - test4))
+sum(abs(test1 - test5))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    R = CVMNW_K2B_R(X = X, Y = Y.CP, h = 1.5, p_Y = rep(1 / n, n)),
+    Rcpp = CVMNW_K2B_rcpp(X = X, Y = Y.CP, h = 1.5, p_Y = rep(1 / n, n)),
+    Rcpp_uniY = CVDNWuniY_K2B_rcpp(X = X.sort, Y = Y.sort, h = 1.5,
+                                   rank_y_in_Y = rank.y.in.Y, p_y = rep(1 / n, n)),
+    Rcpp_uniY_n1 = CVDNWuniY_K2B_rcpp_n1(X = X, Y = Y, h = 1.5, y = Y, p_y = rep(1 / n, n))
+  )
+)
+
+test1 <- CVMNW_K2B_R(X = X, Y = Y, h = 1.5, p_Y = 1)
+test2 <- CVMNW_K2B_rcpp(X = X, Y = Y, h = 1.5, p_Y = 1)
+test3 <- CVMNW_K2B_rcpp_n1(X = X, Y = Y, h = 1.5, p_Y = 1)
+sum(abs(test1 - test2))
+sum(abs(test1 - test3))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    R = CVMNW_K2B_R(X = X, Y = Y, h = 1.5, p_Y = 1),
+    Rcpp = CVMNW_K2B_rcpp(X = X, Y = Y, h = 1.5, p_Y = 1),
+    Rcpp_n1 = CVMNW_K2B_rcpp_n1(X = X, Y = Y, h = 1.5, p_Y = 1)
+  )
+)
+
+test1 <- CVMNW_K2B_w_R(X = X, Y = Y.CP, h = 1.5, w = w, p_Y = rep(1 / n, n))
+test2 <- CVMNW_K2B_w_rcpp(X = X, Y = Y.CP, h = 1.5, w = w, p_Y = rep(1 / n, n))
 sum(abs(test1 - test2))
 
 ggplot2::autoplot(
   microbenchmark::microbenchmark(
-    R = CVMNW_K2B_R(X = X, Y = Y.CP, h = 1.5),
-    Rcpp = CVMNW_K2B_rcpp(X = X, Y = Y.CP, h = 1.5)
+    R = CVMNW_K2B_w_R(X = X, Y = Y.CP, h = 1.5, w = w, p_Y = rep(1 / n, n)),
+    Rcpp = CVMNW_K2B_w_rcpp(X = X, Y = Y.CP, h = 1.5, w = w, p_Y = rep(1 / n, n))
   )
 )
 
-test1 <- CVMNW_K2B_R(X = X, Y = Y, h = 1.5)
-test2 <- CVMNW_K2B_rcpp(X = X, Y = Y, h = 1.5)
+test1 <- CVMNWdist_K4B_R(X = X, Y_CP = Y.CP, h = 1.5, p_Y = rep(1 / n, n))
+test2 <- CVMNWdist_K4B_rcpp(X = X, Y_CP = Y.CP, h = 1.5, p_Y = rep(1 / n, n))
 sum(abs(test1 - test2))
 
 ggplot2::autoplot(
   microbenchmark::microbenchmark(
-    R = CVMNW_K2B_R(X = X, Y = Y, h = 1.5),
-    Rcpp = CVMNW_K2B_rcpp(X = X, Y = Y, h = 1.5)
+    R = CVMNWdist_K4B_R(X = X, Y_CP = Y.CP, h = 1.5, p_Y = rep(1 / n, n)),
+    Rcpp = CVMNWdist_K4B_rcpp(X = X, Y_CP = Y.CP, h = 1.5, p_Y = rep(1 / n, n))
   )
 )
 
-test1 <- CVMNW_K2B_w_R(X = X, Y = Y.CP, h = 1.5, w = w)
-test2 <- CVMNW_K2B_w_rcpp(X = X, Y = Y.CP, h = 1.5, w = w)
+test1 <- CVMNWdist_K4B_w_R(X = X, Y_CP = Y.CP, h = 1.5, w = w, p_Y = rep(1 / n, n))
+test2 <- CVMNWdist_K4B_w_rcpp(X = X, Y_CP = Y.CP, h = 1.5, w = w, p_Y = rep(1 / n, n))
 sum(abs(test1 - test2))
 
 ggplot2::autoplot(
   microbenchmark::microbenchmark(
-    R = CVMNW_K2B_w_R(X = X, Y = Y.CP, h = 1.5, w = w),
-    Rcpp = CVMNW_K2B_w_rcpp(X = X, Y = Y.CP, h = 1.5, w = w)
+    R = CVMNWdist_K4B_R(X = X, Y_CP = Y.CP, h = 1.5, p_Y = rep(1 / n, n)),
+    Rcpp = CVMNWdist_K4B_rcpp(X = X, Y_CP = Y.CP, h = 1.5, p_Y = rep(1 / n, n))
   )
 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####################################################################
+
+####################################################################
+
+####################################################################
 
 test1 <- LOOCV(X = X, Y = Y, kernel = "Gaussian")
 test2 <- LOOCV_o1(X = X, Y = Y, kernel = "Gaussian")
@@ -368,32 +427,3 @@ ggplot2::autoplot(
     Rcpp = LOOCV(X = X, Y = Y)
   )
 )
-
-test1 <- CVDNW_K4B_R(X = X, Y = Y.CP, h = 1.5)
-test2 <- CVDNW_K4B_rcpp(X = X, Y = Y.CP, h = 1.5)
-sum(abs(test1 - test2))
-
-ggplot2::autoplot(
-  microbenchmark::microbenchmark(
-    R = CVDNW_K4B_R(X = X, Y = Y.CP, h = 1.5),
-    Rcpp = CVDNW_K4B_rcpp(X = X, Y = Y.CP, h = 1.5)
-  )
-)
-
-test1 <- CVDNW_K4B_w_R(X = X, Y = Y.CP, h = 1.5, w = w)
-test2 <- CVDNW_K4B_w_rcpp(X = X, Y = Y.CP, h = 1.5, w = w)
-sum(abs(test1 - test2))
-
-ggplot2::autoplot(
-  microbenchmark::microbenchmark(
-    R = CVDNW_K4B_R(X = X, Y = Y.CP, h = 1.5),
-    Rcpp = CVDNW_K4B_rcpp(X = X, Y = Y.CP, h = 1.5)
-  )
-)
-
-####################################################################
-
-####################################################################
-
-####################################################################
-

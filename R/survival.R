@@ -1,18 +1,18 @@
 KME <- function(t.stop, is.event,
+                t.event = NULL,
                 t.points = NULL,
-                sorted = FALSE,
                 wi.boot = NULL)
 {
   t.stop <- as.vector(t.stop)
   is.event <- as.vector(is.event)
 
-  t.event <- sort(unique(t.stop[is.event == 1]))
-
-  if (!sorted)
+  if (is.null(t.event))
   {
-    index.t.stop <- order(t.stop)
-    is.event <- is.event[index.t.stop]
-    t.stop <- t.stop[index.t.stop]
+    t.event <- sort(unique(t.stop[is.event == 1]))
+
+  }else
+  {
+    t.event <- as.vector(t.event)
   }
 
   if (is.null(wi.boot))
@@ -44,6 +44,20 @@ KME <- function(t.stop, is.event,
 
   return(results)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### to be revised ##############################################
 
 SKME <- function(t.stop, is.event, X, x = NULL,
                  t.points = NULL, t.event = NULL,

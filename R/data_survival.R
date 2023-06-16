@@ -16,10 +16,10 @@ simSurv.AFT.normal <- function(Xi, Ci,
     set.seed(seed)
   }
 
-  Ti <- exp(alpha0+Xi %*% beta0+
+  Ti <- exp(alpha0 + Xi %*% beta0 +
               rnorm(n = number_n, mean = 0, sd = sigma.error))
   Yi <- pmin(Ti, Ci)
-  Di <- (Ti<=Ci)*1
+  Di <- (Ti <= Ci) * 1
 
   simData <- data.frame(t.stop = Yi,
                         is.event = Di,
@@ -47,9 +47,9 @@ simSurv.PH <- function(Xi, Ci,
   }
 
   Ui <- runif(n = number_n, min = 0, max = 1)
-  Ti <- cumhazard.inv(-log(1-Ui)/exp(Xi %*% beta0))
+  Ti <- cumhazard.inv(-log(1 - Ui) / exp(Xi %*% beta0))
   Yi <- pmin(Ti, Ci)
-  Di <- (Ti<=Ci)*1
+  Di <- (Ti <= Ci) * 1
 
   simData <- data.frame(t.stop = Yi,
                         is.event = Di,

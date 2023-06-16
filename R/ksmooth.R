@@ -1,3 +1,12 @@
+
+
+
+
+
+
+
+##### to be revised #########################################
+
 # dist.control = list(mode = "sample", SN = 100, seed = 123)
 # dist.control = list(mode = "quantile", QN = 100)
 # dist.control = list(mode = "empirical")
@@ -149,8 +158,8 @@ LOOCV <- function(X, Y, regression = "mean",
       {
         cv.h <- function(h.log)
         {
-          cv <- CVDNW_K4B_rcpp(X = X, Y = Y.CP,
-                               h = rep(exp(h.log), number_p))
+          cv <- CVMNWdist_K4B_rcpp(X = X, Y_CP = Y.CP,
+                                   h = rep(exp(h.log), number_p))
           return(cv)
         }
       }else
@@ -158,9 +167,9 @@ LOOCV <- function(X, Y, regression = "mean",
         wi.boot <- as.vector(wi.boot)
         cv.h <- function(h.log)
         {
-          cv <- CVDNW_K4B_w_rcpp(X = X, Y = Y.CP,
-                                 h = rep(exp(h.log), number_p),
-                                 w = wi.boot)
+          cv <- CVMNWdist_K4B_w_rcpp(X = X, Y_CP = Y.CP,
+                                     h = rep(exp(h.log), number_p),
+                                     w = wi.boot)
           return(cv)
         }
       }

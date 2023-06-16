@@ -168,48 +168,50 @@ NWD_uni_R_kernel <- function(X, Y, x, y, K, h){
   return(Yhat)
 }
 
-CVMNW_K2B_R <- function(X, Y, h){
-
-  number_p <- dim(X)[2]
-
-  cv <- mean((Y - NWcv_K2B_rcpp(
-    X = X, Y = Y, h = rep(h, number_p)
-  )) ^ 2)
-
-  return(cv)
-}
-
-CVMNW_K2B_w_R <- function(X, Y, h, w){
+CVMNW_K2B_R <- function(X, Y, h, p_Y){
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
 
-  cv <- mean(colSums((Y - NWcv_K2B_w_rcpp(
-    X = X, Y = Y, h = rep(h, number_p), w = w
-  )) ^ 2 * w) / number_n)
-
-  return(cv)
-}
-
-CVDNW_K4B_R <- function(X, Y, h){
-
-  number_p <- dim(X)[2]
-
-  cv <- mean((Y - pmax(pmin(NWcv_K4B_rcpp(
+  cv <- sum(t((Y - NWcv_K2B_rcpp(
     X = X, Y = Y, h = rep(h, number_p)
-  ), 1), 0)) ^ 2)
+  )) ^ 2) * p_Y) / number_n
 
   return(cv)
 }
 
-CVDNW_K4B_w_R <- function(X, Y, h, w){
+CVMNW_K2B_w_R <- function(X, Y, h, p_Y, w){
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
 
-  cv <- mean(colSums((Y - pmax(pmin(NWcv_K4B_w_rcpp(
+  cv <- sum(colSums((Y - NWcv_K2B_w_rcpp(
     X = X, Y = Y, h = rep(h, number_p), w = w
-  ), 1), 0)) ^ 2 * w) / number_n)
+  )) ^ 2 * w) / number_n * p_Y)
+
+  return(cv)
+}
+
+CVMNWdist_K4B_R <- function(X, Y_CP, h, p_Y){
+
+  number_n <- dim(X)[1]
+  number_p <- dim(X)[2]
+
+  cv <- sum(t((Y_CP - pmax(pmin(NWcv_K4B_rcpp(
+    X = X, Y = Y_CP, h = rep(h, number_p)
+  ), 1), 0)) ^ 2) * p_Y) / number_n
+
+  return(cv)
+}
+
+CVMNWdist_K4B_w_R <- function(X, Y_CP, h, p_Y, w){
+
+  number_n <- dim(X)[1]
+  number_p <- dim(X)[2]
+
+  cv <- sum(colSums((Y_CP - pmax(pmin(NWcv_K4B_w_rcpp(
+    X = X, Y = Y_CP, h = rep(h, number_p), w = w
+  ), 1), 0)) ^ 2 * w) / number_n * p_Y)
 
   return(cv)
 }
@@ -416,6 +418,14 @@ LOOCV_o1 <- function(X, Y, regression = "mean",
 
   return(results)
 }
+
+
+
+
+
+
+
+
 
 
 

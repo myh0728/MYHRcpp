@@ -5,7 +5,7 @@ beta0 <- rep(0.2, p)
 sigma0 <- 0.1
 
 set.seed(321)
-X <- rnorm(n*p, mean = 0, sd = 1)
+X <- rnorm(n * p, mean = 0, sd = 1)
 dim(X) <- c(n, p)
 test.data <- simGLM.normal(Xi = X,
                            alpha0 = alpha0,
@@ -27,7 +27,7 @@ alpha0 <- 0.1
 beta0 <- rep(0.2, p)
 
 set.seed(321)
-X <- rnorm(n*p, mean = 0, sd = 1)
+X <- rnorm(n * p, mean = 0, sd = 1)
 dim(X) <- c(n, p)
 
 test.data <- simGLM.logistic(Xi = X,
