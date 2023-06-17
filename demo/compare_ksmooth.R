@@ -411,19 +411,3 @@ ggplot2::autoplot(
 
 
 
-####################################################################
-
-####################################################################
-
-####################################################################
-
-test1 <- LOOCV(X = X, Y = Y, kernel = "Gaussian")
-test2 <- LOOCV_o1(X = X, Y = Y, kernel = "Gaussian")
-sum(abs(test1$bandwidth - test2$bandwidth))
-
-ggplot2::autoplot(
-  microbenchmark::microbenchmark(
-    R = LOOCV_o1(X = X, Y = Y),
-    Rcpp = LOOCV(X = X, Y = Y)
-  )
-)
