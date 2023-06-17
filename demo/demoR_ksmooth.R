@@ -1,3 +1,5 @@
+##### univariate covariate
+
 n <- 500
 p <- 1
 
@@ -23,17 +25,8 @@ LOOCV(X = X, Y = Y, regression = "distribution", dist.mode = "quantile")
 LOOCV(X = X, Y = Y, regression = "distribution", dist.mode = "quantile",
       dist.quantile.control = list(QN = 10))
 
-
-
-
-
-
-
-
-
-
-
-##### to be revised #############################################
+RW <- colSums(outer(sample(1:n, size = n, replace = TRUE), 1:n, FUN = "=="))
+LOOCV(X = X, Y = Y, wi.boot = RW)
 
 ### Nadaraya-Watson estimator
 
@@ -47,37 +40,22 @@ yhat4 <- NW(X = X, Y = Y, x = x, regression = "mean",
 yhat5 <- NW(X = X, Y = Y, x = x, regression = "distribution")
 yhat6 <- NW(X = X, Y = Y, x = x, regression = "distribution",
             y = sort(unique(Y)))
-yhat7 <- NW(X = X, Y = Y, x = x, regression = "distribution",
-            y = sort(unique(Y)),
-            distribution.control = list(mode = "sample",
-                                        SN = 100,
-                                        seed = 123))
-yhat8 <- NW(X = X, Y = Y, x = x, regression = "distribution",
-            y = sort(unique(Y)),
-            distribution.control = list(mode = "quantile",
-                                        QN = 50))
-yhat9 <- NW(X = X, Y = Y, x = x, regression = "distribution",
-            y = sort(unique(Y)),
-            distribution.control = list(mode = "empirical"))
 
 plot(X, Y, cex = 0.5)
-lines(x, yhat)
+lines(x, NW(X = X, Y = Y, x = x))
 lines(x, NW(X = X, Y = Y, x = x, bandwidth = 0.1), col = 2)
 lines(x, NW(X = X, Y = Y, x = x, bandwidth = 1), col = 3)
 lines(x, NW(X = X, Y = Y, x = x, bandwidth = 2), col = 4)
 
-RW <- colSums(outer(sample(1:n, size = n, replace = TRUE), 1:n, FUN = "=="))
-hhat.boot <- LOOCV(X = X, Y = Y, wi.boot = RW)
-
-#############################################################################
+##### multivariate covariate
 
 n <- 100
 p <- 5
 
-X <- matrix(rnorm(n*p), nrow = n, ncol = p)
-Y <- as.matrix(sin(X %*% rep(1, p))+rnorm(n, mean = 0, sd = 0.2))
+X <- matrix(rnorm(n * p), nrow = n, ncol = p)
+Y <- as.matrix(sin(X %*% rep(1, p)) + rnorm(n, mean = 0, sd = 0.2))
 
-hhat <- LOOCV(X = X, Y = Y)
+LOOCV(X = X, Y = Y)
 yhat <- NW(X = X, Y = Y, x = X)
 
 plot(Y, yhat, cex = 0.5)

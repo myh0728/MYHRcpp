@@ -378,21 +378,14 @@ LOOCV <- function(X, Y, regression = "mean",
   return(results)
 }
 
-
-
-
-
-
-##### to be revised #########################################
-
-NW <- function(X, Y, x = NULL, regression = "mean",
-               y = NULL,
-               kernel = "K2_Biweight",
-               bandwidth = NULL,
-               wi.boot = NULL,
-               dist.control = list(mode = "sample",
-                                   SN = 100,
-                                   seed = 123))
+NW <- function(X, Y, x = NULL, regression = "mean", y = NULL,
+               kernel = "K2_Biweight", wi.boot = NULL,
+               bandwidth = NULL, bandwidth.initial = 1,
+               method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
+               mean.weight.Ycomponent = NULL,
+               dist.mode = "empirical",
+               dist.sample.control = list(SN = 100, seed = 123),
+               dist.quantile.control = list(QN = 100))
 {
   X <- as.matrix(X)
   Y <- as.matrix(Y)
@@ -401,6 +394,23 @@ NW <- function(X, Y, x = NULL, regression = "mean",
   number_p <- dim(X)[2]
   number_m <- dim(Y)[2]
 
+  if (is.null(bandwidth))
+  {
+    hhat <- LOOCV(X = X, Y = Y, regression = regression,
+                  kernel = kernel,
+                  initial = bandwidth.initial, wi.boot = wi.boot,
+                  method = method, optim.method = optim.method, abs.tol = abs.tol,
+                  mean.weight.Ycomponent = mean.weight.Ycomponent,
+                  dist.mode = dist.mode,
+                  dist.sample.control = dist.sample.control,
+                  dist.quantile.control = dist.quantile.control)$bandwidth
+    bandwidth <- rep(hhat, length = number_p)
+
+  }else
+  {
+    bandwidth <- rep(bandwidth, length = number_p)
+  }
+
   if (is.null(x))
   {
     x <- X
@@ -408,20 +418,8 @@ NW <- function(X, Y, x = NULL, regression = "mean",
 
   }else
   {
-    number_k <- length(as.matrix(x))/number_p
+    number_k <- length(as.matrix(x)) / number_p
     x <- matrix(x, nrow = number_k, ncol = number_p)
-  }
-
-  if (is.null(bandwidth))
-  {
-    hhat <- LOOCV(X = X, Y = Y, regression = regression,
-                  kernel = kernel, wi.boot = wi.boot,
-                  dist.control = dist.control)$bandwidth
-    bandwidth <- rep(hhat, length = number_p)
-
-  }else
-  {
-    bandwidth <- rep(bandwidth, length = number_p)
   }
 
   if (regression == "mean")
@@ -482,7 +480,7 @@ NW <- function(X, Y, x = NULL, regression = "mean",
       }
     }else
     {
-      number_l <- length(as.matrix(y))/dim(Y)[2]
+      number_l <- length(as.matrix(y)) / dim(Y)[2]
       y <- matrix(y, nrow = number_l, ncol = dim(Y)[2])
     }
 
