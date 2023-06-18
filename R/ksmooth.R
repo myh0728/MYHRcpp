@@ -369,7 +369,6 @@ LOOCV <- function(X, Y, regression = "mean",
     esti <- optim(par = log(initial), fn = cv.h,
                   method = optim.method,
                   control = list(abstol = abs.tol))
-
   }
 
   results <- list(bandwidth = exp(esti$par),
