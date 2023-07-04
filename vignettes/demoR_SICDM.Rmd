@@ -64,21 +64,27 @@ SDR1
 Options:
 
 - `initial`: Initial vector for $\beta_0$, which is of the same dimension as $X$
-- `kernel`: `"K2_Biweight"` or `"K4_Biweight"`
+- `kernel`: `"K2_Biweight"`, `"K4_Biweight"`, or `"Gaussian"`
 
 ```{r}
-SID1 <- SIDR(X = X, Y = Y)
-SID2 <- SIDR(X = X, Y = Y, initial = SDR1$basis[, 1])
-SID3 <- SIDR(X = X, Y = Y, initial = rep(1, p))
-SID4 <- SIDR(X = X, Y = Y, initial = rep(1, p), kernel = "K2_Biweight")
-SID5 <- SIDR(X = X, Y = Y, initial = rep(1, p), bandwidth = 1)
+SID1 <- SIDRuniY(X = X, Y = Y)
+SID2 <- SIDRuniY(X = X, Y = Y, initial = SDR1$basis[, 1])
+SID3 <- SIDRuniY(X = X, Y = Y, initial = rep(1, p))
+SID4 <- SIDRuniY(X = X, Y = Y, initial = rep(1, p), kernel = "K2_Biweight")
+SID5 <- SIDRuniY(X = X, Y = Y, initial = rep(1, p), bandwidth = 1)
+SID6 <- SIDRuniY(X = X, Y = Y, initial = rep(1, p), method = "nlminb")
+SID7 <- SIDRuniY(X = X, Y = Y, initial = rep(1, p), method = "nmk")
+SID8 <- SIDRuniY(X = X, Y = Y, initial = rep(1, p), dist.mode = "sample")
+SID9 <- SIDRuniY(X = X, Y = Y, initial = rep(1, p), dist.mode = "quantile")
+SID10 <- SIDRmultiY(X = X, Y = Y, initial = rep(1, p))
+SID11 <- SIDRmultiY(X = X, Y = Y, initial = rep(1, p), dist.mode = "sample")
 ```
 
 Calculation of the estimated conditional distribution function
 
 ```{r}
 Fhat <- NW(X = X %*% SID1$coef, Y = Y, x = X %*% SID1$coef,
-           regression = "distribution", y = sort(Y),
+           regression = "distribution", y = sort(unique(Y)),
            bandwidth = SID1$bandwidth)
 ```
 

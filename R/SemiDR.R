@@ -246,7 +246,7 @@ SIMR <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p-1)])
-          cv <- CVMNW_K2B_rcpp(X = X %*% b, Y = Y,
+          cv <- SSMNW_K2B_rcpp(X = X %*% b, Y = Y,
                                h = bandwidth,
                                p_Y = mean.weight.Ycomponent)
           return(cv)
@@ -258,7 +258,7 @@ SIMR <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p - 1)])
-          cv <- CVMNW_K2B_w_rcpp(X = X %*% b, Y = Y,
+          cv <- SSMNW_K2B_w_rcpp(X = X %*% b, Y = Y,
                                  h = bandwidth,
                                  p_Y = mean.weight.Ycomponent,
                                  w = wi.boot)
@@ -272,7 +272,7 @@ SIMR <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p-1)])
-          cv <- CVMNW_K4B_rcpp(X = X %*% b, Y = Y,
+          cv <- SSMNW_K4B_rcpp(X = X %*% b, Y = Y,
                                h = bandwidth,
                                p_Y = mean.weight.Ycomponent)
           return(cv)
@@ -284,7 +284,7 @@ SIMR <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p - 1)])
-          cv <- CVMNW_K4B_w_rcpp(X = X %*% b, Y = Y,
+          cv <- SSMNW_K4B_w_rcpp(X = X %*% b, Y = Y,
                                  h = bandwidth,
                                  p_Y = mean.weight.Ycomponent,
                                  w = wi.boot)
@@ -298,7 +298,7 @@ SIMR <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p-1)])
-          cv <- CVMNW_KG_rcpp(X = X %*% b, Y = Y,
+          cv <- SSMNW_KG_rcpp(X = X %*% b, Y = Y,
                               h = bandwidth,
                               p_Y = mean.weight.Ycomponent)
           return(cv)
@@ -310,7 +310,7 @@ SIMR <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p - 1)])
-          cv <- CVMNW_KG_w_rcpp(X = X %*% b, Y = Y,
+          cv <- SSMNW_KG_w_rcpp(X = X %*% b, Y = Y,
                                 h = bandwidth,
                                 p_Y = mean.weight.Ycomponent,
                                 w = wi.boot)
@@ -531,7 +531,7 @@ MIMR <- function(X, Y, n.index, initial = NULL,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- CVMNW_K2B_rcpp(X = X %*% B, Y = Y,
+          cv <- SSMNW_K2B_rcpp(X = X %*% B, Y = Y,
                                h = rep(bandwidth,
                                        length = n.index),
                                p_Y = mean.weight.Ycomponent)
@@ -547,7 +547,7 @@ MIMR <- function(X, Y, n.index, initial = NULL,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- CVMNW_K2B_w_rcpp(X = X %*% B, Y = Y,
+          cv <- SSMNW_K2B_w_rcpp(X = X %*% B, Y = Y,
                                  h = rep(bandwidth,
                                          length = n.index),
                                  p_Y = mean.weight.Ycomponent,
@@ -565,7 +565,7 @@ MIMR <- function(X, Y, n.index, initial = NULL,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- CVMNW_K4B_rcpp(X = X %*% B, Y = Y,
+          cv <- SSMNW_K4B_rcpp(X = X %*% B, Y = Y,
                                h = rep(bandwidth,
                                        length = n.index),
                                p_Y = mean.weight.Ycomponent)
@@ -581,7 +581,7 @@ MIMR <- function(X, Y, n.index, initial = NULL,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- CVMNW_K4B_w_rcpp(X = X %*% B, Y = Y,
+          cv <- SSMNW_K4B_w_rcpp(X = X %*% B, Y = Y,
                                  h = rep(bandwidth,
                                          length = n.index),
                                  p_Y = mean.weight.Ycomponent,
@@ -599,7 +599,7 @@ MIMR <- function(X, Y, n.index, initial = NULL,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- CVMNW_KG_rcpp(X = X %*% B, Y = Y,
+          cv <- SSMNW_KG_rcpp(X = X %*% B, Y = Y,
                               h = rep(bandwidth,
                                       length = n.index),
                               p_Y = mean.weight.Ycomponent)
@@ -615,7 +615,7 @@ MIMR <- function(X, Y, n.index, initial = NULL,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- CVMNW_KG_w_rcpp(X = X %*% B, Y = Y,
+          cv <- SSMNW_KG_w_rcpp(X = X %*% B, Y = Y,
                                 h = rep(bandwidth,
                                         length = n.index),
                                 p_Y = mean.weight.Ycomponent,
@@ -920,7 +920,7 @@ SIDRuniY <- function(X, Y, initial = NULL,
           cv.b <- function(parameter)
           {
             b <- c(1, parameter[1:(number_p-1)])
-            cv <- CVDNWuniY_K2B_rcpp(X = X %*% b, Y = Y, h = bandwidth,
+            cv <- SSDNWuniY_K2B_rcpp(X = X %*% b, Y = Y, h = bandwidth,
                                      rank_y_in_Y = rank.y.in.Y, p_y = p.y)
             return(cv)
           }
@@ -931,7 +931,7 @@ SIDRuniY <- function(X, Y, initial = NULL,
           cv.b <- function(parameter)
           {
             b <- c(1, parameter[1:(number_p-1)])
-            cv <- CVDNWuniY_K2B_w_rcpp(X = X %*% b, Y = Y, h = bandwidth,
+            cv <- SSDNWuniY_K2B_w_rcpp(X = X %*% b, Y = Y, h = bandwidth,
                                        rank_y_in_Y = rank.y.in.Y, p_y = p.y,
                                        w = wi.boot)
             return(cv)
@@ -944,7 +944,7 @@ SIDRuniY <- function(X, Y, initial = NULL,
           cv.b <- function(parameter)
           {
             b <- c(1, parameter[1:(number_p-1)])
-            cv <- CVDNWuniY_K4B_rcpp(X = X %*% b, Y = Y, h = bandwidth,
+            cv <- SSDNWuniY_K4B_rcpp(X = X %*% b, Y = Y, h = bandwidth,
                                      rank_y_in_Y = rank.y.in.Y, p_y = p.y)
             return(cv)
           }
@@ -955,7 +955,7 @@ SIDRuniY <- function(X, Y, initial = NULL,
           cv.b <- function(parameter)
           {
             b <- c(1, parameter[1:(number_p-1)])
-            cv <- CVDNWuniY_K4B_w_rcpp(X = X %*% b, Y = Y, h = bandwidth,
+            cv <- SSDNWuniY_K4B_w_rcpp(X = X %*% b, Y = Y, h = bandwidth,
                                        rank_y_in_Y = rank.y.in.Y, p_y = p.y,
                                        w = wi.boot)
             return(cv)
@@ -968,7 +968,7 @@ SIDRuniY <- function(X, Y, initial = NULL,
           cv.b <- function(parameter)
           {
             b <- c(1, parameter[1:(number_p-1)])
-            cv <- CVDNWuniY_KG_rcpp(X = X %*% b, Y = Y, h = bandwidth,
+            cv <- SSDNWuniY_KG_rcpp(X = X %*% b, Y = Y, h = bandwidth,
                                     rank_y_in_Y = rank.y.in.Y, p_y = p.y)
             return(cv)
           }
@@ -979,7 +979,7 @@ SIDRuniY <- function(X, Y, initial = NULL,
           cv.b <- function(parameter)
           {
             b <- c(1, parameter[1:(number_p-1)])
-            cv <- CVDNWuniY_KG_w_rcpp(X = X %*% b, Y = Y, h = bandwidth,
+            cv <- SSDNWuniY_KG_w_rcpp(X = X %*% b, Y = Y, h = bandwidth,
                                       rank_y_in_Y = rank.y.in.Y, p_y = p.y,
                                       w = wi.boot)
             return(cv)
@@ -1158,7 +1158,7 @@ SIDRuniY <- function(X, Y, initial = NULL,
           cv.b <- function(parameter)
           {
             b <- c(1, parameter[1:(number_p-1)])
-            cv <- CVMNW_K2B_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
+            cv <- SSMNW_K2B_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
                                  p_Y = rep(1 / number_k, number_k))
             return(cv)
           }
@@ -1169,7 +1169,7 @@ SIDRuniY <- function(X, Y, initial = NULL,
           cv.b <- function(parameter)
           {
             b <- c(1, parameter[1:(number_p-1)])
-            cv <- CVMNW_K2B_w_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
+            cv <- SSMNW_K2B_w_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
                                    p_Y = rep(1 / number_k, number_k),
                                    w = wi.boot)
             return(cv)
@@ -1182,7 +1182,7 @@ SIDRuniY <- function(X, Y, initial = NULL,
           cv.b <- function(parameter)
           {
             b <- c(1, parameter[1:(number_p-1)])
-            cv <- CVMNWdist_K4B_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
+            cv <- SSMNWdist_K4B_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
                                      p_Y = rep(1 / number_k, number_k))
             return(cv)
           }
@@ -1193,7 +1193,7 @@ SIDRuniY <- function(X, Y, initial = NULL,
           cv.b <- function(parameter)
           {
             b <- c(1, parameter[1:(number_p-1)])
-            cv <- CVMNWdist_K4B_w_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
+            cv <- SSMNWdist_K4B_w_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
                                        p_Y = rep(1 / number_k, number_k),
                                        w = wi.boot)
             return(cv)
@@ -1206,7 +1206,7 @@ SIDRuniY <- function(X, Y, initial = NULL,
           cv.b <- function(parameter)
           {
             b <- c(1, parameter[1:(number_p-1)])
-            cv <- CVMNW_KG_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
+            cv <- SSMNW_KG_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
                                 p_Y = rep(1 / number_k, number_k))
             return(cv)
           }
@@ -1217,7 +1217,7 @@ SIDRuniY <- function(X, Y, initial = NULL,
           cv.b <- function(parameter)
           {
             b <- c(1, parameter[1:(number_p-1)])
-            cv <- CVMNW_KG_w_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
+            cv <- SSMNW_KG_w_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
                                   p_Y = rep(1 / number_k, number_k),
                                   w = wi.boot)
             return(cv)
@@ -1406,7 +1406,7 @@ SIDRmultiY <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p-1)])
-          cv <- CVMNW_K2B_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
+          cv <- SSMNW_K2B_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
                                p_Y = rep(1 / number_k, number_k))
           return(cv)
         }
@@ -1417,7 +1417,7 @@ SIDRmultiY <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p-1)])
-          cv <- CVMNW_K2B_w_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
+          cv <- SSMNW_K2B_w_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
                                  p_Y = rep(1 / number_k, number_k),
                                  w = wi.boot)
           return(cv)
@@ -1430,7 +1430,7 @@ SIDRmultiY <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p-1)])
-          cv <- CVMNWdist_K4B_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
+          cv <- SSMNWdist_K4B_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
                                    p_Y = rep(1 / number_k, number_k))
           return(cv)
         }
@@ -1441,7 +1441,7 @@ SIDRmultiY <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p-1)])
-          cv <- CVMNWdist_K4B_w_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
+          cv <- SSMNWdist_K4B_w_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
                                      p_Y = rep(1 / number_k, number_k),
                                      w = wi.boot)
           return(cv)
@@ -1454,7 +1454,7 @@ SIDRmultiY <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p-1)])
-          cv <- CVMNW_KG_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
+          cv <- SSMNW_KG_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
                               p_Y = rep(1 / number_k, number_k))
           return(cv)
         }
@@ -1465,7 +1465,7 @@ SIDRmultiY <- function(X, Y, initial = NULL,
         cv.b <- function(parameter)
         {
           b <- c(1, parameter[1:(number_p-1)])
-          cv <- CVMNW_KG_w_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
+          cv <- SSMNW_KG_w_rcpp(X = X %*% b, Y = Y.CP, h = bandwidth,
                                 p_Y = rep(1 / number_k, number_k),
                                 w = wi.boot)
           return(cv)
@@ -1690,7 +1690,7 @@ MIDRuniY <- function(X, Y, n.index, initial = NULL,
                        matrix(parameter[1:number_c],
                               nrow = number_cr,
                               ncol = n.index))
-            cv <- CVDNWuniY_K2B_rcpp(X = X %*% B, Y = Y,
+            cv <- SSDNWuniY_K2B_rcpp(X = X %*% B, Y = Y,
                                      h = rep(bandwidth, length = n.index),
                                      rank_y_in_Y = rank.y.in.Y, p_y = p.y)
             return(cv)
@@ -1705,7 +1705,7 @@ MIDRuniY <- function(X, Y, n.index, initial = NULL,
                        matrix(parameter[1:number_c],
                               nrow = number_cr,
                               ncol = n.index))
-            cv <- CVDNWuniY_K2B_w_rcpp(X = X %*% B, Y = Y,
+            cv <- SSDNWuniY_K2B_w_rcpp(X = X %*% B, Y = Y,
                                        h = rep(bandwidth, length = n.index),
                                        rank_y_in_Y = rank.y.in.Y, p_y = p.y,
                                        w = wi.boot)
@@ -1722,7 +1722,7 @@ MIDRuniY <- function(X, Y, n.index, initial = NULL,
                        matrix(parameter[1:number_c],
                               nrow = number_cr,
                               ncol = n.index))
-            cv <- CVDNWuniY_K4B_rcpp(X = X %*% B, Y = Y,
+            cv <- SSDNWuniY_K4B_rcpp(X = X %*% B, Y = Y,
                                      h = rep(bandwidth, length = n.index),
                                      rank_y_in_Y = rank.y.in.Y, p_y = p.y)
             return(cv)
@@ -1737,7 +1737,7 @@ MIDRuniY <- function(X, Y, n.index, initial = NULL,
                        matrix(parameter[1:number_c],
                               nrow = number_cr,
                               ncol = n.index))
-            cv <- CVDNWuniY_K4B_w_rcpp(X = X %*% B, Y = Y,
+            cv <- SSDNWuniY_K4B_w_rcpp(X = X %*% B, Y = Y,
                                        h = rep(bandwidth, length = n.index),
                                        rank_y_in_Y = rank.y.in.Y, p_y = p.y,
                                        w = wi.boot)
@@ -1754,7 +1754,7 @@ MIDRuniY <- function(X, Y, n.index, initial = NULL,
                        matrix(parameter[1:number_c],
                               nrow = number_cr,
                               ncol = n.index))
-            cv <- CVDNWuniY_KG_rcpp(X = X %*% B, Y = Y,
+            cv <- SSDNWuniY_KG_rcpp(X = X %*% B, Y = Y,
                                     h = rep(bandwidth, length = n.index),
                                     rank_y_in_Y = rank.y.in.Y, p_y = p.y)
             return(cv)
@@ -1769,7 +1769,7 @@ MIDRuniY <- function(X, Y, n.index, initial = NULL,
                        matrix(parameter[1:number_c],
                               nrow = number_cr,
                               ncol = n.index))
-            cv <- CVDNWuniY_KG_w_rcpp(X = X %*% B, Y = Y,
+            cv <- SSDNWuniY_KG_w_rcpp(X = X %*% B, Y = Y,
                                       h = rep(bandwidth, length = n.index),
                                       rank_y_in_Y = rank.y.in.Y, p_y = p.y,
                                       w = wi.boot)
@@ -1989,7 +1989,7 @@ MIDRuniY <- function(X, Y, n.index, initial = NULL,
                        matrix(parameter[1:number_c],
                               nrow = number_cr,
                               ncol = n.index))
-            cv <- CVMNW_K2B_rcpp(X = X %*% B, Y = Y.CP,
+            cv <- SSMNW_K2B_rcpp(X = X %*% B, Y = Y.CP,
                                  h = rep(bandwidth, length = n.index),
                                  p_Y = rep(1 / number_k, number_k))
             return(cv)
@@ -2004,7 +2004,7 @@ MIDRuniY <- function(X, Y, n.index, initial = NULL,
                        matrix(parameter[1:number_c],
                               nrow = number_cr,
                               ncol = n.index))
-            cv <- CVMNW_K2B_w_rcpp(X = X %*% B, Y = Y.CP,
+            cv <- SSMNW_K2B_w_rcpp(X = X %*% B, Y = Y.CP,
                                    h = rep(bandwidth, length = n.index),
                                    p_Y = rep(1 / number_k, number_k),
                                    w = wi.boot)
@@ -2021,7 +2021,7 @@ MIDRuniY <- function(X, Y, n.index, initial = NULL,
                        matrix(parameter[1:number_c],
                               nrow = number_cr,
                               ncol = n.index))
-            cv <- CVMNWdist_K4B_rcpp(X = X %*% B, Y = Y.CP,
+            cv <- SSMNWdist_K4B_rcpp(X = X %*% B, Y = Y.CP,
                                      h = rep(bandwidth, length = n.index),
                                      p_Y = rep(1 / number_k, number_k))
             return(cv)
@@ -2036,7 +2036,7 @@ MIDRuniY <- function(X, Y, n.index, initial = NULL,
                        matrix(parameter[1:number_c],
                               nrow = number_cr,
                               ncol = n.index))
-            cv <- CVMNWdist_K4B_w_rcpp(X = X %*% B, Y = Y.CP,
+            cv <- SSMNWdist_K4B_w_rcpp(X = X %*% B, Y = Y.CP,
                                        h = rep(bandwidth, length = n.index),
                                        p_Y = rep(1 / number_k, number_k),
                                        w = wi.boot)
@@ -2053,7 +2053,7 @@ MIDRuniY <- function(X, Y, n.index, initial = NULL,
                        matrix(parameter[1:number_c],
                               nrow = number_cr,
                               ncol = n.index))
-            cv <- CVMNW_KG_rcpp(X = X %*% B, Y = Y.CP,
+            cv <- SSMNW_KG_rcpp(X = X %*% B, Y = Y.CP,
                                 h = rep(bandwidth, length = n.index),
                                 p_Y = rep(1 / number_k, number_k))
             return(cv)
@@ -2068,7 +2068,7 @@ MIDRuniY <- function(X, Y, n.index, initial = NULL,
                        matrix(parameter[1:number_c],
                               nrow = number_cr,
                               ncol = n.index))
-            cv <- CVMNW_KG_w_rcpp(X = X %*% B, Y = Y.CP,
+            cv <- SSMNW_KG_w_rcpp(X = X %*% B, Y = Y.CP,
                                   h = rep(bandwidth, length = n.index),
                                   p_Y = rep(1 / number_k, number_k),
                                   w = wi.boot)
@@ -2300,7 +2300,7 @@ MIDRmultiY <- function(X, Y, n.index, initial = NULL,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- CVMNW_K2B_rcpp(X = X %*% B, Y = Y.CP,
+          cv <- SSMNW_K2B_rcpp(X = X %*% B, Y = Y.CP,
                                h = rep(bandwidth, length = n.index),
                                p_Y = rep(1 / number_k, number_k))
           return(cv)
@@ -2315,7 +2315,7 @@ MIDRmultiY <- function(X, Y, n.index, initial = NULL,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- CVMNW_K2B_w_rcpp(X = X %*% B, Y = Y.CP,
+          cv <- SSMNW_K2B_w_rcpp(X = X %*% B, Y = Y.CP,
                                  h = rep(bandwidth, length = n.index),
                                  p_Y = rep(1 / number_k, number_k),
                                  w = wi.boot)
@@ -2332,7 +2332,7 @@ MIDRmultiY <- function(X, Y, n.index, initial = NULL,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- CVMNWdist_K4B_rcpp(X = X %*% B, Y = Y.CP,
+          cv <- SSMNWdist_K4B_rcpp(X = X %*% B, Y = Y.CP,
                                    h = rep(bandwidth, length = n.index),
                                    p_Y = rep(1 / number_k, number_k))
           return(cv)
@@ -2347,7 +2347,7 @@ MIDRmultiY <- function(X, Y, n.index, initial = NULL,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- CVMNWdist_K4B_w_rcpp(X = X %*% B, Y = Y.CP,
+          cv <- SSMNWdist_K4B_w_rcpp(X = X %*% B, Y = Y.CP,
                                      h = rep(bandwidth, length = n.index),
                                      p_Y = rep(1 / number_k, number_k),
                                      w = wi.boot)
@@ -2364,7 +2364,7 @@ MIDRmultiY <- function(X, Y, n.index, initial = NULL,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- CVMNW_KG_rcpp(X = X %*% B, Y = Y.CP,
+          cv <- SSMNW_KG_rcpp(X = X %*% B, Y = Y.CP,
                               h = rep(bandwidth, length = n.index),
                               p_Y = rep(1 / number_k, number_k))
           return(cv)
@@ -2379,7 +2379,7 @@ MIDRmultiY <- function(X, Y, n.index, initial = NULL,
                      matrix(parameter[1:number_c],
                             nrow = number_cr,
                             ncol = n.index))
-          cv <- CVMNW_KG_w_rcpp(X = X %*% B, Y = Y.CP,
+          cv <- SSMNW_KG_w_rcpp(X = X %*% B, Y = Y.CP,
                                 h = rep(bandwidth, length = n.index),
                                 p_Y = rep(1 / number_k, number_k),
                                 w = wi.boot)
