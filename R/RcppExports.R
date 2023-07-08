@@ -265,6 +265,62 @@ CVDNWuniY_KG_w_rcpp <- function(X, Y, h, rank_y_in_Y, p_y, w) {
     .Call(`_MYHRcpp_CVDNWuniY_KG_w_rcpp`, X, Y, h, rank_y_in_Y, p_y, w)
 }
 
+SSMNW_K2B_rcpp <- function(X, Y, h, p_Y) {
+    .Call(`_MYHRcpp_SSMNW_K2B_rcpp`, X, Y, h, p_Y)
+}
+
+SSMNW_K2B_w_rcpp <- function(X, Y, h, p_Y, w) {
+    .Call(`_MYHRcpp_SSMNW_K2B_w_rcpp`, X, Y, h, p_Y, w)
+}
+
+SSMNW_K4B_rcpp <- function(X, Y, h, p_Y) {
+    .Call(`_MYHRcpp_SSMNW_K4B_rcpp`, X, Y, h, p_Y)
+}
+
+SSMNW_K4B_w_rcpp <- function(X, Y, h, p_Y, w) {
+    .Call(`_MYHRcpp_SSMNW_K4B_w_rcpp`, X, Y, h, p_Y, w)
+}
+
+SSMNW_KG_rcpp <- function(X, Y, h, p_Y) {
+    .Call(`_MYHRcpp_SSMNW_KG_rcpp`, X, Y, h, p_Y)
+}
+
+SSMNW_KG_w_rcpp <- function(X, Y, h, p_Y, w) {
+    .Call(`_MYHRcpp_SSMNW_KG_w_rcpp`, X, Y, h, p_Y, w)
+}
+
+SSMNWdist_K4B_rcpp <- function(X, Y_CP, h, p_Y) {
+    .Call(`_MYHRcpp_SSMNWdist_K4B_rcpp`, X, Y_CP, h, p_Y)
+}
+
+SSMNWdist_K4B_w_rcpp <- function(X, Y_CP, h, p_Y, w) {
+    .Call(`_MYHRcpp_SSMNWdist_K4B_w_rcpp`, X, Y_CP, h, p_Y, w)
+}
+
+SSDNWuniY_K2B_rcpp <- function(X, Y, h, rank_y_in_Y, p_y) {
+    .Call(`_MYHRcpp_SSDNWuniY_K2B_rcpp`, X, Y, h, rank_y_in_Y, p_y)
+}
+
+SSDNWuniY_K2B_w_rcpp <- function(X, Y, h, rank_y_in_Y, p_y, w) {
+    .Call(`_MYHRcpp_SSDNWuniY_K2B_w_rcpp`, X, Y, h, rank_y_in_Y, p_y, w)
+}
+
+SSDNWuniY_K4B_rcpp <- function(X, Y, h, rank_y_in_Y, p_y) {
+    .Call(`_MYHRcpp_SSDNWuniY_K4B_rcpp`, X, Y, h, rank_y_in_Y, p_y)
+}
+
+SSDNWuniY_K4B_w_rcpp <- function(X, Y, h, rank_y_in_Y, p_y, w) {
+    .Call(`_MYHRcpp_SSDNWuniY_K4B_w_rcpp`, X, Y, h, rank_y_in_Y, p_y, w)
+}
+
+SSDNWuniY_KG_rcpp <- function(X, Y, h, rank_y_in_Y, p_y) {
+    .Call(`_MYHRcpp_SSDNWuniY_KG_rcpp`, X, Y, h, rank_y_in_Y, p_y)
+}
+
+SSDNWuniY_KG_w_rcpp <- function(X, Y, h, rank_y_in_Y, p_y, w) {
+    .Call(`_MYHRcpp_SSDNWuniY_KG_w_rcpp`, X, Y, h, rank_y_in_Y, p_y, w)
+}
+
 rcpp_hello <- function() {
     .Call(`_MYHRcpp_rcpp_hello`)
 }
