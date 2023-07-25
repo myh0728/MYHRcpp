@@ -1,3 +1,39 @@
+cumuSIR_wrong <- function(X, Y, eps = 1e-7)
+{
+  X <- as.matrix(X)
+  Y <- as.matrix(Y)
+
+  number_n <- dim(X)[1]
+  number_p <- dim(X)[2]
+
+  # calculating induced response process 1(Y_i\leq y) at y=Y_i
+  if (dim(Y)[2] == 1)
+  {
+    Y.CP <- ctingP_uni_rcpp(as.vector(Y), as.vector(Y))
+
+  }else
+  {
+    Y.CP <- ctingP_rcpp(Y, Y)
+  }
+
+  # centralizing and standardizing covariates
+  X.cs <- t(t(X) - colMeans(X))
+
+  # calculating m(y)=\E[X_i 1(Y_i\leq y)]
+  m.y <- t(X.cs) %*% Y.CP / number_n
+  # calculating K=\E[m(Y_i)m(Y_i)^T]
+  Km <- m.y %*% t(m.y) / number_n
+
+  RR <- eigen_rcpp(Km)
+  Bhat <- solve_rcpp(var(X) + eps * diag(number_p), RR$vector)
+  dimnames(Bhat) <- list(paste("covariate", 1:number_p, sep=""),
+                         paste("direction", 1:number_p, sep=""))
+  results <- list(basis = Bhat,
+                  values = RR$value)
+
+  return(results)
+}
+
 SIDR.Daniel <- function(X, Y, initial = NULL,
                         kernel = "dnorm",
                         method = "optim",
