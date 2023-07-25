@@ -24,8 +24,12 @@ cumuSIR <- function(X, Y, eps = 1e-7)
     Y.CP <- ctingP_rcpp(Y, Y)
   }
 
-  # centralizing covariates
-  X.cs <- t(t(X) - colMeans(X))
+  # centralizing and standardizing covariates
+  eigen_invVarX <- eigen(inv_sympd_rcpp(var(X) + eps * diag(number_p)))
+  normalizing <- eigen_invVarX$vectors %*%
+    diag(eigen_invVarX$values) ^ 0.5 %*%
+    t(eigen_invVarX$vectors)
+  X.cs <- t(normalizing %*% (t(X) - colMeans(X)))
 
   # calculating m(y)=\E[X_i 1(Y_i\leq y)]
   m.y <- t(X.cs) %*% Y.CP / number_n
@@ -33,7 +37,7 @@ cumuSIR <- function(X, Y, eps = 1e-7)
   Km <- m.y %*% t(m.y) / number_n
 
   RR <- eigen_rcpp(Km)
-  Bhat <- solve_rcpp(var(X) + eps * diag(number_p), RR$vector)
+  Bhat <- normalizing %*% RR$vector
   dimnames(Bhat) <- list(paste("covariate", 1:number_p, sep=""),
                          paste("direction", 1:number_p, sep=""))
   results <- list(basis = Bhat,
@@ -62,7 +66,11 @@ cumuSAVE <- function(X, Y, eps = 1e-7)
     Y.CP <- ctingP_rcpp(Y, Y)
   }
 
-  X.cs <- t(t(X) - colMeans(X))
+  eigen_invVarX <- eigen(inv_sympd_rcpp(var(X) + eps * diag(number_p)))
+  normalizing <- eigen_invVarX$vectors %*%
+    diag(eigen_invVarX$values) ^ 0.5 %*%
+    t(eigen_invVarX$vectors)
+  X.cs <- t(normalizing %*% (t(X) - colMeans(X)))
   Y.CP.cs <- t(t(Y.CP) - colMeans(Y.CP))
 
   m.y <- t(X.cs) %*% Y.CP / number_n
@@ -81,7 +89,7 @@ cumuSAVE <- function(X, Y, eps = 1e-7)
   dim(Km) <- c(number_p, number_p)
 
   RR <- eigen_rcpp(Km)
-  Bhat <- solve_rcpp(var(X) + eps * diag(number_p), RR$vector)
+  Bhat <- normalizing %*% RR$vector
   dimnames(Bhat) <- list(paste("covariate", 1:number_p, sep=""),
                          paste("direction", 1:number_p, sep=""))
   results <- list(basis = Bhat,

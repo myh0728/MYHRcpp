@@ -40,6 +40,13 @@ List eigen_rcpp(arma::mat M_S){
 }
 
 // [[Rcpp::export]]
+arma::mat chol_rcpp(arma::mat M_S){
+
+  arma::mat A = arma::chol(M_S);
+  return A;
+}
+
+// [[Rcpp::export]]
 arma::mat GroupSum_rcpp(arma::mat MM,
                         arma::uvec id){
 

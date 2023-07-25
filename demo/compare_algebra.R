@@ -65,6 +65,22 @@ ggplot2::autoplot(
 
 ###########################################
 
+A <- matrix(rnorm(50 ^ 2), 50, 50)
+B <- t(A) %*% A
+
+test1 <- chol(B)
+test2 <- chol_rcpp(B)
+sum(abs(test1 - test2))
+
+ggplot2::autoplot(
+  microbenchmark::microbenchmark(
+    chol = chol(B),
+    Rcpp = chol_rcpp(B)
+  )
+)
+
+###########################################
+
 n <- 1000
 p <- 10
 a <- sample(1:100, size = n, replace = TRUE)

@@ -2,7 +2,7 @@ n <- 500
 p <- 10
 
 X <- matrix(rnorm(n * p), nrow = n, ncol = p)
-Y <- as.matrix(sin(X %*% rep(1, p)) + rnorm(n, mean = 0, sd = 0.2))
+Y <- as.matrix(exp(X %*% rep(1, p)) + rnorm(n, mean = 0, sd = 0.2))
 
 SDR1 <- cumuSIR(X = X, Y = Y)
 SDR2 <- cumuSAVE(X = X, Y = Y)

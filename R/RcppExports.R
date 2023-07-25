@@ -73,6 +73,10 @@ eigen_rcpp <- function(M_S) {
     .Call(`_MYHRcpp_eigen_rcpp`, M_S)
 }
 
+chol_rcpp <- function(M_S) {
+    .Call(`_MYHRcpp_chol_rcpp`, M_S)
+}
+
 GroupSum_rcpp <- function(MM, id) {
     .Call(`_MYHRcpp_GroupSum_rcpp`, MM, id)
 }
