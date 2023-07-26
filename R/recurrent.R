@@ -33,18 +33,18 @@ recurReg.proData <- function(id, t.start = NULL,
     for (i in 1:number_n)
     {
       id.sort <- c(id.sort, rep(i, id.table[i]))
-      sort.index <- order(t.stop[id==id.unique[i]])
+      sort.index <- order(t.stop[id == id.unique[i]])
       t.stop.sort <- c(t.stop.sort, t.stop[id==id.unique[i]][sort.index])
 
       if (is.null(t.start))
       {
         t.start.sort <- c(t.start.sort,
                           0,
-                          t.stop[id==id.unique[i]][sort.index][-id.table[i]])
+                          t.stop[id == id.unique[i]][sort.index][-id.table[i]])
       }else
       {
         t.start.sort <- c(t.start.sort,
-                          t.start[id==id.unique[i]][sort.index])
+                          t.start[id == id.unique[i]][sort.index])
       }
 
       if (is.null(is.event))
@@ -55,16 +55,16 @@ recurReg.proData <- function(id, t.start = NULL,
       }else
       {
         is.event.sort <- c(is.event.sort,
-                           is.event[id==id.unique[i]][sort.index])
+                           is.event[id == id.unique[i]][sort.index])
       }
 
       covariate.sort <- rbind(covariate.sort,
-                              covariate[id==id.unique[i], ][sort.index, ])
+                              covariate[id == id.unique[i], ][sort.index, ])
 
       if (!is.null(w.boot))
       {
-        w.boot.sort <- c(w.boot.sort, w.boot[id==id.unique[i]][sort.index])
-        wi.boot.sort <- c(wi.boot.sort, w.boot[id==id.unique[i]][1])
+        w.boot.sort <- c(w.boot.sort, w.boot[id == id.unique[i]][sort.index])
+        wi.boot.sort <- c(wi.boot.sort, w.boot[id == id.unique[i]][1])
       }
     }
 
@@ -93,7 +93,7 @@ recurReg.proData <- function(id, t.start = NULL,
       {
         t.start <- c(t.start,
                      0,
-                     t.stop[id==id.unique[i]][-id.table[i]])
+                     t.stop[id == id.unique[i]][-id.table[i]])
       }
     }
 
@@ -102,7 +102,7 @@ recurReg.proData <- function(id, t.start = NULL,
       for (i in 1:number_n)
       {
         is.event <- c(is.event,
-                      rep(1, id.table[i]-1),
+                      rep(1, id.table[i] - 1),
                       0)
       }
     }
@@ -125,7 +125,7 @@ recurReg.proData <- function(id, t.start = NULL,
 
   ### jump points ###
 
-  t.event <- sort(unique(t.stop[is.event==1]))
+  t.event <- sort(unique(t.stop[is.event == 1]))
   results$t.event <- t.event
 
   ### index of t.event for t.stop
@@ -133,9 +133,9 @@ recurReg.proData <- function(id, t.start = NULL,
   stop.from.event.index <- rep(0, number_m)
   for (k in 1:number_m)
   {
-    if (is.event[k]==1)
+    if (is.event[k] == 1)
     {
-      stop.from.event.index[k] <- which(t.stop[k]==t.event)
+      stop.from.event.index[k] <- which(t.stop[k] == t.event)
     }
   }
   results$stop.from.event.index <- stop.from.event.index
@@ -145,11 +145,11 @@ recurReg.proData <- function(id, t.start = NULL,
   if (is.null(w.boot))
   {
     sum.event.t <- as.vector(
-      countAinB_rcpp(t.event, t.stop[is.event==1]))
+      countAinB_rcpp(t.event, t.stop[is.event == 1]))
   }else
   {
     sum.event.t <- as.vector(
-      countAinB_W_rcpp(t.event, t.stop, is.event*w.boot))
+      countAinB_W_rcpp(t.event, t.stop, is.event * w.boot))
   }
   results$sum.event.t <- sum.event.t
 
@@ -157,7 +157,7 @@ recurReg.proData <- function(id, t.start = NULL,
 
   covariate.sq <- Xsq_lowtri_rcpp(as.matrix(covariate))
   index1 <- matrix(1:number_p, nrow = number_p, ncol = number_p)
-  index1[lower.tri(index1, diag = TRUE)] <- 1:(number_p*(number_p+1)/2)
+  index1[lower.tri(index1, diag = TRUE)] <- 1:(number_p * (number_p + 1) / 2)
   index1[upper.tri(index1, diag = FALSE)] <- t(index1)[upper.tri(index1, diag = FALSE)]
   index.tri.to.sym <- as.vector(index1)
 
@@ -168,7 +168,7 @@ recurReg.proData <- function(id, t.start = NULL,
   ### calculating \int W(t) X_i(t) dN_i(t)
 
   n.w.t <- length(w.t.event)
-  if (n.w.t>0)
+  if (n.w.t > 0)
   {
     EwIntXdNt <- matrix(0, nrow = n.w.t, ncol = number_p)
     wIntXdNt.i <- array(0, c(n.w.t, number_n, number_p))
@@ -177,42 +177,42 @@ recurReg.proData <- function(id, t.start = NULL,
     {
       if (is.null(w.boot))
       {
-        if (w.t.event[[k]][1]=="unit")
+        if (w.t.event[[k]][1] == "unit")
         {
-          EwIntXdNt[k, ] <- colSums(covariate[is.event==1, ])/number_n
+          EwIntXdNt[k, ] <- colSums(covariate[is.event == 1, ]) / number_n
         }else
         {
-          EwIntXdNt[k, ] <- colSums(covariate[is.event==1, ]*
-                                      w.t.event[[k]][stop.from.event.index])/number_n
+          EwIntXdNt[k, ] <- colSums(covariate[is.event == 1, ] *
+                                      w.t.event[[k]][stop.from.event.index]) / number_n
         }
       }else
       {
-        if (w.t.event[[k]][1]=="unit")
+        if (w.t.event[[k]][1] == "unit")
         {
-          EwIntXdNt[k, ] <- colSums(covariate[is.event==1, ]*
-                                      w.boot[is.event==1])/number_n
+          EwIntXdNt[k, ] <- colSums(covariate[is.event==1, ] *
+                                      w.boot[is.event == 1]) / number_n
         }else
         {
-          EwIntXdNt[k, ] <- colSums(covariate[is.event==1, ]*
-                                      w.t.event[[k]][stop.from.event.index]*
-                                      w.boot[is.event==1])/number_n
+          EwIntXdNt[k, ] <- colSums(covariate[is.event == 1, ] *
+                                      w.t.event[[k]][stop.from.event.index] *
+                                      w.boot[is.event == 1]) / number_n
         }
       }
 
-      if (w.t.event[[k]][1]=="unit")
+      if (w.t.event[[k]][1] == "unit")
       {
         wIntXdNt.i[k, , ] <- GroupSum_rcpp(as.matrix(covariate*is.event), id)
       }else
       {
         wIntXdNt.i[k, , ] <- GroupSum_rcpp(
           as.matrix(
-            covariate*c(0, w.t.event[[k]])[stop.from.event.index+1]), id)
+            covariate * c(0, w.t.event[[k]])[stop.from.event.index + 1]), id)
       }
     }
 
     index.stack <- as.vector(
       aperm(
-        array(1:(n.w.t*number_p^2), c(number_p, number_p, n.w.t)), c(1, 3, 2)
+        array(1:(n.w.t * number_p ^ 2), c(number_p, number_p, n.w.t)), c(1, 3, 2)
       )
     )
 
@@ -228,7 +228,7 @@ proData.updateW <- function(Rij = recurReg.proData(...),
                             w.t = list(), beta = NULL)
 {
   n.w.t <- length(w.t)
-  if (n.w.t==0)
+  if (n.w.t == 0)
   {
     Rij$w.t.event <- list()
     Rij$EwIntXdNt <- NULL
@@ -245,16 +245,16 @@ proData.updateW <- function(Rij = recurReg.proData(...),
       if (is.function(w.t[[k]]))
       {
         w.t.event[[k]] <- w.t[[k]](Rij$t.event)
-      }else if (w.t[[k]][1]=="Gehan")
+      }else if (w.t[[k]][1] == "Gehan")
       {
         w.t.event[[k]] <- rate.baseline(Rij = Rij, beta = beta)$Gehan
-      }else if (w.t[[k]][1]=="cumbase")
+      }else if (w.t[[k]][1] == "cumbase")
       {
         w.t.event[[k]] <- rate.baseline(Rij = Rij, beta = beta)$rate.base
-      }else if (w.t[[k]][1]=="S0t")
+      }else if (w.t[[k]][1] == "S0t")
       {
         w.t.event[[k]] <- rate.baseline(Rij = Rij, beta = beta)$S0t
-      }else if (w.t[[k]][1]=="unit")
+      }else if (w.t[[k]][1] == "unit")
       {
         w.t.event[[k]] <- "unit"
       }else
@@ -264,29 +264,29 @@ proData.updateW <- function(Rij = recurReg.proData(...),
 
       if (is.null(Rij$w.boot))
       {
-        if (w.t.event[[k]][1]=="unit")
+        if (w.t.event[[k]][1] == "unit")
         {
-          EwIntXdNt[k, ] <- colSums(Rij$covariate[Rij$is.event==1, ])/Rij$n.size
+          EwIntXdNt[k, ] <- colSums(Rij$covariate[Rij$is.event==1, ]) / Rij$n.size
         }else
         {
-          EwIntXdNt[k, ] <- colSums(Rij$covariate[Rij$is.event==1, ]*
-                                      w.t.event[[k]][Rij$stop.from.event.index])/Rij$n.size
+          EwIntXdNt[k, ] <- colSums(Rij$covariate[Rij$is.event == 1, ] *
+                                      w.t.event[[k]][Rij$stop.from.event.index]) / Rij$n.size
         }
       }else
       {
-        if (w.t.event[[k]][1]=="unit")
+        if (w.t.event[[k]][1] == "unit")
         {
-          EwIntXdNt[k, ] <- colSums(Rij$covariate[Rij$is.event==1, ]*
-                                      Rij$w.boot[Rij$is.event==1])/Rij$n.size
+          EwIntXdNt[k, ] <- colSums(Rij$covariate[Rij$is.event == 1, ] *
+                                      Rij$w.boot[Rij$is.event == 1]) / Rij$n.size
         }else
         {
-          EwIntXdNt[k, ] <- colSums(Rij$covariate[Rij$is.event==1, ]*
-                                      w.t.event[[k]][Rij$stop.from.event.index]*
-                                      Rij$w.boot[Rij$is.event==1])/Rij$n.size
+          EwIntXdNt[k, ] <- colSums(Rij$covariate[Rij$is.event==1, ] *
+                                      w.t.event[[k]][Rij$stop.from.event.index] *
+                                      Rij$w.boot[Rij$is.event == 1]) / Rij$n.size
         }
       }
 
-      if (w.t.event[[k]][1]=="unit")
+      if (w.t.event[[k]][1] == "unit")
       {
         wIntXdNt.i[k, , ] <- GroupSum_rcpp(as.matrix(Rij$covariate*Rij$is.event),
                                            Rij$id)
@@ -294,14 +294,14 @@ proData.updateW <- function(Rij = recurReg.proData(...),
       {
         wIntXdNt.i[k, , ] <- GroupSum_rcpp(
           as.matrix(
-            Rij$covariate*c(0, w.t.event[[k]])[Rij$stop.from.event.index+1]),
+            Rij$covariate * c(0, w.t.event[[k]])[Rij$stop.from.event.index + 1]),
           Rij$id)
       }
     }
 
     index.stack <- as.vector(
       aperm(
-        array(1:(n.w.t*Rij$n.covariate^2),
+        array(1:(n.w.t * Rij$n.covariate ^ 2),
               c(Rij$n.covariate, Rij$n.covariate, n.w.t)), c(1, 3, 2)
       )
     )
@@ -322,13 +322,13 @@ proData.updateBoot <- function(Rij = recurReg.proData(...),
 {
   w.boot <- NULL
 
-  if (method=="delete")
+  if (method == "delete")
   {
     Rij$w.boot <- NULL
     Rij$wi.boot <- NULL
   }
 
-  if (method=="naive")
+  if (method == "naive")
   {
     if (!is.null(seed))
     {
@@ -339,29 +339,29 @@ proData.updateBoot <- function(Rij = recurReg.proData(...),
     w.boot <- rep(wi.boot, Rij$id.table)
   }
 
-  if (method=="RWB.gamma42")
+  if (method == "RWB.gamma42")
   {
     if (!is.null(seed))
     {
       set.seed(seed)
     }
     wi.boot <- rgamma(n = Rij$n.size, shape = 4, rate = 2)
-    wi.boot <- wi.boot/sum(wi.boot)*Rij$n.size
+    wi.boot <- wi.boot / sum(wi.boot) * Rij$n.size
     w.boot <- rep(wi.boot, Rij$id.table)
   }
 
-  if (method=="RWB.exp")
+  if (method == "RWB.exp")
   {
     if (!is.null(seed))
     {
       set.seed(seed)
     }
     wi.boot <- rexp(n = Rij$n.size, rate = 1)
-    wi.boot <- wi.boot/sum(wi.boot)*Rij$n.size
+    wi.boot <- wi.boot / sum(wi.boot) * Rij$n.size
     w.boot <- rep(wi.boot, Rij$id.table)
   }
 
-  if (method=="ELcali")
+  if (method == "ELcali")
   {
     if (!is.null(seed))
     {
@@ -382,23 +382,23 @@ proData.updateBoot <- function(Rij = recurReg.proData(...),
     Rij$wi.boot <- wi.boot
 
     sum.event.t <- as.vector(
-      countAinB_W_rcpp(Rij$t.event, Rij$t.stop, Rij$is.event*w.boot))
+      countAinB_W_rcpp(Rij$t.event, Rij$t.stop, Rij$is.event * w.boot))
     Rij$sum.event.t <- sum.event.t
 
     n.w.t <- length(Rij$w.t.event)
-    if (n.w.t>0)
+    if (n.w.t > 0)
     {
       for (k in 1:n.w.t)
       {
-        if (Rij$w.t.event[[k]][1]=="unit")
+        if (Rij$w.t.event[[k]][1] == "unit")
         {
-          Rij$EwIntXdNt[k, ] <- colSums(Rij$covariate[Rij$is.event==1, ]*
-                                          Rij$w.boot[Rij$is.event==1])/Rij$n.size
+          Rij$EwIntXdNt[k, ] <- colSums(Rij$covariate[Rij$is.event == 1, ] *
+                                          Rij$w.boot[Rij$is.event == 1]) / Rij$n.size
         }else
         {
-          Rij$EwIntXdNt[k, ] <- colSums(Rij$covariate[Rij$is.event==1, ]*
-                                          Rij$w.t.event[[k]][Rij$stop.from.event.index]*
-                                          Rij$w.boot[Rij$is.event==1])/Rij$n.size
+          Rij$EwIntXdNt[k, ] <- colSums(Rij$covariate[Rij$is.event == 1, ] *
+                                          Rij$w.t.event[[k]][Rij$stop.from.event.index] *
+                                          Rij$w.boot[Rij$is.event == 1]) / Rij$n.size
         }
       }
     }
@@ -412,10 +412,10 @@ proData.updateBoot <- function(Rij = recurReg.proData(...),
 rate.baseline <- function(Rij = recurReg.proData(...), beta)
 {
   expSI <- as.vector(exp(as.matrix(Rij$covariate) %*% beta))
-  expSI[expSI>1e100] <- 1e100
+  expSI[expSI > 1e100] <- 1e100
   if (!is.null(Rij$w.boot))
   {
-    expSI <- as.vector(expSI*Rij$w.boot)
+    expSI <- as.vector(expSI * Rij$w.boot)
   }
 
   S0t <- as.vector(
@@ -423,8 +423,8 @@ rate.baseline <- function(Rij = recurReg.proData(...), beta)
                     t_start = Rij$t.start,
                     t_stop = Rij$t.stop,
                     t_event = Rij$t.event))
-  dL.hat <- Rij$sum.event.t/S0t
-  dL.hat[is.na(dL.hat)|is.infinite(dL.hat)] <- 0
+  dL.hat <- Rij$sum.event.t / S0t
+  dL.hat[is.na(dL.hat) | is.infinite(dL.hat)] <- 0
   L.hat <- cumsum(dL.hat)
 
   Gwt <- as.vector(
@@ -438,8 +438,8 @@ rate.baseline <- function(Rij = recurReg.proData(...), beta)
   names(Gwt) <- Rij$t.event
 
   results <- list(rate.base = L.hat,
-                  S0t = S0t/Rij$n.size,
-                  Gehan = Gwt/Rij$n.size)
+                  S0t = S0t / Rij$n.size,
+                  Gehan = Gwt / Rij$n.size)
 
   return(results)
 }
@@ -450,18 +450,18 @@ WPPLS <- function(Rij = recurReg.proData(...), beta,
                   do.diff = FALSE)
 {
   expSI <- as.vector(exp(as.matrix(Rij$covariate) %*% beta))
-  expSI[expSI>1e100] <- 1e100
+  expSI[expSI > 1e100] <- 1e100
   if (!is.null(Rij$w.boot))
   {
-    expSI <- as.vector(expSI*Rij$w.boot)
+    expSI <- as.vector(expSI * Rij$w.boot)
   }
-  XexpSI <- as.matrix(Rij$covariate*expSI)
+  XexpSI <- as.matrix(Rij$covariate * expSI)
 
   Skt <- sum_atRisk_rcpp(summand = cbind(expSI, XexpSI),
                          t_start = Rij$t.start,
                          t_stop = Rij$t.stop,
                          t_event = Rij$t.event)
-  dL.hat <- Rij$sum.event.t/Skt[, 1]
+  dL.hat <- Rij$sum.event.t / Skt[, 1]
   dL.hat[is.na(dL.hat)|is.infinite(dL.hat)] <- 0
 
   n.w.t <- length(Rij$w.t.event)
@@ -470,46 +470,46 @@ WPPLS <- function(Rij = recurReg.proData(...), beta,
   {
     if (Rij$w.t.event[[k]][1]=="unit")
     {
-      score[, k] <- Rij$EwIntXdNt[k, ]-
-        colSums(as.matrix(Skt[, -1])*dL.hat)/Rij$n.size
+      score[, k] <- Rij$EwIntXdNt[k, ] -
+        colSums(as.matrix(Skt[, -1]) * dL.hat) / Rij$n.size
     }else
     {
-      score[, k] <- Rij$EwIntXdNt[k, ]-
-        colSums(as.matrix(Skt[, -1])*dL.hat*Rij$w.t.event[[k]])/Rij$n.size
+      score[, k] <- Rij$EwIntXdNt[k, ] -
+        colSums(as.matrix(Skt[, -1]) * dL.hat * Rij$w.t.event[[k]]) / Rij$n.size
     }
   }
   score <- as.vector(score)
 
   results <- list(score = score,
                   rate.base = cumsum(dL.hat),
-                  S0t = Skt[, 1]/Rij$n.size)
+                  S0t = Skt[, 1] / Rij$n.size)
 
   if (do.diff)
   {
-    XsqexpSI <- as.matrix(Rij$covariate.sq*expSI)
+    XsqexpSI <- as.matrix(Rij$covariate.sq * expSI)
     S2t <- sum_atRisk_rcpp(summand = XsqexpSI,
                            t_start = Rij$t.start,
                            t_stop = Rij$t.stop,
                            t_event = Rij$t.event)
-    integrand.dLhat <- (Xsq_lowtri_rcpp(as.matrix(Skt[, -1]))/Skt[, 1]-S2t)*
-      dL.hat/Rij$n.size
-    integrand.dLhat[is.na(integrand.dLhat)|is.infinite(integrand.dLhat)] <- 0
+    integrand.dLhat <- (Xsq_lowtri_rcpp(as.matrix(Skt[, -1])) / Skt[, 1] - S2t) *
+      dL.hat / Rij$n.size
+    integrand.dLhat[is.na(integrand.dLhat) | is.infinite(integrand.dLhat)] <- 0
 
     diff.score <- array(0, c(Rij$n.covariate, n.w.t, Rij$n.covariate))
     for (k in 1:n.w.t)
     {
-      if (Rij$w.t.event[[k]][1]=="unit")
+      if (Rij$w.t.event[[k]][1] == "unit")
       {
         diff.score.wk <- colSums(integrand.dLhat)
       }else
       {
-        diff.score.wk <- colSums(integrand.dLhat*Rij$w.t.event[[k]])
+        diff.score.wk <- colSums(integrand.dLhat * Rij$w.t.event[[k]])
       }
       diff.score[, k, ] <- matrix(diff.score.wk[Rij$index.tri.to.sym],
                                   nrow = Rij$n.covariate,
                                   ncol = Rij$n.covariate)
     }
-    dim(diff.score) <-c(Rij$n.covariate*n.w.t, Rij$n.covariate)
+    dim(diff.score) <-c(Rij$n.covariate * n.w.t, Rij$n.covariate)
 
     results$diff.score <- diff.score
   }
@@ -521,12 +521,12 @@ WPPLS.iid <- function(Rij = recurReg.proData(...), beta,
                       do.diff = FALSE)
 {
   expSI <- as.vector(exp(as.matrix(Rij$covariate) %*% beta))
-  expSI[expSI>1e100] <- 1e100
-  XexpSI <- as.matrix(Rij$covariate*expSI)
+  expSI[expSI > 1e100] <- 1e100
+  XexpSI <- as.matrix(Rij$covariate * expSI)
   if (!is.null(Rij$w.boot))
   {
-    expSI.boot <- as.vector(expSI*Rij$w.boot)
-    XexpSI.boot <- as.matrix(Rij$covariate*expSI.boot)
+    expSI.boot <- as.vector(expSI * Rij$w.boot)
+    XexpSI.boot <- as.matrix(Rij$covariate * expSI.boot)
     Skt <- sum_atRisk_rcpp(summand = cbind(expSI.boot, XexpSI.boot),
                            t_start = Rij$t.start,
                            t_stop = Rij$t.stop,
@@ -539,61 +539,61 @@ WPPLS.iid <- function(Rij = recurReg.proData(...), beta,
                            t_event = Rij$t.event)
   }
 
-  dL.hat <- Rij$sum.event.t/Skt[, 1]
+  dL.hat <- Rij$sum.event.t / Skt[, 1]
   dL.hat[is.na(dL.hat)|is.infinite(dL.hat)] <- 0
-  S1t.std <- as.matrix(Skt[, -1])/Skt[, 1]
+  S1t.std <- as.matrix(Skt[, -1]) / Skt[, 1]
   S1t.std[is.na(S1t.std)|is.infinite(S1t.std)] <- 0
-  S1t.std.dL <- S1t.std*dL.hat
+  S1t.std.dL <- S1t.std * dL.hat
 
   n.w.t <- length(Rij$w.t.event)
-  integrand01.Ii <- array(0, c(length(Rij$t.event), 1+Rij$n.covariate, n.w.t))
+  integrand01.Ii <- array(0, c(length(Rij$t.event), 1 + Rij$n.covariate, n.w.t))
   S1t.std.w <- array(0, c(n.w.t, length(Rij$t.event), Rij$n.covariate))
   summand.i <- array(0, c(length(Rij$id), Rij$n.covariate, 3, n.w.t))
   for (k in 1:n.w.t)
   {
-    if (Rij$w.t.event[[k]][1]=="unit")
+    if (Rij$w.t.event[[k]][1] == "unit")
     {
       integrand01.Ii[, , k] <- cbind(dL.hat, S1t.std.dL)
       S1t.std.w[k, , ] <- S1t.std
     }else
     {
-      integrand01.Ii[, , k] <- cbind(dL.hat*Rij$w.t.event[[k]],
-                                     S1t.std.dL*Rij$w.t.event[[k]])
-      S1t.std.w[k, , ] <- S1t.std*Rij$w.t.event[[k]]
+      integrand01.Ii[, , k] <- cbind(dL.hat * Rij$w.t.event[[k]],
+                                     S1t.std.dL * Rij$w.t.event[[k]])
+      S1t.std.w[k, , ] <- S1t.std * Rij$w.t.event[[k]]
     }
   }
-  dim(integrand01.Ii) <- c(length(Rij$t.event), (1+Rij$n.covariate)*n.w.t)
+  dim(integrand01.Ii) <- c(length(Rij$t.event), (1 + Rij$n.covariate) * n.w.t)
   integral01.Ii <- atRisk_integral_rcpp(integrand = integrand01.Ii,
                                         t_start = Rij$t.start,
                                         t_stop = Rij$t.stop,
                                         t_event = Rij$t.event)
-  dim(integral01.Ii) <- c(length(Rij$id), (1+Rij$n.covariate), n.w.t)
+  dim(integral01.Ii) <- c(length(Rij$id), (1 + Rij$n.covariate), n.w.t)
   for (k in 1:n.w.t)
   {
-    summand.i[, , 1, k] <- -XexpSI*integral01.Ii[, 1, k]
-    summand.i[, , 2, k] <- integral01.Ii[, -1, k]*expSI
-    summand.i[, , 3, k] <- -rbind(0, as.matrix(S1t.std.w[k, , ]))[Rij$stop.from.event.index+1, ]
+    summand.i[, , 1, k] <- -XexpSI * integral01.Ii[, 1, k]
+    summand.i[, , 2, k] <- integral01.Ii[, -1, k] * expSI
+    summand.i[, , 3, k] <- -rbind(0, as.matrix(S1t.std.w[k, , ]))[Rij$stop.from.event.index + 1, ]
   }
-  dim(summand.i) <- c(length(Rij$id), Rij$n.covariate*3*n.w.t)
+  dim(summand.i) <- c(length(Rij$id), Rij$n.covariate * 3 * n.w.t)
   summation.i <- GroupSum_rcpp(summand.i, Rij$id)
   dim(summation.i) <- c(Rij$n.size, Rij$n.covariate, 3, n.w.t)
   score.i <- matrix(apply(summation.i, c(1, 2, 4), sum),
                     nrow = Rij$n.size,
-                    ncol = Rij$n.covariate*n.w.t)+matrix(
+                    ncol = Rij$n.covariate*n.w.t) + matrix(
                       aperm(Rij$wIntXdNt.i, c(2, 3, 1)),
                       nrow = Rij$n.size,
-                      ncol = Rij$n.covariate*n.w.t)
+                      ncol = Rij$n.covariate * n.w.t)
 
   results <- list(score.i = score.i,
                   rate.base = cumsum(dL.hat),
-                  S0t = Skt[, 1]/Rij$n.size)
+                  S0t = Skt[, 1] / Rij$n.size)
 
   if (do.diff)
   {
-    XsqexpSI <- as.matrix(Rij$covariate.sq*expSI)
+    XsqexpSI <- as.matrix(Rij$covariate.sq * expSI)
     if (!is.null(Rij$w.boot))
     {
-      XsqexpSI.boot <- as.matrix(Rij$covariate.sq*expSI.boot)
+      XsqexpSI.boot <- as.matrix(Rij$covariate.sq * expSI.boot)
       S2t.std <- sum_atRisk_rcpp(summand = XsqexpSI.boot,
                                  t_start = Rij$t.start,
                                  t_stop = Rij$t.stop,
@@ -603,30 +603,30 @@ WPPLS.iid <- function(Rij = recurReg.proData(...), beta,
       S2t.std <- sum_atRisk_rcpp(summand = XsqexpSI,
                                  t_start = Rij$t.start,
                                  t_stop = Rij$t.stop,
-                                 t_event = Rij$t.event)/Skt[, 1]
+                                 t_event = Rij$t.event) / Skt[, 1]
     }
-    S2t.std[is.na(S2t.std)|is.infinite(S2t.std)] <- 0
+    S2t.std[is.na(S2t.std) | is.infinite(S2t.std)] <- 0
     S1t.std.sq <- Xsq_lowtri_rcpp(S1t.std)
-    S2t.E0 <- S2t.std-S1t.std.sq
-    S2t.integrand <- S2t.std-S1t.std.sq*2
-    S2t.integrand.dL <- S2t.integrand*dL.hat
-    n.tri <- Rij$n.covariate*(Rij$n.covariate+1)/2
+    S2t.E0 <- S2t.std - S1t.std.sq
+    S2t.integrand <- S2t.std - S1t.std.sq * 2
+    S2t.integrand.dL <- S2t.integrand * dL.hat
+    n.tri <- Rij$n.covariate * (Rij$n.covariate + 1) / 2
     integrand2.Ii <- array(0, c(length(Rij$t.event), n.tri, n.w.t))
     S2t.E0.w <- array(0, c(n.w.t, length(Rij$t.event), n.tri))
     summand.i <- array(0, c(length(Rij$id), n.tri, 4, n.w.t))
     for (k in 1:n.w.t)
     {
-      if (Rij$w.t.event[[k]][1]=="unit")
+      if (Rij$w.t.event[[k]][1] == "unit")
       {
         integrand2.Ii[, , k] <- S2t.integrand.dL
         S2t.E0.w[k, , ] <- S2t.E0
       }else
       {
-        integrand2.Ii[, , k] <- S2t.integrand.dL*Rij$w.t.event[[k]]
-        S2t.E0.w[k, , ] <- S2t.E0*Rij$w.t.event[[k]]
+        integrand2.Ii[, , k] <- S2t.integrand.dL * Rij$w.t.event[[k]]
+        S2t.E0.w[k, , ] <- S2t.E0 * Rij$w.t.event[[k]]
       }
     }
-    dim(integrand2.Ii) <- c(length(Rij$t.event), n.tri*n.w.t)
+    dim(integrand2.Ii) <- c(length(Rij$t.event), n.tri * n.w.t)
     integral2.Ii <- atRisk_integral_rcpp(integrand = integrand2.Ii,
                                          t_start = Rij$t.start,
                                          t_stop = Rij$t.stop,
@@ -634,18 +634,18 @@ WPPLS.iid <- function(Rij = recurReg.proData(...), beta,
     dim(integral2.Ii) <- c(length(Rij$id), n.tri, n.w.t)
     for (k in 1:n.w.t)
     {
-      summand.i[, , 1, k] <- -rbind(0, as.matrix(S2t.E0.w[k, , ]))[Rij$stop.from.event.index+1, ]
-      summand.i[, , 2, k] <- -XsqexpSI*integral01.Ii[, 1, k]
-      summand.i[, , 3, k] <- integral2.Ii[, , k]*expSI
+      summand.i[, , 1, k] <- -rbind(0, as.matrix(S2t.E0.w[k, , ]))[Rij$stop.from.event.index + 1, ]
+      summand.i[, , 2, k] <- -XsqexpSI * integral01.Ii[, 1, k]
+      summand.i[, , 3, k] <- integral2.Ii[, , k] * expSI
       summand.i[, , 4, k] <- twoXYsym_lowtri_rcpp(integral01.Ii[, -1, k], XexpSI)
     }
-    dim(summand.i) <- c(length(Rij$id), n.tri*4*n.w.t)
+    dim(summand.i) <- c(length(Rij$id), n.tri * 4 * n.w.t)
     summation.i <- GroupSum_rcpp(summand.i, Rij$id)
     dim(summation.i) <- c(Rij$n.size, n.tri, 4, n.w.t)
     diff.score.i <- apply(summation.i, c(1, 2, 4), sum)[, Rij$index.tri.to.sym, ]
     dim(diff.score.i) <- c(Rij$n.size, Rij$n.covariate, Rij$n.covariate, n.w.t)
     diff.score.i <- aperm(diff.score.i, c(1, 2, 4, 3))
-    dim(diff.score.i) <- c(Rij$n.size, Rij$n.covariate*n.w.t, Rij$n.covariate)
+    dim(diff.score.i) <- c(Rij$n.size, Rij$n.covariate * n.w.t, Rij$n.covariate)
 
     results$diff.score.i <- diff.score.i
   }
