@@ -29,16 +29,18 @@ KME <- function(t.stop, is.event,
                         w = wi.boot)
   }
 
+  Lhat <- cumsum(dLhat)
   Shat <- cumprod(1 - dLhat)
 
   if (!is.null(t.points))
   {
     index.points <- rankAinB_rcpp(t.points, t.event) + 1
     Shat <- c(1, Shat)[index.points]
-    dLhat <- c(0, dLhat)[index.points]
+    Lhat <- c(0, Lhat)[index.points]
   }
 
   results <- list(jumps = t.event,
+                  cumuhazard = Lhat,
                   survival = Shat,
                   hazard = dLhat)
 
