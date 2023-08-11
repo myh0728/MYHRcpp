@@ -47,20 +47,6 @@ KME <- function(t.stop, is.event,
   return(results)
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-##### to be revised ##############################################
-
 SKME <- function(t.stop, is.event, X, x = NULL,
                  t.points = NULL, t.event = NULL,
                  kernel = "K2_Biweight",
@@ -164,21 +150,35 @@ SKME <- function(t.stop, is.event, X, x = NULL,
   }
 
   dLhat <- pmin(pmax(dLhat, 0), 1)
+  Lhat <- t(apply(dLhat, 1, cumsum))
   Shat <- t(apply(1 - dLhat, 1, cumprod))
 
   if (!is.null(t.points))
   {
     index.points <- rankAinB_rcpp(t.points, t.event) + 1
     Shat <- cbind(1, Shat)[, index.points]
-    dLhat <- cbind(0, dLhat)[, index.points]
+    Lhat <- cbind(0, Lhat)[, index.points]
   }
 
   results <- list(jumps = t.event,
+                  cumuhazard = Lhat,
                   survival = Shat,
                   hazard = dLhat)
 
   return(results)
 }
+
+
+
+
+
+
+
+
+
+
+
+##### to be revised ##############################################
 
 SurvP.impute <- function(t.stop, is.event, covariate,
                          t.points = NULL, t.event = NULL,

@@ -1441,7 +1441,6 @@ double CVDNWuniY_K2B_rcpp(arma::mat X,
                           arma::vec p_y){
 
   arma::uword n_n = X.n_rows;
-  arma::uword n_m = rank_y_in_Y.n_elem;
   double cv = 0;
 
   for (size_t i = 0; i < n_n; ++i){
@@ -1489,7 +1488,6 @@ double CVDNWuniY_K2B_w_rcpp(arma::mat X,
                             arma::vec w){
 
   arma::uword n_n = X.n_rows;
-  arma::uword n_m = rank_y_in_Y.n_elem;
   double cv = 0;
 
   for (size_t i = 0; i < n_n; ++i){
@@ -1538,7 +1536,6 @@ double CVDNWuniY_K4B_rcpp(arma::mat X,
                           arma::vec p_y){
 
   arma::uword n_n = X.n_rows;
-  arma::uword n_m = rank_y_in_Y.n_elem;
   double cv = 0;
 
   for (size_t i = 0; i < n_n; ++i){
@@ -1588,7 +1585,6 @@ double CVDNWuniY_K4B_w_rcpp(arma::mat X,
                             arma::vec w){
 
   arma::uword n_n = X.n_rows;
-  arma::uword n_m = rank_y_in_Y.n_elem;
   double cv = 0;
 
   for (size_t i = 0; i < n_n; ++i){
@@ -1639,7 +1635,6 @@ double CVDNWuniY_KG_rcpp(arma::mat X,
                          arma::vec p_y){
 
   arma::uword n_n = X.n_rows;
-  arma::uword n_m = rank_y_in_Y.n_elem;
   double cv = 0;
 
   for (size_t i = 0; i < n_n; ++i){
@@ -1685,7 +1680,6 @@ double CVDNWuniY_KG_w_rcpp(arma::mat X,
                            arma::vec w){
 
   arma::uword n_n = X.n_rows;
-  arma::uword n_m = rank_y_in_Y.n_elem;
   double cv = 0;
 
   for (size_t i = 0; i < n_n; ++i){
@@ -2232,7 +2226,6 @@ double SSDNWuniY_K2B_rcpp(arma::mat X,
                           arma::vec p_y){
 
   arma::uword n_n = X.n_rows;
-  arma::uword n_m = rank_y_in_Y.n_elem;
   double cv = 0;
 
   for (size_t i = 0; i < n_n; ++i){
@@ -2278,7 +2271,6 @@ double SSDNWuniY_K2B_w_rcpp(arma::mat X,
                             arma::vec w){
 
   arma::uword n_n = X.n_rows;
-  arma::uword n_m = rank_y_in_Y.n_elem;
   double cv = 0;
 
   for (size_t i = 0; i < n_n; ++i){
@@ -2325,7 +2317,6 @@ double SSDNWuniY_K4B_rcpp(arma::mat X,
                           arma::vec p_y){
 
   arma::uword n_n = X.n_rows;
-  arma::uword n_m = rank_y_in_Y.n_elem;
   double cv = 0;
 
   for (size_t i = 0; i < n_n; ++i){
@@ -2373,7 +2364,6 @@ double SSDNWuniY_K4B_w_rcpp(arma::mat X,
                             arma::vec w){
 
   arma::uword n_n = X.n_rows;
-  arma::uword n_m = rank_y_in_Y.n_elem;
   double cv = 0;
 
   for (size_t i = 0; i < n_n; ++i){
@@ -2422,7 +2412,6 @@ double SSDNWuniY_KG_rcpp(arma::mat X,
                          arma::vec p_y){
 
   arma::uword n_n = X.n_rows;
-  arma::uword n_m = rank_y_in_Y.n_elem;
   double cv = 0;
 
   for (size_t i = 0; i < n_n; ++i){
@@ -2466,7 +2455,6 @@ double SSDNWuniY_KG_w_rcpp(arma::mat X,
                            arma::vec w){
 
   arma::uword n_n = X.n_rows;
-  arma::uword n_m = rank_y_in_Y.n_elem;
   double cv = 0;
 
   for (size_t i = 0; i < n_n; ++i){

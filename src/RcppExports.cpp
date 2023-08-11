@@ -155,6 +155,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// diff_lL_normal
+List diff_lL_normal(arma::mat X, arma::vec Y, double alpha, arma::vec beta, double sigma);
+RcppExport SEXP _MYHRcpp_diff_lL_normal(SEXP XSEXP, SEXP YSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    rcpp_result_gen = Rcpp::wrap(diff_lL_normal(X, Y, alpha, beta, sigma));
+    return rcpp_result_gen;
+END_RCPP
+}
 // eXsq_rcpp
 arma::mat eXsq_rcpp(arma::mat data_X);
 RcppExport SEXP _MYHRcpp_eXsq_rcpp(SEXP data_XSEXP) {
@@ -1496,6 +1511,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_lpL_logistic_rcpp", (DL_FUNC) &_MYHRcpp_lpL_logistic_rcpp, 7},
     {"_MYHRcpp_dG1alt_logistic_rcpp", (DL_FUNC) &_MYHRcpp_dG1alt_logistic_rcpp, 8},
     {"_MYHRcpp_lpLalt_logistic_rcpp", (DL_FUNC) &_MYHRcpp_lpLalt_logistic_rcpp, 8},
+    {"_MYHRcpp_diff_lL_normal", (DL_FUNC) &_MYHRcpp_diff_lL_normal, 5},
     {"_MYHRcpp_eXsq_rcpp", (DL_FUNC) &_MYHRcpp_eXsq_rcpp, 1},
     {"_MYHRcpp_eXsq_w_rcpp", (DL_FUNC) &_MYHRcpp_eXsq_w_rcpp, 2},
     {"_MYHRcpp_Xsq_lowtri_rcpp", (DL_FUNC) &_MYHRcpp_Xsq_lowtri_rcpp, 1},

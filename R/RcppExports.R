@@ -33,6 +33,10 @@ lpLalt_logistic_rcpp <- function(X, Y, n1, alpha, beta, gamma, iter_max, stop_to
     .Call(`_MYHRcpp_lpLalt_logistic_rcpp`, X, Y, n1, alpha, beta, gamma, iter_max, stop_tol)
 }
 
+diff_lL_normal <- function(X, Y, alpha, beta, sigma) {
+    .Call(`_MYHRcpp_diff_lL_normal`, X, Y, alpha, beta, sigma)
+}
+
 eXsq_rcpp <- function(data_X) {
     .Call(`_MYHRcpp_eXsq_rcpp`, data_X)
 }
