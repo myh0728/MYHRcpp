@@ -3,11 +3,11 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List diff_lL_normal(arma::mat X,
-                    arma::vec Y,
-                    double alpha,
-                    arma::vec beta,
-                    double sigma){
+List diff_lL_normal_rcpp(arma::mat X,
+                         arma::vec Y,
+                         double alpha,
+                         arma::vec beta,
+                         double sigma){
 
   arma::uword n_n = X.n_rows;
   arma::uword n_p = X.n_cols;

@@ -4,7 +4,7 @@ theta0 <- 1
 theta1 <- 1
 theta2 <- 1
 sigma0 <- 0.5
-beta0 <- 0.8
+beta0 <- 0.2
 
 n <- 100
 N <- 1000
@@ -33,19 +33,53 @@ for (i in 1:N)
 X1_shift <- X_shift[, 1]
 X2_shift <- X_shift[, 2]
 
-### average of X given Y
+### average of X given Y (auxiliary information)
 
-phi1 <- colMeans(X_shift[Y_shift <= quantile(Y_shift, 0.25), ])
-phi2 <- colMeans(X_shift[(Y_shift > quantile(Y_shift, 0.25)) &
-                           (Y_shift <= quantile(Y_shift, 0.5)), ])
-phi3 <- colMeans(X_shift[(Y_shift > quantile(Y_shift, 0.5)) &
-                           (Y_shift <= quantile(Y_shift, 0.75)), ])
-phi4 <- colMeans(X_shift[Y_shift > quantile(Y_shift, 0.75), ])
+y.pts <- matrix(0, 2, 2)
+y.pts[1, ] <- quantile(Y_shift, c(0.0, 0.5))
+y.pts[2, ] <- quantile(Y_shift, c(0.5, 1.0))
 
-### initial MLE
+phi1 <- colMeans(X_shift[(Y_shift > y.pts[1, 1]) & (Y_shift <= y.pts[1, 2]), ])
+phi2 <- colMeans(X_shift[(Y_shift > y.pts[2, 1]) & (Y_shift <= y.pts[2, 2]), ])
 
-MLE.normal(X = X, Y = Y)
+auxLS.normal(X = X, Y = Y, aux = "EXsubgroupY",
+             control.EXsubgroupY = list(phi = rbind(phi1, phi2), y.pts = y.pts,
+                                        sample.size = N))
+aux.normal(X = X, Y = Y, aux = "EXsubgroupY",
+           control.EXsubgroupY = list(phi = rbind(phi1, phi2), y.pts = y.pts,
+                                      sample.size = N))
 
+y.pts <- matrix(0, 4, 2)
+y.pts[1, ] <- quantile(Y_shift, c(0.00, 0.25))
+y.pts[2, ] <- quantile(Y_shift, c(0.25, 0.5))
+y.pts[3, ] <- quantile(Y_shift, c(0.50, 0.75))
+y.pts[4, ] <- quantile(Y_shift, c(0.75, 1.00))
 
+phi1 <- colMeans(X_shift[(Y_shift > y.pts[1, 1]) & (Y_shift <= y.pts[1, 2]), ])
+phi2 <- colMeans(X_shift[(Y_shift > y.pts[2, 1]) & (Y_shift <= y.pts[2, 2]), ])
+phi3 <- colMeans(X_shift[(Y_shift > y.pts[3, 1]) & (Y_shift <= y.pts[3, 2]), ])
+phi4 <- colMeans(X_shift[(Y_shift > y.pts[4, 1]) & (Y_shift <= y.pts[4, 2]), ])
 
+auxLS.normal(X = X, Y = Y, aux = "EXsubgroupY",
+             control.EXsubgroupY = list(phi = rbind(phi1, phi2, phi3, phi4),
+                                        y.pts = y.pts,
+                                        sample.size = N))
+aux.normal(X = X, Y = Y, aux = "EXsubgroupY",
+           control.EXsubgroupY = list(phi = rbind(phi1, phi2, phi3, phi4),
+                                      y.pts = y.pts,
+                                      sample.size = N))
+
+### average of Y given X (auxiliary information)
+
+phi1 <- mean(Y_shift[X_shift[, 1] > 0])
+phi2 <- mean(Y_shift[X_shift[, 1] <= 0])
+
+auxLS.normal(X = X, Y = Y, aux = "EYsubgroupX",
+             control.EYsubgroupX = list(phi = c(phi1, phi2),
+                                        inclusion = cbind(X[, 1] > 0, X[, 1] <= 0),
+                                        sample.size = N))
+aux.normal(X = X, Y = Y, aux = "EYsubgroupX",
+           control.EYsubgroupX = list(phi = c(phi1, phi2),
+                                      inclusion = cbind(X[, 1] > 0, X[, 1] <= 0),
+                                      sample.size = N))
 

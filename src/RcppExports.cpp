@@ -155,9 +155,75 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// diff_lL_normal
-List diff_lL_normal(arma::mat X, arma::vec Y, double alpha, arma::vec beta, double sigma);
-RcppExport SEXP _MYHRcpp_diff_lL_normal(SEXP XSEXP, SEXP YSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP) {
+// auxLS_EXsubgroupY_normal_rcpp
+List auxLS_EXsubgroupY_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::mat phi, double LS_beta, arma::mat y_pts);
+RcppExport SEXP _MYHRcpp_auxLS_EXsubgroupY_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP LS_betaSEXP, SEXP y_ptsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< double >::type LS_beta(LS_betaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type y_pts(y_ptsSEXP);
+    rcpp_result_gen = Rcpp::wrap(auxLS_EXsubgroupY_normal_rcpp(X, alpha, beta, sigma, phi, LS_beta, y_pts));
+    return rcpp_result_gen;
+END_RCPP
+}
+// aux_EXsubgroupY_normal_rcpp
+List aux_EXsubgroupY_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::mat phi, arma::mat y_pts);
+RcppExport SEXP _MYHRcpp_aux_EXsubgroupY_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP y_ptsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type y_pts(y_ptsSEXP);
+    rcpp_result_gen = Rcpp::wrap(aux_EXsubgroupY_normal_rcpp(X, alpha, beta, sigma, phi, y_pts));
+    return rcpp_result_gen;
+END_RCPP
+}
+// auxLS_EYsubgroupX_normal_rcpp
+List auxLS_EYsubgroupX_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::vec phi, double LS_beta, arma::umat index);
+RcppExport SEXP _MYHRcpp_auxLS_EYsubgroupX_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP LS_betaSEXP, SEXP indexSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< double >::type LS_beta(LS_betaSEXP);
+    Rcpp::traits::input_parameter< arma::umat >::type index(indexSEXP);
+    rcpp_result_gen = Rcpp::wrap(auxLS_EYsubgroupX_normal_rcpp(X, alpha, beta, sigma, phi, LS_beta, index));
+    return rcpp_result_gen;
+END_RCPP
+}
+// aux_EYsubgroupX_normal_rcpp
+List aux_EYsubgroupX_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::vec phi, arma::umat index);
+RcppExport SEXP _MYHRcpp_aux_EYsubgroupX_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP indexSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< arma::umat >::type index(indexSEXP);
+    rcpp_result_gen = Rcpp::wrap(aux_EYsubgroupX_normal_rcpp(X, alpha, beta, sigma, phi, index));
+    return rcpp_result_gen;
+END_RCPP
+}
+// diff_lL_normal_rcpp
+List diff_lL_normal_rcpp(arma::mat X, arma::vec Y, double alpha, arma::vec beta, double sigma);
+RcppExport SEXP _MYHRcpp_diff_lL_normal_rcpp(SEXP XSEXP, SEXP YSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -166,7 +232,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
-    rcpp_result_gen = Rcpp::wrap(diff_lL_normal(X, Y, alpha, beta, sigma));
+    rcpp_result_gen = Rcpp::wrap(diff_lL_normal_rcpp(X, Y, alpha, beta, sigma));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1511,7 +1577,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_lpL_logistic_rcpp", (DL_FUNC) &_MYHRcpp_lpL_logistic_rcpp, 7},
     {"_MYHRcpp_dG1alt_logistic_rcpp", (DL_FUNC) &_MYHRcpp_dG1alt_logistic_rcpp, 8},
     {"_MYHRcpp_lpLalt_logistic_rcpp", (DL_FUNC) &_MYHRcpp_lpLalt_logistic_rcpp, 8},
-    {"_MYHRcpp_diff_lL_normal", (DL_FUNC) &_MYHRcpp_diff_lL_normal, 5},
+    {"_MYHRcpp_auxLS_EXsubgroupY_normal_rcpp", (DL_FUNC) &_MYHRcpp_auxLS_EXsubgroupY_normal_rcpp, 7},
+    {"_MYHRcpp_aux_EXsubgroupY_normal_rcpp", (DL_FUNC) &_MYHRcpp_aux_EXsubgroupY_normal_rcpp, 6},
+    {"_MYHRcpp_auxLS_EYsubgroupX_normal_rcpp", (DL_FUNC) &_MYHRcpp_auxLS_EYsubgroupX_normal_rcpp, 7},
+    {"_MYHRcpp_aux_EYsubgroupX_normal_rcpp", (DL_FUNC) &_MYHRcpp_aux_EYsubgroupX_normal_rcpp, 6},
+    {"_MYHRcpp_diff_lL_normal_rcpp", (DL_FUNC) &_MYHRcpp_diff_lL_normal_rcpp, 5},
     {"_MYHRcpp_eXsq_rcpp", (DL_FUNC) &_MYHRcpp_eXsq_rcpp, 1},
     {"_MYHRcpp_eXsq_w_rcpp", (DL_FUNC) &_MYHRcpp_eXsq_w_rcpp, 2},
     {"_MYHRcpp_Xsq_lowtri_rcpp", (DL_FUNC) &_MYHRcpp_Xsq_lowtri_rcpp, 1},

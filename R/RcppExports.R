@@ -33,8 +33,24 @@ lpLalt_logistic_rcpp <- function(X, Y, n1, alpha, beta, gamma, iter_max, stop_to
     .Call(`_MYHRcpp_lpLalt_logistic_rcpp`, X, Y, n1, alpha, beta, gamma, iter_max, stop_tol)
 }
 
-diff_lL_normal <- function(X, Y, alpha, beta, sigma) {
-    .Call(`_MYHRcpp_diff_lL_normal`, X, Y, alpha, beta, sigma)
+auxLS_EXsubgroupY_normal_rcpp <- function(X, alpha, beta, sigma, phi, LS_beta, y_pts) {
+    .Call(`_MYHRcpp_auxLS_EXsubgroupY_normal_rcpp`, X, alpha, beta, sigma, phi, LS_beta, y_pts)
+}
+
+aux_EXsubgroupY_normal_rcpp <- function(X, alpha, beta, sigma, phi, y_pts) {
+    .Call(`_MYHRcpp_aux_EXsubgroupY_normal_rcpp`, X, alpha, beta, sigma, phi, y_pts)
+}
+
+auxLS_EYsubgroupX_normal_rcpp <- function(X, alpha, beta, sigma, phi, LS_beta, index) {
+    .Call(`_MYHRcpp_auxLS_EYsubgroupX_normal_rcpp`, X, alpha, beta, sigma, phi, LS_beta, index)
+}
+
+aux_EYsubgroupX_normal_rcpp <- function(X, alpha, beta, sigma, phi, index) {
+    .Call(`_MYHRcpp_aux_EYsubgroupX_normal_rcpp`, X, alpha, beta, sigma, phi, index)
+}
+
+diff_lL_normal_rcpp <- function(X, Y, alpha, beta, sigma) {
+    .Call(`_MYHRcpp_diff_lL_normal_rcpp`, X, Y, alpha, beta, sigma)
 }
 
 eXsq_rcpp <- function(data_X) {
