@@ -1,5 +1,7 @@
 ##### Normal regression model #####
 
+p <- 2
+
 theta0 <- 1
 theta1 <- 1
 theta2 <- 1
@@ -35,18 +37,17 @@ X2_shift <- X_shift[, 2]
 
 ### average of X given Y (auxiliary information)
 
-y.pts <- matrix(0, 2, 2)
+y.pts <- matrix(0, 1, 2)
 y.pts[1, ] <- quantile(Y_shift, c(0.0, 0.5))
-y.pts[2, ] <- quantile(Y_shift, c(0.5, 1.0))
 
-phi1 <- colMeans(X_shift[(Y_shift > y.pts[1, 1]) & (Y_shift <= y.pts[1, 2]), ])
-phi2 <- colMeans(X_shift[(Y_shift > y.pts[2, 1]) & (Y_shift <= y.pts[2, 2]), ])
+phi <- matrix(0, 1, p)
+phi[1, ] <- colMeans(X_shift[(Y_shift > y.pts[1, 1]) & (Y_shift <= y.pts[1, 2]), ])
 
 auxLS.normal(X = X, Y = Y, aux = "EXsubgroupY",
-             control.EXsubgroupY = list(phi = rbind(phi1, phi2), y.pts = y.pts,
+             control.EXsubgroupY = list(phi = phi, y.pts = y.pts,
                                         sample.size = N))
 aux.normal(X = X, Y = Y, aux = "EXsubgroupY",
-           control.EXsubgroupY = list(phi = rbind(phi1, phi2), y.pts = y.pts,
+           control.EXsubgroupY = list(phi = phi, y.pts = y.pts,
                                       sample.size = N))
 
 y.pts <- matrix(0, 4, 2)

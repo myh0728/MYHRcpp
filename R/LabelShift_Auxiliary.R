@@ -72,7 +72,7 @@ auxLS.normal <- function(X, Y, aux = "EXsubgroupY",
 
       thetahat <- as.vector(theta.initial + invH %*%
         t(aux_Psi$score_gradient[ , 1:(number_p + 2)]) %*%
-        solve(JV)[(number_all - number_p * number_k + 1):number_all,
+        pinv_rcpp(JV)[(number_all - number_p * number_k + 1):number_all,
                   (number_all - number_p * number_k + 1):number_all] %*%
           (-aux_Psi$score))
     }
@@ -129,7 +129,7 @@ auxLS.normal <- function(X, Y, aux = "EXsubgroupY",
 
       thetahat <- as.vector(theta.initial + invH %*%
                               t(aux_Psi$score_gradient[ , 1:(number_p + 2)]) %*%
-                              solve(JV)[(number_all - number_k + 1):number_all,
+                              pinv_rcpp(JV)[(number_all - number_k + 1):number_all,
                                         (number_all - number_k + 1):number_all] %*%
                               (-aux_Psi$score))
     }
@@ -201,7 +201,7 @@ aux.normal <- function(X, Y, aux = "EXsubgroupY",
 
       thetahat <- as.vector(theta.initial + invH %*%
                               t(aux_Psi$score_gradient[ , 1:(number_p + 2)]) %*%
-                              solve(JV)[(number_all - number_p * number_k + 1):number_all,
+                              pinv_rcpp(JV)[(number_all - number_p * number_k + 1):number_all,
                                         (number_all - number_p * number_k + 1):number_all] %*%
                               (-aux_Psi$score))
     }
@@ -242,7 +242,7 @@ aux.normal <- function(X, Y, aux = "EXsubgroupY",
 
       thetahat <- as.vector(theta.initial + invH %*%
                               t(aux_Psi$score_gradient[ , 1:(number_p + 2)]) %*%
-                              solve(JV)[(number_all - number_k + 1):number_all,
+                              pinv_rcpp(JV)[(number_all - number_k + 1):number_all,
                                         (number_all - number_k + 1):number_all] %*%
                               (-aux_Psi$score))
     }
