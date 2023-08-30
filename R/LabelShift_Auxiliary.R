@@ -67,11 +67,14 @@ auxLS.normal <- function(X, Y, aux = "EXsubgroupY",
               1:(number_all - number_p * number_k)])
       JV[(number_all - number_p * number_k + 1):number_all,
          (number_all - number_p * number_k + 1):number_all] <- -aux_Psi$score_square
-      diag(JV[(number_p + 3):(number_p * number_k + number_p + 2),
-              (number_p + 3):(number_p * number_k + number_p + 2)]) <- control.EXsubgroupY$sample.size / number_n
+      JV[(number_p + 3):(number_p * number_k + number_p + 2),
+         (number_p + 3):(number_p * number_k + number_p + 2)] <- diag(number_p * number_k) *
+        control.EXsubgroupY$sample.size / number_n
 
       thetahat <- as.vector(theta.initial + invH %*%
-        t(aux_Psi$score_gradient[ , 1:(number_p + 2)]) %*%
+        t(matrix(aux_Psi$score_gradient[, 1:(number_p + 2)],
+                 nrow = number_p * number_k,
+                 ncol = number_p + 2)) %*%
         pinv_rcpp(JV)[(number_all - number_p * number_k + 1):number_all,
                   (number_all - number_p * number_k + 1):number_all] %*%
           (-aux_Psi$score))
@@ -124,11 +127,14 @@ auxLS.normal <- function(X, Y, aux = "EXsubgroupY",
               1:(number_all - number_k)])
       JV[(number_all - number_k + 1):number_all,
          (number_all - number_k + 1):number_all] <- -aux_Psi$score_square
-      diag(JV[(number_p + 3):(number_k + number_p + 2),
-              (number_p + 3):(number_k + number_p + 2)]) <- control.EYsubgroupX$sample.size / number_n
+      JV[(number_p + 3):(number_k + number_p + 2),
+         (number_p + 3):(number_k + number_p + 2)] <- diag(number_k) *
+        control.EYsubgroupX$sample.size / number_n
 
       thetahat <- as.vector(theta.initial + invH %*%
-                              t(aux_Psi$score_gradient[ , 1:(number_p + 2)]) %*%
+                              t(matrix(aux_Psi$score_gradient[ , 1:(number_p + 2)],
+                                       nrow = number_k,
+                                       ncol = number_p + 2)) %*%
                               pinv_rcpp(JV)[(number_all - number_k + 1):number_all,
                                         (number_all - number_k + 1):number_all] %*%
                               (-aux_Psi$score))
@@ -196,13 +202,16 @@ aux.normal <- function(X, Y, aux = "EXsubgroupY",
               1:(number_all - number_p * number_k)])
       JV[(number_all - number_p * number_k + 1):number_all,
          (number_all - number_p * number_k + 1):number_all] <- -aux_Psi$score_square
-      diag(JV[(number_p + 3):(number_p * number_k + number_p + 2),
-              (number_p + 3):(number_p * number_k + number_p + 2)]) <- control.EXsubgroupY$sample.size / number_n
+      JV[(number_p + 3):(number_p * number_k + number_p + 2),
+         (number_p + 3):(number_p * number_k + number_p + 2)] <- diag(number_p * number_k) *
+        control.EXsubgroupY$sample.size / number_n
 
       thetahat <- as.vector(theta.initial + invH %*%
-                              t(aux_Psi$score_gradient[ , 1:(number_p + 2)]) %*%
+                              t(matrix(aux_Psi$score_gradient[ , 1:(number_p + 2)],
+                                       nrow = number_p * number_k,
+                                       ncol = number_p + 2)) %*%
                               pinv_rcpp(JV)[(number_all - number_p * number_k + 1):number_all,
-                                        (number_all - number_p * number_k + 1):number_all] %*%
+                                            (number_all - number_p * number_k + 1):number_all] %*%
                               (-aux_Psi$score))
     }
   }
@@ -237,11 +246,14 @@ aux.normal <- function(X, Y, aux = "EXsubgroupY",
               1:(number_all - number_k)])
       JV[(number_all - number_k + 1):number_all,
          (number_all - number_k + 1):number_all] <- -aux_Psi$score_square
-      diag(JV[(number_p + 3):(number_k + number_p + 2),
-              (number_p + 3):(number_k + number_p + 2)]) <- control.EYsubgroupX$sample.size / number_n
+      JV[(number_p + 3):(number_k + number_p + 2),
+         (number_p + 3):(number_k + number_p + 2)] <- diag(number_k) *
+        control.EYsubgroupX$sample.size / number_n
 
       thetahat <- as.vector(theta.initial + invH %*%
-                              t(aux_Psi$score_gradient[ , 1:(number_p + 2)]) %*%
+                              t(matrix(aux_Psi$score_gradient[ , 1:(number_p + 2)],
+                                       nrow = number_k,
+                                       ncol = number_p + 2)) %*%
                               pinv_rcpp(JV)[(number_all - number_k + 1):number_all,
                                         (number_all - number_k + 1):number_all] %*%
                               (-aux_Psi$score))
