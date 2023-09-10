@@ -1,15 +1,18 @@
-n <- 100
-p <- 5
+n <- 1000
+p <- 2
+alpha0 <- 1
+beta0 <- rep(1, p)
+sigma0 <- 1
 
 Xi <- matrix(rnorm(n * p), n, p)
 Ci <- 1 + rexp(n)
 
 test.data1 <- simSurv.AFT.normal(Xi = Xi, Ci = Ci,
-                                 alpha0 = 1, beta0 = rep(1, 5),
-                                 sigma.error = 1)
+                                 alpha0 = alpha0, beta0 = beta0,
+                                 sigma.error = sigma0)
 
 test.data2 <- simSurv.PH(Xi = Xi, Ci = Ci,
-                         beta0 = rep(1, 5))
+                         beta0 = beta0)
 
 #####
 
@@ -47,11 +50,18 @@ lines(sort(unique(test.data1$t.stop)),
       Shat.empirical.biased2,
       type = 's', lty = 3, col = 3)
 
+###
 
+x <- matrix(rep(0, p), 1, p)
+t.grids <- seq(0, max(test.data1$t.stop), 0.1)
+S0.cond <- 1 - pnorm(log(t.grids) - alpha0 - sum(x * beta0), mean = 0, sd = sigma0)
+plot(t.grids, S0.cond, type = 'l', xlab = "time", ylab = "survival")
 
-
-
-
+Shat.cond <- SKME(t.stop = test.data1$t.stop,
+                  is.event = test.data1$is.event,
+                  X = Xi, x = x,
+                  bandwidth = 0.5, t.points = t.grids)
+lines(t.grids, Shat.cond$survival, type = 's', col = 2)
 
 
 
@@ -59,10 +69,6 @@ lines(sort(unique(test.data1$t.stop)),
 
 
 ##### to be revised ##############################################
-
-Shat.cond <- SKME(t.stop = test.data1$t.stop,
-                  is.event = test.data1$is.event,
-                  X = Xi)
 
 t.points <- seq(0, 3, 0.01)
 S.empirical <- colMeans(outer(test.data1$failure.time, t.points, FUN = ">"))

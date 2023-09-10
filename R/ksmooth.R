@@ -1,5 +1,5 @@
-LOOCV <- function(X, Y, regression = "mean",
-                  kernel = "K2_Biweight",
+LOOCV <- function(data, X.name, Y.name,
+                  regression = "mean", kernel = "K2_Biweight",
                   initial = 1, wi.boot = NULL,
                   method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
                   mean.weight.Ycomponent = NULL,
@@ -7,8 +7,8 @@ LOOCV <- function(X, Y, regression = "mean",
                   dist.sample.control = list(SN = 100, seed = 123),
                   dist.quantile.control = list(QN = 100))
 {
-  X <- as.matrix(X)
-  Y <- as.matrix(Y)
+  X <- as.matrix(data[, X.name])
+  Y <- as.matrix(data[, Y.name])
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
@@ -377,7 +377,151 @@ LOOCV <- function(X, Y, regression = "mean",
   return(results)
 }
 
-NW <- function(X, Y, x = NULL, regression = "mean", y = NULL,
+KfoldCV <- function(data, X.name, Y.name, regression = "mean", K = 5, seed.K = 123,
+                    kernel = "K2_Biweight", initial = 1,
+                    method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
+                    mean.weight.Ycomponent = NULL)
+{
+  X <- as.matrix(data[, X.name])
+  Y <- as.matrix(data[, Y.name])
+
+  number_n <- dim(X)[1]
+  number_p <- dim(X)[2]
+  number_m <- dim(Y)[2]
+  number_NK <- floor(number_n / K)
+
+  set.seed(seed.K)
+  permute <- sample(1:number_n, size = number_NK * K)
+  dim(permute) <- c(K, number_NK)
+
+  if (regression == "mean")
+  {
+    if (is.null(mean.weight.Ycomponent))
+    {
+      mean.weight.Ycomponent <- rep(1 / number_m, number_m)
+    }else
+    {
+      mean.weight.Ycomponent <- as.vector(mean.weight.Ycomponent)
+      mean.weight.Ycomponent <- mean.weight.Ycomponent / sum(mean.weight.Ycomponent)
+    }
+
+    if (kernel == "K2_Biweight")
+    {
+      cv.h <- function(h.log){
+
+        cv <- 0
+        for (k in 1:K)
+        {
+          cv <- cv + sum(t((as.matrix(Y[permute[k, ], ]) - NW_K2B_rcpp(
+            X = as.matrix(X[as.vector(permute[-k, ]), ]),
+            Y = as.matrix(Y[as.vector(permute[-k, ]), ]),
+            x = as.matrix(X[permute[k, ], ]),
+            h = rep(exp(h.log), number_p))) ^ 2) * mean.weight.Ycomponent) / number_NK
+        }
+        return(cv)
+      }
+    }else if (kernel == "K4_Biweight")
+    {
+      cv.h <- function(h.log){
+
+        cv <- 0
+        for (k in 1:K)
+        {
+          cv <- cv + sum(t((as.matrix(Y[permute[k, ], ]) - NW_K4B_rcpp(
+            X = as.matrix(X[as.vector(permute[-k, ]), ]),
+            Y = as.matrix(Y[as.vector(permute[-k, ]), ]),
+            x = as.matrix(X[permute[k, ], ]),
+            h = rep(exp(h.log), number_p))) ^ 2) * mean.weight.Ycomponent) / number_NK
+        }
+        return(cv)
+      }
+    }else if (kernel == "Gaussian")
+    {
+      cv.h <- function(h.log){
+
+        cv <- 0
+        for (k in 1:K)
+        {
+          cv <- cv + sum(t((as.matrix(Y[permute[k, ], ]) - NW_KG_rcpp(
+            X = as.matrix(X[as.vector(permute[-k, ]), ]),
+            Y = as.matrix(Y[as.vector(permute[-k, ]), ]),
+            x = as.matrix(X[permute[k, ], ]),
+            h = rep(exp(h.log), number_p))) ^ 2) * mean.weight.Ycomponent) / number_NK
+        }
+        return(cv)
+      }
+    }
+  }else if (regression == "distribution")
+  {
+    Y.CP <- ctingP_rcpp(Y = Y, y = Y)
+
+    if (kernel == "K2_Biweight")
+    {
+      cv.h <- function(h.log){
+
+        cv <- 0
+        for (k in 1:K)
+        {
+          cv <- cv + sum(t((as.matrix(Y.CP[permute[k, ], ]) - NW_K2B_rcpp(
+            X = as.matrix(X[as.vector(permute[-k, ]), ]),
+            Y = as.matrix(Y.CP[as.vector(permute[-k, ]), ]),
+            x = as.matrix(X[permute[k, ], ]),
+            h = rep(exp(h.log), number_p))) ^ 2) / number_n) / number_NK
+        }
+        return(cv)
+      }
+    }else if (kernel == "K4_Biweight")
+    {
+      cv.h <- function(h.log){
+
+        cv <- 0
+        for (k in 1:K)
+        {
+          cv <- cv + sum(t((as.matrix(Y.CP[permute[k, ], ]) - NW_K4B_rcpp(
+            X = as.matrix(X[as.vector(permute[-k, ]), ]),
+            Y = as.matrix(Y.CP[as.vector(permute[-k, ]), ]),
+            x = as.matrix(X[permute[k, ], ]),
+            h = rep(exp(h.log), number_p))) ^ 2) / number_n) / number_NK
+        }
+        return(cv)
+      }
+    }else if (kernel == "Gaussian")
+    {
+      cv.h <- function(h.log){
+
+        cv <- 0
+        for (k in 1:K)
+        {
+          cv <- cv + sum(t((as.matrix(Y.CP[permute[k, ], ]) - NW_KG_rcpp(
+            X = as.matrix(X[as.vector(permute[-k, ]), ]),
+            Y = as.matrix(Y.CP[as.vector(permute[-k, ]), ]),
+            x = as.matrix(X[permute[k, ], ]),
+            h = rep(exp(h.log), number_p))) ^ 2) / number_n) / number_NK
+        }
+        return(cv)
+      }
+    }
+  }
+
+  if (method == "nlminb")
+  {
+    esti <- nlminb(start = log(initial), objective = cv.h,
+                   control = list(abs.tol = abs.tol))
+
+  }else if (method == "optim")
+  {
+    esti <- optim(par = log(initial), fn = cv.h,
+                  method = optim.method,
+                  control = list(abstol = abs.tol))
+  }
+
+  results <- list(bandwidth = exp(esti$par),
+                  details = esti)
+
+  return(results)
+}
+
+NW <- function(data, X.name, Y.name, x = NULL, regression = "mean", y = NULL,
                kernel = "K2_Biweight", wi.boot = NULL,
                bandwidth = NULL, bandwidth.initial = 1,
                method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
@@ -386,8 +530,8 @@ NW <- function(X, Y, x = NULL, regression = "mean", y = NULL,
                dist.sample.control = list(SN = 100, seed = 123),
                dist.quantile.control = list(QN = 100))
 {
-  X <- as.matrix(X)
-  Y <- as.matrix(Y)
+  X <- as.matrix(data[, X.name])
+  Y <- as.matrix(data[, Y.name])
 
   number_n <- dim(Y)[1]
   number_p <- dim(X)[2]
@@ -395,8 +539,8 @@ NW <- function(X, Y, x = NULL, regression = "mean", y = NULL,
 
   if (is.null(bandwidth))
   {
-    hhat <- LOOCV(X = X, Y = Y, regression = regression,
-                  kernel = kernel,
+    hhat <- LOOCV(data = data, X.name = X.name, Y.name = Y.name,
+                  regression = regression, kernel = kernel,
                   initial = bandwidth.initial, wi.boot = wi.boot,
                   method = method, optim.method = optim.method, abs.tol = abs.tol,
                   mean.weight.Ycomponent = mean.weight.Ycomponent,
@@ -540,148 +684,5 @@ NW <- function(X, Y, x = NULL, regression = "mean", y = NULL,
   return(yhat)
 }
 
-KfoldCV <- function(X, Y, regression = "mean", K = 5, seed.K = 123,
-                    kernel = "K2_Biweight", initial = 1,
-                    method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
-                    mean.weight.Ycomponent = NULL)
-{
-  X <- as.matrix(X)
-  Y <- as.matrix(Y)
-
-  number_n <- dim(X)[1]
-  number_p <- dim(X)[2]
-  number_m <- dim(Y)[2]
-  number_NK <- floor(number_n / K)
-
-  set.seed(seed.K)
-  permute <- sample(1:number_n, size = number_NK * K)
-  dim(permute) <- c(K, number_NK)
-
-  if (regression == "mean")
-  {
-    if (is.null(mean.weight.Ycomponent))
-    {
-      mean.weight.Ycomponent <- rep(1 / number_m, number_m)
-    }else
-    {
-      mean.weight.Ycomponent <- as.vector(mean.weight.Ycomponent)
-      mean.weight.Ycomponent <- mean.weight.Ycomponent / sum(mean.weight.Ycomponent)
-    }
-
-    if (kernel == "K2_Biweight")
-    {
-      cv.h <- function(h.log){
-
-        cv <- 0
-        for (k in 1:K)
-        {
-          cv <- cv + sum(t((as.matrix(Y[permute[k, ], ]) - NW_K2B_rcpp(
-            X = as.matrix(X[as.vector(permute[-k, ]), ]),
-            Y = as.matrix(Y[as.vector(permute[-k, ]), ]),
-            x = as.matrix(X[permute[k, ], ]),
-            h = rep(exp(h.log), number_p))) ^ 2) * mean.weight.Ycomponent) / number_NK
-        }
-        return(cv)
-      }
-    }else if (kernel == "K4_Biweight")
-    {
-      cv.h <- function(h.log){
-
-        cv <- 0
-        for (k in 1:K)
-        {
-          cv <- cv + sum(t((as.matrix(Y[permute[k, ], ]) - NW_K4B_rcpp(
-            X = as.matrix(X[as.vector(permute[-k, ]), ]),
-            Y = as.matrix(Y[as.vector(permute[-k, ]), ]),
-            x = as.matrix(X[permute[k, ], ]),
-            h = rep(exp(h.log), number_p))) ^ 2) * mean.weight.Ycomponent) / number_NK
-        }
-        return(cv)
-      }
-    }else if (kernel == "Gaussian")
-    {
-      cv.h <- function(h.log){
-
-        cv <- 0
-        for (k in 1:K)
-        {
-          cv <- cv + sum(t((as.matrix(Y[permute[k, ], ]) - NW_KG_rcpp(
-            X = as.matrix(X[as.vector(permute[-k, ]), ]),
-            Y = as.matrix(Y[as.vector(permute[-k, ]), ]),
-            x = as.matrix(X[permute[k, ], ]),
-            h = rep(exp(h.log), number_p))) ^ 2) * mean.weight.Ycomponent) / number_NK
-        }
-        return(cv)
-      }
-    }
-  }else if (regression == "distribution")
-  {
-    Y.CP <- ctingP_rcpp(Y = Y, y = Y)
-
-    if (kernel == "K2_Biweight")
-    {
-      cv.h <- function(h.log){
-
-        cv <- 0
-        for (k in 1:K)
-        {
-          cv <- cv + sum(t((as.matrix(Y.CP[permute[k, ], ]) - NW_K2B_rcpp(
-            X = as.matrix(X[as.vector(permute[-k, ]), ]),
-            Y = as.matrix(Y.CP[as.vector(permute[-k, ]), ]),
-            x = as.matrix(X[permute[k, ], ]),
-            h = rep(exp(h.log), number_p))) ^ 2) / number_n) / number_NK
-        }
-        return(cv)
-      }
-    }else if (kernel == "K4_Biweight")
-    {
-      cv.h <- function(h.log){
-
-        cv <- 0
-        for (k in 1:K)
-        {
-          cv <- cv + sum(t((as.matrix(Y.CP[permute[k, ], ]) - NW_K4B_rcpp(
-            X = as.matrix(X[as.vector(permute[-k, ]), ]),
-            Y = as.matrix(Y.CP[as.vector(permute[-k, ]), ]),
-            x = as.matrix(X[permute[k, ], ]),
-            h = rep(exp(h.log), number_p))) ^ 2) / number_n) / number_NK
-        }
-        return(cv)
-      }
-    }else if (kernel == "Gaussian")
-    {
-      cv.h <- function(h.log){
-
-        cv <- 0
-        for (k in 1:K)
-        {
-          cv <- cv + sum(t((as.matrix(Y.CP[permute[k, ], ]) - NW_KG_rcpp(
-            X = as.matrix(X[as.vector(permute[-k, ]), ]),
-            Y = as.matrix(Y.CP[as.vector(permute[-k, ]), ]),
-            x = as.matrix(X[permute[k, ], ]),
-            h = rep(exp(h.log), number_p))) ^ 2) / number_n) / number_NK
-        }
-        return(cv)
-      }
-    }
-  }
-
-  if (method == "nlminb")
-  {
-    esti <- nlminb(start = log(initial), objective = cv.h,
-                   control = list(abs.tol = abs.tol))
-
-  }else if (method == "optim")
-  {
-    esti <- optim(par = log(initial), fn = cv.h,
-                  method = optim.method,
-                  control = list(abstol = abs.tol))
-  }
-
-  results <- list(bandwidth = exp(esti$par),
-                  details = esti)
-
-  return(results)
-}
 
 
