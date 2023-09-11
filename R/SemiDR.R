@@ -6,10 +6,18 @@
 
 ### cumulative SIR
 
-cumuSIR <- function(X, Y, eps = 1e-7)
+cumuSIR <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                    X = NULL, Y = NULL, eps = 1e-7)
 {
-  X <- as.matrix(X)
-  Y <- as.matrix(Y)
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
@@ -48,10 +56,18 @@ cumuSIR <- function(X, Y, eps = 1e-7)
 
 ### cumulative SAVE
 
-cumuSAVE <- function(X, Y, eps = 1e-7)
+cumuSAVE <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                     X = NULL, Y = NULL, eps = 1e-7)
 {
-  X <- as.matrix(X)
-  Y <- as.matrix(Y)
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
@@ -106,14 +122,22 @@ cumuSAVE <- function(X, Y, eps = 1e-7)
 
 ### single-index
 
-SIMR <- function(X, Y, initial = NULL,
+SIMR <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                 X = NULL, Y = NULL, initial = NULL,
                  kernel = "K4_Biweight", wi.boot = NULL,
                  bandwidth = NULL, bandwidth.initial = 1,
                  method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
                  mean.weight.Ycomponent = NULL)
 {
-  X <- as.matrix(X)
-  Y <- as.matrix(Y)
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
@@ -355,14 +379,22 @@ SIMR <- function(X, Y, initial = NULL,
 
 ### multi-index
 
-MIMR <- function(X, Y, n.index, initial = NULL,
+MIMR <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                 X = NULL, Y = NULL, n.index, initial = NULL,
                  kernel = "K4_Biweight", wi.boot = NULL,
                  bandwidth = NULL, bandwidth.initial = 1,
                  method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
                  mean.weight.Ycomponent = NULL)
 {
-  X <- as.matrix(X)
-  Y <- as.matrix(Y)
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
@@ -667,14 +699,22 @@ MIMR <- function(X, Y, n.index, initial = NULL,
 
 ### semiparametric mean dimension reduction
 
-CVMDR <- function(X, Y, initial = NULL,
+CVMDR <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                  X = NULL, Y = NULL, initial = NULL,
                   kernel = "K4_Biweight", wi.boot = NULL,
                   bandwidth.initial = 1, stop.prop = 1,
                   method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
                   mean.weight.Ycomponent = NULL, do.print = TRUE)
 {
-  X <- as.matrix(X)
-  Y <- as.matrix(Y)
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
@@ -777,7 +817,8 @@ CVMDR <- function(X, Y, initial = NULL,
 
 # univariate response
 
-SIDRuniY <- function(X, Y, initial = NULL,
+SIDRuniY <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                     X = NULL, Y = NULL, initial = NULL,
                      kernel = "K4_Biweight", wi.boot = NULL,
                      bandwidth = NULL, bandwidth.initial = 1,
                      method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
@@ -785,6 +826,16 @@ SIDRuniY <- function(X, Y, initial = NULL,
                      dist.sample.control = list(SN = 100, seed = 123),
                      dist.quantile.control = list(QN = 100))
 {
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
+
   if (dist.mode == "empirical")
   {
     Y <- as.vector(Y)
@@ -1262,15 +1313,23 @@ SIDRuniY <- function(X, Y, initial = NULL,
 
 # multivariate response
 
-SIDRmultiY <- function(X, Y, initial = NULL,
+SIDRmultiY <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                       X = NULL, Y = NULL, initial = NULL,
                        kernel = "K4_Biweight", wi.boot = NULL,
                        bandwidth = NULL, bandwidth.initial = 1,
                        method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
                        dist.mode = "empirical",
                        dist.sample.control = list(SN = 100, seed = 123))
 {
-  X <- as.matrix(X)
-  Y <- as.matrix(Y)
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
@@ -1511,7 +1570,8 @@ SIDRmultiY <- function(X, Y, initial = NULL,
 
 # univariate response
 
-MIDRuniY <- function(X, Y, n.index, initial = NULL,
+MIDRuniY <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                     X = NULL, Y = NULL, n.index, initial = NULL,
                      kernel = "K4_Biweight", wi.boot = NULL,
                      bandwidth = NULL, bandwidth.initial = 1,
                      method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
@@ -1519,6 +1579,16 @@ MIDRuniY <- function(X, Y, n.index, initial = NULL,
                      dist.sample.control = list(SN = 100, seed = 123),
                      dist.quantile.control = list(QN = 100))
 {
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
+
   if (dist.mode == "empirical")
   {
     Y <- as.vector(Y)
@@ -2120,15 +2190,23 @@ MIDRuniY <- function(X, Y, n.index, initial = NULL,
 
 # multivariate response
 
-MIDRmultiY <- function(X, Y, n.index, initial = NULL,
+MIDRmultiY <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                       X = NULL, Y = NULL, n.index, initial = NULL,
                        kernel = "K4_Biweight", wi.boot = NULL,
                        bandwidth = NULL, bandwidth.initial = 1,
                        method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
                        dist.mode = "empirical",
                        dist.sample.control = list(SN = 100, seed = 123))
 {
-  X <- as.matrix(X)
-  Y <- as.matrix(Y)
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
@@ -2432,7 +2510,8 @@ MIDRmultiY <- function(X, Y, n.index, initial = NULL,
 
 # univariate response
 
-CVSDRuniY <- function(X, Y, initial = NULL,
+CVSDRuniY <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                      X = NULL, Y = NULL, initial = NULL,
                       kernel = "K4_Biweight", wi.boot = NULL,
                       bandwidth.initial = 1, stop.prop = 1,
                       method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
@@ -2441,6 +2520,16 @@ CVSDRuniY <- function(X, Y, initial = NULL,
                       dist.quantile.control = list(QN = 100),
                       do.print = TRUE)
 {
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
+
   Y <- as.vector(Y)
   Y.order <- order(Y)
   X <- as.matrix(X[Y.order, ])
@@ -2539,7 +2628,8 @@ CVSDRuniY <- function(X, Y, initial = NULL,
 
 # multivariate response
 
-CVSDRmultiY <- function(X, Y, initial = NULL,
+CVSDRmultiY <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                        X = NULL, Y = NULL, initial = NULL,
                         kernel = "K4_Biweight", wi.boot = NULL,
                         bandwidth.initial = 1, stop.prop = 1,
                         method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
@@ -2547,8 +2637,15 @@ CVSDRmultiY <- function(X, Y, initial = NULL,
                         dist.sample.control = list(SN = 100, seed = 123),
                         do.print = TRUE)
 {
-  X <- as.matrix(X)
-  Y <- as.matrix(Y)
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]

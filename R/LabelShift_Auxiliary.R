@@ -1,4 +1,5 @@
-auxLS.normal <- function(X, Y, aux = "EXsubgroupY",
+auxLS.normal <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                         X = NULL, Y = NULL, aux = "EXsubgroupY",
                          control.EXsubgroupY = list(phi = NULL,
                                                     y.pts = NULL,
                                                     sample.size = NULL),
@@ -6,8 +7,15 @@ auxLS.normal <- function(X, Y, aux = "EXsubgroupY",
                                                     inclusion = NULL,
                                                     sample.size = NULL))
 {
-  X <- as.matrix(X)
-  Y <- as.matrix(Y)
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
@@ -149,7 +157,8 @@ auxLS.normal <- function(X, Y, aux = "EXsubgroupY",
   return(results)
 }
 
-aux.normal <- function(X, Y, aux = "EXsubgroupY",
+aux.normal <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                       X = NULL, Y = NULL, aux = "EXsubgroupY",
                        control.EXsubgroupY = list(phi = NULL,
                                                   y.pts = NULL,
                                                   sample.size = NULL),
@@ -157,8 +166,15 @@ aux.normal <- function(X, Y, aux = "EXsubgroupY",
                                                   inclusion = NULL,
                                                   sample.size = NULL))
 {
-  X <- as.matrix(X)
-  Y <- as.matrix(Y)
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]

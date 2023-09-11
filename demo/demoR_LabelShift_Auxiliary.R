@@ -16,6 +16,8 @@ X1 <- rnorm(n = n, mean = 0, sd = 1)
 X2 <- rbinom(n = n, size = 1, prob = 0.6)
 X <- cbind(X1, X2)
 Y <- rnorm(n = n, mean = theta0 + X1 * theta1 + X2 * theta2, sd = sigma0)
+test.data <- data.frame(response = Y,
+                        covariate = X)
 
 X1_sim <- rnorm(n = N_sim, mean = 0, sd = 1)
 X2_sim <- rbinom(n = N_sim, size = 1, prob = 0.6)
@@ -43,10 +45,21 @@ y.pts[1, ] <- quantile(Y_shift, c(0.0, 0.5))
 phi <- matrix(0, 1, p)
 phi[1, ] <- colMeans(X_shift[(Y_shift > y.pts[1, 1]) & (Y_shift <= y.pts[1, 2]), ])
 
-auxLS.normal(X = X, Y = Y, aux = "EXsubgroupY",
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data[, "response"],
+             aux = "EXsubgroupY",
              control.EXsubgroupY = list(phi = phi, y.pts = y.pts,
                                         sample.size = N))
-aux.normal(X = X, Y = Y, aux = "EXsubgroupY",
+auxLS.normal(data = test.data,
+             X.name = paste("covariate.X", 1:p, sep = ""),
+             Y.name = "response",
+             aux = "EXsubgroupY",
+             control.EXsubgroupY = list(phi = phi, y.pts = y.pts,
+                                        sample.size = N))
+aux.normal(data = test.data,
+           X.name = paste("covariate.X", 1:p, sep = ""),
+           Y.name = "response",
+           aux = "EXsubgroupY",
            control.EXsubgroupY = list(phi = phi, y.pts = y.pts,
                                       sample.size = N))
 
@@ -61,11 +74,17 @@ phi2 <- colMeans(X_shift[(Y_shift > y.pts[2, 1]) & (Y_shift <= y.pts[2, 2]), ])
 phi3 <- colMeans(X_shift[(Y_shift > y.pts[3, 1]) & (Y_shift <= y.pts[3, 2]), ])
 phi4 <- colMeans(X_shift[(Y_shift > y.pts[4, 1]) & (Y_shift <= y.pts[4, 2]), ])
 
-auxLS.normal(X = X, Y = Y, aux = "EXsubgroupY",
+auxLS.normal(data = test.data,
+             X.name = paste("covariate.X", 1:p, sep = ""),
+             Y.name = "response",
+             aux = "EXsubgroupY",
              control.EXsubgroupY = list(phi = rbind(phi1, phi2, phi3, phi4),
                                         y.pts = y.pts,
                                         sample.size = N))
-aux.normal(X = X, Y = Y, aux = "EXsubgroupY",
+aux.normal(data = test.data,
+           X.name = paste("covariate.X", 1:p, sep = ""),
+           Y.name = "response",
+           aux = "EXsubgroupY",
            control.EXsubgroupY = list(phi = rbind(phi1, phi2, phi3, phi4),
                                       y.pts = y.pts,
                                       sample.size = N))
@@ -75,11 +94,17 @@ aux.normal(X = X, Y = Y, aux = "EXsubgroupY",
 phi1 <- mean(Y_shift[X_shift[, 1] > 0])
 phi2 <- mean(Y_shift[X_shift[, 1] <= 0])
 
-auxLS.normal(X = X, Y = Y, aux = "EYsubgroupX",
+auxLS.normal(data = test.data,
+             X.name = paste("covariate.X", 1:p, sep = ""),
+             Y.name = "response",
+             aux = "EYsubgroupX",
              control.EYsubgroupX = list(phi = c(phi1, phi2),
                                         inclusion = cbind(X[, 1] > 0, X[, 1] <= 0),
                                         sample.size = N))
-aux.normal(X = X, Y = Y, aux = "EYsubgroupX",
+aux.normal(data = test.data,
+           X.name = paste("covariate.X", 1:p, sep = ""),
+           Y.name = "response",
+           aux = "EYsubgroupX",
            control.EYsubgroupX = list(phi = c(phi1, phi2),
                                       inclusion = cbind(X[, 1] > 0, X[, 1] <= 0),
                                       sample.size = N))

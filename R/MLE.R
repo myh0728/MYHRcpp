@@ -19,17 +19,25 @@
 # inputs:
 # X: c(number_n, number_p) data.frame
 # Y: c(number_n, 1) data.frame
-# initial: initial values of c(alpha, beta, sigma), c(number_p+2) vector
+# initial: initial values of c(alpha, beta, sigma), c(number_p + 2) vector
 # wi.boot: random weights with sum being 'number_n', c(number_n) vector
 # X.future: c(number_k, number_p) data.frame
 
-MLE.normal <- function(X, Y,
+MLE.normal <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                       X = NULL, Y = NULL,
                        initial = NULL, wi.boot = NULL,
                        do.SE = TRUE, diff.tol = 1e-5,
                        X.future = NULL)
 {
-  X <- as.matrix(X)
-  Y <- as.matrix(Y)
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
 
   number_n <- dim(Y)[1]
   number_p <- dim(X)[2]
@@ -156,13 +164,21 @@ plogit <- function(X, alpha, beta)
 # wi.boot: random weights with sum being 'number_n', c(number_n) vector
 # X.future: c(number_k, number_p) data.frame
 
-MLE.logistic <- function(X, Y,
+MLE.logistic <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                         X = NULL, Y = NULL,
                          initial = NULL, wi.boot = NULL,
                          do.SE = TRUE, diff.tol = 1e-5,
                          X.future = NULL)
 {
-  X <- as.matrix(X)
-  Y <- as.matrix(Y)
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
 
   number_n <- dim(Y)[1]
   number_p <- dim(X)[2]

@@ -1,4 +1,5 @@
-LOOCV <- function(data, X.name, Y.name,
+LOOCV <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                  X = NULL, Y = NULL,
                   regression = "mean", kernel = "K2_Biweight",
                   initial = 1, wi.boot = NULL,
                   method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
@@ -7,8 +8,15 @@ LOOCV <- function(data, X.name, Y.name,
                   dist.sample.control = list(SN = 100, seed = 123),
                   dist.quantile.control = list(QN = 100))
 {
-  X <- as.matrix(data[, X.name])
-  Y <- as.matrix(data[, Y.name])
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
@@ -377,13 +385,22 @@ LOOCV <- function(data, X.name, Y.name,
   return(results)
 }
 
-KfoldCV <- function(data, X.name, Y.name, regression = "mean", K = 5, seed.K = 123,
+KfoldCV <- function(data = NULL, X.name = NULL, Y.name = NULL,
+                    X = NULL, Y = NULL,
+                    regression = "mean", K = 5, seed.K = 123,
                     kernel = "K2_Biweight", initial = 1,
                     method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
                     mean.weight.Ycomponent = NULL)
 {
-  X <- as.matrix(data[, X.name])
-  Y <- as.matrix(data[, Y.name])
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
 
   number_n <- dim(X)[1]
   number_p <- dim(X)[2]
@@ -521,7 +538,9 @@ KfoldCV <- function(data, X.name, Y.name, regression = "mean", K = 5, seed.K = 1
   return(results)
 }
 
-NW <- function(data, X.name, Y.name, x = NULL, regression = "mean", y = NULL,
+NW <- function(data = NULL, X.name = NULL, Y.name = NULL,
+               X = NULL, Y = NULL,
+               x = NULL, regression = "mean", y = NULL,
                kernel = "K2_Biweight", wi.boot = NULL,
                bandwidth = NULL, bandwidth.initial = 1,
                method = "optim", optim.method = "BFGS", abs.tol = 1e-8,
@@ -530,8 +549,15 @@ NW <- function(data, X.name, Y.name, x = NULL, regression = "mean", y = NULL,
                dist.sample.control = list(SN = 100, seed = 123),
                dist.quantile.control = list(QN = 100))
 {
-  X <- as.matrix(data[, X.name])
-  Y <- as.matrix(data[, Y.name])
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
 
   number_n <- dim(Y)[1]
   number_p <- dim(X)[2]
@@ -539,7 +565,7 @@ NW <- function(data, X.name, Y.name, x = NULL, regression = "mean", y = NULL,
 
   if (is.null(bandwidth))
   {
-    hhat <- LOOCV(data = data, X.name = X.name, Y.name = Y.name,
+    hhat <- LOOCV(X = X, Y = Y,
                   regression = regression, kernel = kernel,
                   initial = bandwidth.initial, wi.boot = wi.boot,
                   method = method, optim.method = optim.method, abs.tol = abs.tol,

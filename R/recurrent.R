@@ -5,13 +5,39 @@
 
 ##### pre-processing the data #####
 
-recurReg.proData <- function(id, t.start = NULL,
-                             t.stop, is.event = NULL,
-                             covariate,
-                             w.boot = NULL,
+recurReg.proData <- function(data = NULL,
+                             id.name = NULL, t.start.name = NULL,
+                             t.stop.name = NULL, is.event.name = NULL,
+                             covariate.name = NULL,
+                             id = NULL, t.start = NULL,
+                             t.stop = NULL, is.event = NULL,
+                             covariate = NULL,
+                             w.boot.name = NULL, w.boot = NULL,
                              sort = TRUE,
                              w.t.event = list())
 {
+  if (!is.null(data))
+  {
+    id <- as.vector(data[, "id.name"])
+    t.stop <- as.vector(data[, "t.stop.name"])
+    covariate <- as.matrix(data[, "covariate.name"])
+
+    if (!is.null(t.start.name))
+    {
+      t.start <- as.vector(data[, "t.start.name"])
+    }
+
+    if (!is.null(is.event.name))
+    {
+      is.event <- as.vector(data[, "is.event.name"])
+    }
+
+    if (!is.null(w.boot.name))
+    {
+      w.boot <- as.vector(data[, "w.boot.name"])
+    }
+  }
+
   number_m <- length(id)
   id.table <- table(id)
   id.unique <- names(id.table)

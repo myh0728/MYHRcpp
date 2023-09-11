@@ -1,14 +1,33 @@
 ##### normal model #####
 
-LS.profile.normal <- function(X1, Y1, X2, Y2,
+LS.profile.normal <- function(data1 = NULL, data2 = NULL,
+                              X1.name = NULL, Y1.name = NULL,
+                              X2.name = NULL, Y2.name = NULL,
+                              X1 = NULL, Y1 = NULL,
+                              X2 = NULL, Y2 = NULL,
                               initial = NULL,
                               iter.max = 20, stop.tol = 1e-5,
                               do.SE = TRUE, diff.tol = 1e-5)
 {
-  X1 <- as.matrix(X1)
-  Y1 <- as.vector(Y1)
-  X2 <- as.matrix(X2)
-  Y2 <- as.vector(Y2)
+  if (!is.null(data1))
+  {
+    X1 <- as.matrix(data1[, X1.name])
+    Y1 <- as.vector(data1[, Y1.name])
+  }else
+  {
+    X1 <- as.matrix(X1)
+    Y1 <- as.vector(Y1)
+  }
+
+  if (!is.null(data2))
+  {
+    X2 <- as.matrix(data2[, X2.name])
+    Y2 <- as.vector(data2[, Y2.name])
+  }else
+  {
+    X2 <- as.matrix(X2)
+    Y2 <- as.vector(Y2)
+  }
 
   number_n1 <- length(Y1)
   number_n2 <- length(Y2)
@@ -107,16 +126,35 @@ LS.profile.normal <- function(X1, Y1, X2, Y2,
   return(results)
 }
 
-LS.profile.LASSOp.normal <- function(X1, Y1, X2, Y2,
+LS.profile.LASSOp.normal <- function(data1 = NULL, data2 = NULL,
+                                     X1.name = NULL, Y1.name = NULL,
+                                     X2.name = NULL, Y2.name = NULL,
+                                     X1 = NULL, Y1 = NULL,
+                                     X2 = NULL, Y2 = NULL,
                                      initial = NULL, w.adapt = NULL,
                                      lambda = 0, zero.tol = 1e-5,
                                      iter.max = 20, stop.tol = 1e-5,
                                      do.SE = TRUE, diff.tol = 1e-5)
 {
-  X1 <- as.matrix(X1)
-  Y1 <- as.vector(Y1)
-  X2 <- as.matrix(X2)
-  Y2 <- as.vector(Y2)
+  if (!is.null(data1))
+  {
+    X1 <- as.matrix(data1[, X1.name])
+    Y1 <- as.vector(data1[, Y1.name])
+  }else
+  {
+    X1 <- as.matrix(X1)
+    Y1 <- as.vector(Y1)
+  }
+
+  if (!is.null(data2))
+  {
+    X2 <- as.matrix(data2[, X2.name])
+    Y2 <- as.vector(data2[, Y2.name])
+  }else
+  {
+    X2 <- as.matrix(X2)
+    Y2 <- as.vector(Y2)
+  }
 
   number_n1 <- length(Y1)
   number_n2 <- length(Y2)
@@ -282,17 +320,36 @@ LS.profile.LASSOp.normal <- function(X1, Y1, X2, Y2,
   return(results)
 }
 
-LS.profile.LASSO.normal <- function(X1, Y1, X2, Y2,
+LS.profile.LASSO.normal <- function(data1 = NULL, data2 = NULL,
+                                    X1.name = NULL, Y1.name = NULL,
+                                    X2.name = NULL, Y2.name = NULL,
+                                    X1 = NULL, Y1 = NULL,
+                                    X2 = NULL, Y2 = NULL,
                                     initial = NULL, w.adapt = NULL,
                                     seq.lambda = NULL, zero.tol = 1e-5,
                                     iter.max = 20, stop.tol = 1e-5,
                                     do.SE = TRUE, diff.tol = 1e-5,
                                     do.print = TRUE)
 {
-  X1 <- as.matrix(X1)
-  Y1 <- as.vector(Y1)
-  X2 <- as.matrix(X2)
-  Y2 <- as.vector(Y2)
+  if (!is.null(data1))
+  {
+    X1 <- as.matrix(data1[, X1.name])
+    Y1 <- as.vector(data1[, Y1.name])
+  }else
+  {
+    X1 <- as.matrix(X1)
+    Y1 <- as.vector(Y1)
+  }
+
+  if (!is.null(data2))
+  {
+    X2 <- as.matrix(data2[, X2.name])
+    Y2 <- as.vector(data2[, Y2.name])
+  }else
+  {
+    X2 <- as.matrix(X2)
+    Y2 <- as.vector(Y2)
+  }
 
   number_n1 <- length(Y1)
   number_n2 <- length(Y2)
@@ -347,14 +404,30 @@ LS.profile.LASSO.normal <- function(X1, Y1, X2, Y2,
   return(results)
 }
 
-LS.predict.normal <- function(X1, Y1 = NULL, X2, Y2,
+LS.predict.normal <- function(data1 = NULL, data2 = NULL,
+                              X1.name = NULL, X2.name = NULL, Y2.name = NULL,
+                              X1 = NULL, X2 = NULL, Y2 = NULL,
                               esti = LS.profile.normal(...),
                               X1.future = NULL,
                               X2.future = NULL)
 {
-  X1 <- as.matrix(X1)
-  X2 <- as.matrix(X2)
-  Y2 <- as.vector(Y2)
+  if (!is.null(data1))
+  {
+    X1 <- as.matrix(data1[, X1.name])
+  }else
+  {
+    X1 <- as.matrix(X1)
+  }
+
+  if (!is.null(data2))
+  {
+    X2 <- as.matrix(data2[, X2.name])
+    Y2 <- as.vector(data2[, Y2.name])
+  }else
+  {
+    X2 <- as.matrix(X2)
+    Y2 <- as.vector(Y2)
+  }
 
   Y1.predict <- NULL
   Y2.predict <- NULL
@@ -386,15 +459,34 @@ LS.predict.normal <- function(X1, Y1 = NULL, X2, Y2,
   return(results)
 }
 
-LSalt.profile.normal <- function(X1, Y1, X2, Y2,
+LSalt.profile.normal <- function(data1 = NULL, data2 = NULL,
+                                 X1.name = NULL, Y1.name = NULL,
+                                 X2.name = NULL, Y2.name = NULL,
+                                 X1 = NULL, Y1 = NULL,
+                                 X2 = NULL, Y2 = NULL,
                                  initial = NULL,
                                  initial.gamma = NULL,
                                  iter.max = 20, stop.tol = 1e-5)
 {
-  X1 <- as.matrix(X1)
-  Y1 <- as.vector(Y1)
-  X2 <- as.matrix(X2)
-  Y2 <- as.vector(Y2)
+  if (!is.null(data1))
+  {
+    X1 <- as.matrix(data1[, X1.name])
+    Y1 <- as.vector(data1[, Y1.name])
+  }else
+  {
+    X1 <- as.matrix(X1)
+    Y1 <- as.vector(Y1)
+  }
+
+  if (!is.null(data2))
+  {
+    X2 <- as.matrix(data2[, X2.name])
+    Y2 <- as.vector(data2[, Y2.name])
+  }else
+  {
+    X2 <- as.matrix(X2)
+    Y2 <- as.vector(Y2)
+  }
 
   number_n1 <- length(Y1)
   number_n2 <- length(Y2)
@@ -465,20 +557,36 @@ LSalt.profile.normal <- function(X1, Y1, X2, Y2,
                   details = esti)
 }
 
-LStest.normal <- function(X1, Y1, X2, Y2,
+LStest.normal <- function(data1 = NULL, data2 = NULL,
+                          X1.name = NULL, Y1.name = NULL,
+                          X2.name = NULL, Y2.name = NULL,
+                          X1 = NULL, Y1 = NULL,
+                          X2 = NULL, Y2 = NULL,
                           esti = LS.profile.normal(...),
                           initial = NULL,
                           initial.gamma = NULL,
                           iter.max = 20, stop.tol = 1e-5)
 {
-  X1 <- as.matrix(X1)
-  Y1 <- as.vector(Y1)
-  X2 <- as.matrix(X2)
-  Y2 <- as.vector(Y2)
+  if (!is.null(data1))
+  {
+    X1 <- as.matrix(data1[, X1.name])
+    Y1 <- as.vector(data1[, Y1.name])
+  }else
+  {
+    X1 <- as.matrix(X1)
+    Y1 <- as.vector(Y1)
+  }
 
-  number_n1 <- length(Y1)
-  number_n2 <- length(Y2)
-  number_n <- number_n1 + number_n2
+  if (!is.null(data2))
+  {
+    X2 <- as.matrix(data2[, X2.name])
+    Y2 <- as.vector(data2[, Y2.name])
+  }else
+  {
+    X2 <- as.matrix(X2)
+    Y2 <- as.vector(Y2)
+  }
+
   number_p <- dim(X1)[2]
 
   if (is.null(initial))
@@ -500,15 +608,34 @@ LStest.normal <- function(X1, Y1, X2, Y2,
 
 ##### logistic model #####
 
-LS.profile.logistic <- function(X1, Y1, X2, Y2,
+LS.profile.logistic <- function(data1 = NULL, data2 = NULL,
+                                X1.name = NULL, Y1.name = NULL,
+                                X2.name = NULL, Y2.name = NULL,
+                                X1 = NULL, Y1 = NULL,
+                                X2 = NULL, Y2 = NULL,
                                 initial = NULL,
                                 iter.max = 20, stop.tol = 1e-5,
                                 do.SE = TRUE, diff.tol = 1e-5)
 {
-  X1 <- as.matrix(X1)
-  Y1 <- as.vector(Y1)
-  X2 <- as.matrix(X2)
-  Y2 <- as.vector(Y2)
+  if (!is.null(data1))
+  {
+    X1 <- as.matrix(data1[, X1.name])
+    Y1 <- as.vector(data1[, Y1.name])
+  }else
+  {
+    X1 <- as.matrix(X1)
+    Y1 <- as.vector(Y1)
+  }
+
+  if (!is.null(data2))
+  {
+    X2 <- as.matrix(data2[, X2.name])
+    Y2 <- as.vector(data2[, Y2.name])
+  }else
+  {
+    X2 <- as.matrix(X2)
+    Y2 <- as.vector(Y2)
+  }
 
   number_n1 <- length(Y1)
   number_n2 <- length(Y2)
@@ -594,16 +721,35 @@ LS.profile.logistic <- function(X1, Y1, X2, Y2,
   return(results)
 }
 
-LS.profile.LASSOp.logistic <- function(X1, Y1, X2, Y2,
+LS.profile.LASSOp.logistic <- function(data1 = NULL, data2 = NULL,
+                                       X1.name = NULL, Y1.name = NULL,
+                                       X2.name = NULL, Y2.name = NULL,
+                                       X1 = NULL, Y1 = NULL,
+                                       X2 = NULL, Y2 = NULL,
                                        initial = NULL, w.adapt = NULL,
                                        lambda = 0, zero.tol = 1e-5,
                                        iter.max = 20, stop.tol = 1e-5,
                                        do.SE = TRUE, diff.tol = 1e-5)
 {
-  X1 <- as.matrix(X1)
-  Y1 <- as.vector(Y1)
-  X2 <- as.matrix(X2)
-  Y2 <- as.vector(Y2)
+  if (!is.null(data1))
+  {
+    X1 <- as.matrix(data1[, X1.name])
+    Y1 <- as.vector(data1[, Y1.name])
+  }else
+  {
+    X1 <- as.matrix(X1)
+    Y1 <- as.vector(Y1)
+  }
+
+  if (!is.null(data2))
+  {
+    X2 <- as.matrix(data2[, X2.name])
+    Y2 <- as.vector(data2[, Y2.name])
+  }else
+  {
+    X2 <- as.matrix(X2)
+    Y2 <- as.vector(Y2)
+  }
 
   number_n1 <- length(Y1)
   number_n2 <- length(Y2)
@@ -755,17 +901,36 @@ LS.profile.LASSOp.logistic <- function(X1, Y1, X2, Y2,
   return(results)
 }
 
-LS.profile.LASSO.logistic <- function(X1, Y1, X2, Y2,
+LS.profile.LASSO.logistic <- function(data1 = NULL, data2 = NULL,
+                                      X1.name = NULL, Y1.name = NULL,
+                                      X2.name = NULL, Y2.name = NULL,
+                                      X1 = NULL, Y1 = NULL,
+                                      X2 = NULL, Y2 = NULL,
                                       initial = NULL, w.adapt = NULL,
                                       seq.lambda = NULL, zero.tol = 1e-5,
                                       iter.max = 20, stop.tol = 1e-5,
                                       do.SE = TRUE, diff.tol = 1e-5,
                                       do.print = TRUE)
 {
-  X1 <- as.matrix(X1)
-  Y1 <- as.vector(Y1)
-  X2 <- as.matrix(X2)
-  Y2 <- as.vector(Y2)
+  if (!is.null(data1))
+  {
+    X1 <- as.matrix(data1[, X1.name])
+    Y1 <- as.vector(data1[, Y1.name])
+  }else
+  {
+    X1 <- as.matrix(X1)
+    Y1 <- as.vector(Y1)
+  }
+
+  if (!is.null(data2))
+  {
+    X2 <- as.matrix(data2[, X2.name])
+    Y2 <- as.vector(data2[, Y2.name])
+  }else
+  {
+    X2 <- as.matrix(X2)
+    Y2 <- as.vector(Y2)
+  }
 
   number_n1 <- length(Y1)
   number_n2 <- length(Y2)
@@ -817,14 +982,30 @@ LS.profile.LASSO.logistic <- function(X1, Y1, X2, Y2,
   return(results)
 }
 
-LS.predict.logistic <- function(X1, Y1 = NULL, X2, Y2,
+LS.predict.logistic <- function(data1 = NULL, data2 = NULL,
+                                X1.name = NULL, X2.name = NULL, Y2.name = NULL,
+                                X1 = NULL, X2 = NULL, Y2 = NULL,
                                 esti = LS.profile.logistic(...),
                                 X1.future = NULL,
                                 X2.future = NULL)
 {
-  X1 <- as.matrix(X1)
-  X2 <- as.matrix(X2)
-  Y2 <- as.vector(Y2)
+  if (!is.null(data1))
+  {
+    X1 <- as.matrix(data1[, X1.name])
+  }else
+  {
+    X1 <- as.matrix(X1)
+  }
+
+  if (!is.null(data2))
+  {
+    X2 <- as.matrix(data2[, X2.name])
+    Y2 <- as.vector(data2[, Y2.name])
+  }else
+  {
+    X2 <- as.matrix(X2)
+    Y2 <- as.vector(Y2)
+  }
 
   Y1.predict <- NULL
   Y1.posterior <- NULL
@@ -845,7 +1026,7 @@ LS.predict.logistic <- function(X1, Y1 = NULL, X2, Y2,
     piX2.future <- plogit(X = X2.future, alpha = esti$alpha, beta = esti$beta)
     piX_all <- plogit(X = rbind(X1, X2), alpha = esti$alpha, beta = esti$beta)
     Y2.posterior1 <- piX2.future * mean(Y2 == 1) / sum(piX_all * esti$dG1)
-    Y2.posterior0 <- (1 - piX2.future) * mean(Y2==0) / sum((1 - piX_all) * esti$dG1)
+    Y2.posterior0 <- (1 - piX2.future) * mean(Y2 == 0) / sum((1 - piX_all) * esti$dG1)
     Y2.posterior_normalizing <- Y2.posterior1 + Y2.posterior0
     Y2.posterior1 <- Y2.posterior1 / Y2.posterior_normalizing
     Y2.posterior0 <- Y2.posterior0 / Y2.posterior_normalizing
@@ -861,15 +1042,34 @@ LS.predict.logistic <- function(X1, Y1 = NULL, X2, Y2,
   return(results)
 }
 
-LSalt.profile.logistic <- function(X1, Y1, X2, Y2,
+LSalt.profile.logistic <- function(data1 = NULL, data2 = NULL,
+                                   X1.name = NULL, Y1.name = NULL,
+                                   X2.name = NULL, Y2.name = NULL,
+                                   X1 = NULL, Y1 = NULL,
+                                   X2 = NULL, Y2 = NULL,
                                    initial = NULL,
                                    initial.gamma = NULL,
                                    iter.max = 20, stop.tol = 1e-5)
 {
-  X1 <- as.matrix(X1)
-  Y1 <- as.vector(Y1)
-  X2 <- as.matrix(X2)
-  Y2 <- as.vector(Y2)
+  if (!is.null(data1))
+  {
+    X1 <- as.matrix(data1[, X1.name])
+    Y1 <- as.vector(data1[, Y1.name])
+  }else
+  {
+    X1 <- as.matrix(X1)
+    Y1 <- as.vector(Y1)
+  }
+
+  if (!is.null(data2))
+  {
+    X2 <- as.matrix(data2[, X2.name])
+    Y2 <- as.vector(data2[, Y2.name])
+  }else
+  {
+    X2 <- as.matrix(X2)
+    Y2 <- as.vector(Y2)
+  }
 
   number_n1 <- length(Y1)
   number_n2 <- length(Y2)
@@ -933,20 +1133,36 @@ LSalt.profile.logistic <- function(X1, Y1, X2, Y2,
                   details = esti)
 }
 
-LStest.logistic <- function(X1, Y1, X2, Y2,
+LStest.logistic <- function(data1 = NULL, data2 = NULL,
+                            X1.name = NULL, Y1.name = NULL,
+                            X2.name = NULL, Y2.name = NULL,
+                            X1 = NULL, Y1 = NULL,
+                            X2 = NULL, Y2 = NULL,
                             esti = LS.profile.logistic(...),
                             initial = NULL,
                             initial.gamma = NULL,
                             iter.max = 20, stop.tol = 1e-5)
 {
-  X1 <- as.matrix(X1)
-  Y1 <- as.vector(Y1)
-  X2 <- as.matrix(X2)
-  Y2 <- as.vector(Y2)
+  if (!is.null(data1))
+  {
+    X1 <- as.matrix(data1[, X1.name])
+    Y1 <- as.vector(data1[, Y1.name])
+  }else
+  {
+    X1 <- as.matrix(X1)
+    Y1 <- as.vector(Y1)
+  }
 
-  number_n1 <- length(Y1)
-  number_n2 <- length(Y2)
-  number_n <- number_n1 + number_n2
+  if (!is.null(data2))
+  {
+    X2 <- as.matrix(data2[, X2.name])
+    Y2 <- as.vector(data2[, Y2.name])
+  }else
+  {
+    X2 <- as.matrix(X2)
+    Y2 <- as.vector(Y2)
+  }
+
   number_p <- dim(X1)[2]
 
   if (is.null(initial))

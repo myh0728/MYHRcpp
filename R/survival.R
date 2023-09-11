@@ -1,10 +1,24 @@
-KME <- function(t.stop, is.event,
+KME <- function(data = NULL,
+                t.stop.name = NULL, is.event.name = NULL,
+                t.stop = NULL, is.event = NULL,
                 t.event = NULL,
                 t.points = NULL,
-                wi.boot = NULL)
+                wi.boot.name = NULL, wi.boot = NULL)
 {
-  t.stop <- as.vector(t.stop)
-  is.event <- as.vector(is.event)
+  if (!is.null(data))
+  {
+    t.stop <- as.vector(data[, "t.stop.name"])
+    is.event <- as.vector(data[, "is.event.name"])
+
+    if (!is.null(wi.boot.name))
+    {
+      wi.boot <- as.vector(data[, "wi.boot.name"])
+    }
+  }else
+  {
+    t.stop <- as.vector(t.stop)
+    is.event <- as.vector(is.event)
+  }
 
   if (is.null(t.event))
   {
@@ -47,16 +61,29 @@ KME <- function(t.stop, is.event,
   return(results)
 }
 
-SKME <- function(t.stop, is.event, X, x = NULL,
+SKME <- function(data = NULL,
+                 t.stop.name = NULL, is.event.name = NULL, X.name = NULL,
+                 t.stop = NULL, is.event = NULL, X = NULL, x = NULL,
                  t.points = NULL, t.event = NULL,
-                 kernel = "K2_Biweight",
-                 bandwidth = NULL,
-                 wi.boot = NULL)
+                 kernel = "K2_Biweight", bandwidth = NULL,
+                 wi.boot.name = NULL, wi.boot = NULL)
 {
-  t.stop <- as.vector(t.stop)
-  is.event <- as.vector(is.event)
+  if (!is.null(data))
+  {
+    t.stop <- as.vector(data[, "t.stop.name"])
+    is.event <- as.vector(data[, "is.event.name"])
+    X <- as.matrix(data[, "X.name"])
 
-  X <- as.matrix(X)
+    if (!is.null(wi.boot.name))
+    {
+      wi.boot <- as.vector(data[, "wi.boot.name"])
+    }
+  }else
+  {
+    t.stop <- as.vector(t.stop)
+    is.event <- as.vector(is.event)
+    X <- as.matrix(X)
+  }
 
   if (is.null(t.event))
   {

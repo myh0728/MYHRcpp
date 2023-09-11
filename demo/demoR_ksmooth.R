@@ -11,6 +11,7 @@ x <- as.matrix(seq(-3, 3, 0.1))
 
 ### selecting bandwidth using leave-one-out cross-validation
 
+LOOCV(X = X, Y = Y)
 LOOCV(data = data.demo, Y.name = "response", X.name = "covariate")
 LOOCV(data = data.demo, Y.name = "response", X.name = "covariate",
       regression = "mean")
@@ -42,6 +43,7 @@ LOOCV(data = data.demo, Y.name = "response", X.name = "covariate",
 RW <- colSums(outer(sample(1:n, size = n, replace = TRUE), 1:n, FUN = "=="))
 LOOCV(data = data.demo, Y.name = "response", X.name = "covariate", wi.boot = RW)
 
+KfoldCV(X = X, Y = Y)
 KfoldCV(data = data.demo, Y.name = "response", X.name = "covariate")
 KfoldCV(data = data.demo, Y.name = "response", X.name = "covariate", K = 10)
 KfoldCV(data = data.demo, Y.name = "response", X.name = "covariate", K = 10, kernel = "K4_Biweight")
@@ -49,6 +51,7 @@ KfoldCV(data = data.demo, Y.name = "response", X.name = "covariate", K = 10, ker
 
 ### Nadaraya-Watson estimator
 
+yhata <- NW(X = X, Y = Y)
 yhat0 <- NW(data = data.demo, Y.name = "response", X.name = "covariate")
 yhat1 <- NW(data = data.demo, Y.name = "response", X.name = "covariate",
             x = x)

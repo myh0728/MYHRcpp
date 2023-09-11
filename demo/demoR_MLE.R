@@ -13,11 +13,17 @@ test.data <- simGLM.normal(Xi = X,
                            sigma0 = sigma0,
                            seed = 123)
 
-test.MLE <- MLE.normal(Xi = test.data[paste("covariate", 1:p, sep=".")],
-                       Yi = test.data["response"],
-                       initial = c(-1, rep(1, p), 1),
-                       do.SE = TRUE,
-                       X.future = matrix(0, nrow = 1, ncol = p))
+test.MLE.1 <- MLE.normal(data = test.data,
+                         X.name = paste("covariate", 1:p, sep="."),
+                         Y.name = "response",
+                         initial = c(-1, rep(1, p), 1),
+                         do.SE = TRUE,
+                         X.future = matrix(0, nrow = 1, ncol = p))
+test.MLE.2 <- MLE.normal(X = test.data[, paste("covariate", 1:p, sep=".")],
+                         Y = test.data[, "response"],
+                         initial = c(-1, rep(1, p), 1),
+                         do.SE = TRUE,
+                         X.future = matrix(0, nrow = 1, ncol = p))
 
 ###############################################################################
 
@@ -35,11 +41,17 @@ test.data <- simGLM.logistic(Xi = X,
                              beta0 = beta0,
                              seed = 123)
 
-test.MLE <- MLE.logistic(Xi = test.data[paste("covariate", 1:p, sep=".")],
-                         Yi = test.data["response"],
-                         initial = c(0.1, rep(0.2, p)),
-                         do.SE = TRUE,
-                         X.future = matrix(0, nrow = 1, ncol = p))
+test.MLE.1 <- MLE.logistic(data = test.data,
+                           X.name = paste("covariate", 1:p, sep="."),
+                           Y.name = "response",
+                           initial = c(0.1, rep(0.2, p)),
+                           do.SE = TRUE,
+                           X.future = matrix(0, nrow = 1, ncol = p))
+test.MLE.2 <- MLE.logistic(X = test.data[, paste("covariate", 1:p, sep=".")],
+                           Y = test.data[, "response"],
+                           initial = c(0.1, rep(0.2, p)),
+                           do.SE = TRUE,
+                           X.future = matrix(0, nrow = 1, ncol = p))
 
 
 
