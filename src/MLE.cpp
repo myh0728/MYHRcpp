@@ -44,4 +44,34 @@ List diff_lL_normal_rcpp(arma::mat X,
   return result;
 }
 
+// [[Rcpp::export]]
+List diff_lL_logistic_rcpp(arma::mat X,
+                           arma::vec Y,
+                           double alpha,
+                           arma::vec beta){
 
+  arma::uword n_n = X.n_rows;
+  arma::uword n_p = X.n_cols;
+  arma::vec gradient(n_p + 1);
+  arma::mat hessian(n_p + 1, n_p + 1);
+  List result;
+
+  arma::vec X_intercept = arma::vec({1});
+
+  for (size_t i = 0; i < n_n; ++i){
+
+    const arma::vec Xrow_i = X.row(i).t();
+    const arma::vec extXrow_i = arma::join_vert(X_intercept, Xrow_i);
+    const double eSI_i = exp(alpha + arma::dot(Xrow_i, beta));
+    const double p1_i = eSI_i / (1 + eSI_i);
+    gradient += extXrow_i * (Y(i) - p1_i);
+    hessian += -extXrow_i * extXrow_i.t() * p1_i / (1 + eSI_i);
+  }
+
+  gradient /= n_n;
+  hessian /= n_n;
+
+  result["gradient"] = gradient;
+  result["hessian"] = hessian;
+  return result;
+}

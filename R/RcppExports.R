@@ -49,8 +49,24 @@ aux_EYsubgroupX_normal_rcpp <- function(X, alpha, beta, sigma, phi, index) {
     .Call(`_MYHRcpp_aux_EYsubgroupX_normal_rcpp`, X, alpha, beta, sigma, phi, index)
 }
 
+aux_EXsubgroupY_logistic_rcpp <- function(X, alpha, beta, phi) {
+    .Call(`_MYHRcpp_aux_EXsubgroupY_logistic_rcpp`, X, alpha, beta, phi)
+}
+
+auxLS_EYsubgroupX_logistic_rcpp <- function(X, alpha, beta, phi, LS_beta, index) {
+    .Call(`_MYHRcpp_auxLS_EYsubgroupX_logistic_rcpp`, X, alpha, beta, phi, LS_beta, index)
+}
+
+aux_EYsubgroupX_logistic_rcpp <- function(X, alpha, beta, phi, index) {
+    .Call(`_MYHRcpp_aux_EYsubgroupX_logistic_rcpp`, X, alpha, beta, phi, index)
+}
+
 diff_lL_normal_rcpp <- function(X, Y, alpha, beta, sigma) {
     .Call(`_MYHRcpp_diff_lL_normal_rcpp`, X, Y, alpha, beta, sigma)
+}
+
+diff_lL_logistic_rcpp <- function(X, Y, alpha, beta) {
+    .Call(`_MYHRcpp_diff_lL_logistic_rcpp`, X, Y, alpha, beta)
 }
 
 eXsq_rcpp <- function(data_X) {
