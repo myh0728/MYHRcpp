@@ -252,7 +252,7 @@ List aux_EXsubgroupY_logistic_rcpp(arma::mat X,
       (dist_X_phi % arma::repmat(pn_vec, 1, n_p)).t(), n_m, 1
     ) * e_f / pow(e_f + 1, 2) * extXrow_i.t();
     Psi_gradient.cols(n_p + 1, n_p + n_m).diag() += -arma::reshape(
-      arma::repmat(p_vec, 1, n_p).t(), n_m, 1) / (e_f + 1);
+      arma::repmat(p_vec, 1, n_p).t(), n_m, 1) / (e_f + 1.0);
   }
 
   Psi /= n_n;

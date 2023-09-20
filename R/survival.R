@@ -7,12 +7,12 @@ KME <- function(data = NULL,
 {
   if (!is.null(data))
   {
-    t.stop <- as.vector(data[, "t.stop.name"])
-    is.event <- as.vector(data[, "is.event.name"])
+    t.stop <- as.vector(data[, t.stop.name])
+    is.event <- as.vector(data[, is.event.name])
 
     if (!is.null(wi.boot.name))
     {
-      wi.boot <- as.vector(data[, "wi.boot.name"])
+      wi.boot <- as.vector(data[, wi.boot.name])
     }
   }else
   {
@@ -70,13 +70,13 @@ SKME <- function(data = NULL,
 {
   if (!is.null(data))
   {
-    t.stop <- as.vector(data[, "t.stop.name"])
-    is.event <- as.vector(data[, "is.event.name"])
-    X <- as.matrix(data[, "X.name"])
+    t.stop <- as.vector(data[, t.stop.name])
+    is.event <- as.vector(data[, is.event.name])
+    X <- as.matrix(data[, X.name])
 
     if (!is.null(wi.boot.name))
     {
-      wi.boot <- as.vector(data[, "wi.boot.name"])
+      wi.boot <- as.vector(data[, wi.boot.name])
     }
   }else
   {
