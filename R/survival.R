@@ -195,29 +195,31 @@ SKME <- function(data = NULL,
   return(results)
 }
 
-
-
-
-
-
-
-
-
-
-
-##### to be revised ##############################################
-
-SurvP.impute <- function(t.stop, is.event, covariate,
+SurvP.impute <- function(data = NULL,
+                         t.stop.name = NULL, is.event.name = NULL, X.name = NULL,
+                         t.stop = NULL, is.event = NULL, X = NULL,
                          t.points = NULL, t.event = NULL,
-                         kernel = "K2_Biweight",
-                         bandwidth = NULL,
-                         wi.boot = NULL)
+                         kernel = "K2_Biweight", bandwidth = NULL,
+                         wi.boot.name = NULL, wi.boot = NULL)
 {
-  t.stop <- as.vector(t.stop)
-  is.event <- as.vector(is.event)
+  if (!is.null(data))
+  {
+    t.stop <- as.vector(data[, t.stop.name])
+    is.event <- as.vector(data[, is.event.name])
+    X <- as.matrix(data[, X.name])
 
-  Shat <- SKME(t.stop = t.stop, is.event = is.event,
-               X = as.matrix(covariate),
+    if (!is.null(wi.boot.name))
+    {
+      wi.boot <- as.vector(data[, wi.boot.name])
+    }
+  }else
+  {
+    t.stop <- as.vector(t.stop)
+    is.event <- as.vector(is.event)
+    X <- as.matrix(X)
+  }
+
+  Shat <- SKME(t.stop = t.stop, is.event = is.event, X = X,
                t.event = t.event,
                kernel = kernel, bandwidth = bandwidth,
                wi.boot = wi.boot)
@@ -237,13 +239,23 @@ SurvP.impute <- function(t.stop, is.event, covariate,
   surv.prob <- Shat.ext[, index.t.points] / diag(Shat.ext[, index.t.stop])
   surv.prob[is.na(surv.prob)|is.infinite(surv.prob)] <- 0
 
-  Sit <- outer(t.stop, t.points, FUN = ">")
-  Vit <- Sit+(1 - Sit) * (is.event == 0) * surv.prob
+  Sit <- 1 - outer_leq_rcpp(t.stop, t.points)
+  Vit <- Sit + (1 - Sit) * (is.event == 0) * surv.prob
   dimnames(Vit) <- list(NULL,
                         t.points)
 
   return(Vit)
 }
+
+
+
+
+
+
+
+
+
+##### to be revised ##############################################
 
 ########################################################
 ###                                                  ###
