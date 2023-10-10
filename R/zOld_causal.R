@@ -1,12 +1,12 @@
-CATE.CVMDR <- function(response, treatment, confounder,
-                       B1.prior = NULL, B0.prior = NULL,
-                       initial1.prior = NULL, initial0.prior = NULL,
-                       kernel.prior = "K2_Biweight",
-                       bandwidth1.prior = NULL, bandwidth0.prior = NULL,
-                       bandwidth.prior.scale = 1,
-                       initial = NULL, kernel = "K2_Biweight",
-                       wi.boot = NULL, stop.prop = 0.95,
-                       do.print = TRUE)
+CATE.CVMDR_old <- function(response, treatment, confounder,
+                           B1.prior = NULL, B0.prior = NULL,
+                           initial1.prior = NULL, initial0.prior = NULL,
+                           kernel.prior = "K2_Biweight",
+                           bandwidth1.prior = NULL, bandwidth0.prior = NULL,
+                           bandwidth.prior.scale = 1,
+                           initial = NULL, kernel = "K2_Biweight",
+                           wi.boot = NULL, stop.prop = 0.95,
+                           do.print = TRUE)
 {
   response <- as.vector(response)
   treatment <- as.vector(treatment)
@@ -89,15 +89,15 @@ CATE.CVMDR <- function(response, treatment, confounder,
   return(results)
 }
 
-CATEsurv.CVSDR <- function(t.stop, is.event, treatment, confounder,
-                           B1.prior = NULL, B0.prior = NULL,
-                           initial1.prior = NULL, initial0.prior = NULL,
-                           kernel.prior = "K2_Biweight",
-                           bandwidth1.prior = NULL, bandwidth0.prior = NULL,
-                           bandwidth.prior.scale = 1,
-                           initial = NULL, kernel = "K2_Biweight",
-                           wi.boot = NULL, stop.prop = 0.95,
-                           do.print = TRUE)
+CATEsurv.CVSDR_old <- function(t.stop, is.event, treatment, confounder,
+                               B1.prior = NULL, B0.prior = NULL,
+                               initial1.prior = NULL, initial0.prior = NULL,
+                               kernel.prior = "K2_Biweight",
+                               bandwidth1.prior = NULL, bandwidth0.prior = NULL,
+                               bandwidth.prior.scale = 1,
+                               initial = NULL, kernel = "K2_Biweight",
+                               wi.boot = NULL, stop.prop = 0.95,
+                               do.print = TRUE)
 {
   t.stop <- as.vector(t.stop)
   is.event <- as.vector(is.event)
