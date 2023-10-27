@@ -5,7 +5,7 @@ CATE.CVMDR <- function(data = NULL,
                        initial1.prior = NULL, initial0.prior = NULL,
                        kernel.prior = "K2_Biweight",
                        bandwidth1.prior = NULL, bandwidth0.prior = NULL,
-                       initial = NULL, kernel = "K2_Biweight",
+                       initial = NULL, kernel = "K2_Biweight", bandwidth = NULL,
                        wi.boot.name = NULL, wi.boot = NULL,
                        do.print = TRUE)
 {
