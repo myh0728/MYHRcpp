@@ -2,7 +2,7 @@
 title: "Maximum Likelihood Estimation of Generalized Linear Models"
 output: pdf_document
 vignette: >
-  %\VignetteIndexEntry{demoR_MLE}
+  %\VignetteIndexEntry{MLE}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
