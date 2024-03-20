@@ -304,7 +304,7 @@ CVSDRsurv <- function(t.stop, is.event, covariate,
 
   Vit <- SurvP.impute(t.stop = t.stop,
                       is.event = is.event,
-                      covariate = covariate %*% B.prior,
+                      X = covariate %*% B.prior,
                       t.points = sort(unique(t.stop[is.event==1])),
                       kernel = kernel.prior,
                       bandwidth = bandwidth.prior,

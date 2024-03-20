@@ -1,21 +1,5 @@
 ##### normal model #####
 
-.lL.normal <- function(X, Y, alpha, beta, sigma, wi.boot = NULL)
-{
-  SI <- alpha + X %*% beta
-  f.cond.y.x <- dnorm(Y - SI, mean = 0, sd = sigma)
-
-  if (is.null(wi.boot))
-  {
-    lL <- sum(log(f.cond.y.x))
-  }else
-  {
-    lL <- sum(log(f.cond.y.x) * wi.boot)
-  }
-
-  return(lL)
-}
-
 # inputs:
 # X: c(number_n, number_p) data.frame
 # Y: c(number_n, 1) data.frame
@@ -53,7 +37,7 @@ MLE.normal <- function(data = NULL, X.name = NULL, Y.name = NULL,
 
   nlL.run <- function(theta.trans)
   {
-    value <- -.lL.normal(X = X, Y = Y,
+    value <- -lL.normal(X = X, Y = Y,
                          alpha = theta.trans[1],
                          beta = theta.trans[2:(number_p + 1)],
                          sigma = exp(theta.trans[number_p + 2]),
@@ -131,32 +115,6 @@ MLE.normal <- function(data = NULL, X.name = NULL, Y.name = NULL,
 
 ##### logistic model #####
 
-plogit <- function(X, alpha, beta)
-{
-  eSI <- exp(alpha + as.vector(X %*% beta))
-  piX <- 1 / (1 + 1 / eSI)
-
-  return(piX)
-}
-
-.lL.logistic <- function(X, Y, alpha, beta, wi.boot = NULL)
-{
-  SI <- alpha + X %*% beta
-  P1 <- 1 / (1 + exp(-SI))
-  f.cond.y.x <- P1
-  f.cond.y.x[Y == 0] <- (1 - P1[Y == 0])
-
-  if (is.null(wi.boot))
-  {
-    lL <- sum(log(f.cond.y.x))
-  }else
-  {
-    lL <- sum(log(f.cond.y.x) * wi.boot)
-  }
-
-  return(lL)
-}
-
 # inputs:
 # X: c(number_n, number_p) data.frame
 # Y: c(number_n, 1) data.frame
@@ -190,7 +148,7 @@ MLE.logistic <- function(data = NULL, X.name = NULL, Y.name = NULL,
 
   nlL.run <- function(theta)
   {
-    value <- -.lL.logistic(X = X, Y = Y,
+    value <- -lL.logistic(X = X, Y = Y,
                            alpha = theta[1],
                            beta = theta[2:(number_p + 1)],
                            wi.boot = wi.boot)

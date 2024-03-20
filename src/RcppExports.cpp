@@ -345,9 +345,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// auxLS_EXsubgroupY_normal_rcpp
-List auxLS_EXsubgroupY_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::mat phi, double LS_beta, arma::mat y_pts);
-RcppExport SEXP _MYHRcpp_auxLS_EXsubgroupY_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP LS_betaSEXP, SEXP y_ptsSEXP) {
+// auxLS_Lagrange_EXsubY_normal_rcpp
+List auxLS_Lagrange_EXsubY_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::mat phi, double LS_beta, arma::mat y_pts, arma::vec eta);
+RcppExport SEXP _MYHRcpp_auxLS_Lagrange_EXsubY_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP LS_betaSEXP, SEXP y_ptsSEXP, SEXP etaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -358,13 +358,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type phi(phiSEXP);
     Rcpp::traits::input_parameter< double >::type LS_beta(LS_betaSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type y_pts(y_ptsSEXP);
-    rcpp_result_gen = Rcpp::wrap(auxLS_EXsubgroupY_normal_rcpp(X, alpha, beta, sigma, phi, LS_beta, y_pts));
+    Rcpp::traits::input_parameter< arma::vec >::type eta(etaSEXP);
+    rcpp_result_gen = Rcpp::wrap(auxLS_Lagrange_EXsubY_normal_rcpp(X, alpha, beta, sigma, phi, LS_beta, y_pts, eta));
     return rcpp_result_gen;
 END_RCPP
 }
-// aux_EXsubgroupY_normal_rcpp
-List aux_EXsubgroupY_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::mat phi, arma::mat y_pts);
-RcppExport SEXP _MYHRcpp_aux_EXsubgroupY_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP y_ptsSEXP) {
+// aux_Lagrange_EXsubY_normal_rcpp
+List aux_Lagrange_EXsubY_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::mat phi, arma::mat y_pts, arma::vec eta);
+RcppExport SEXP _MYHRcpp_aux_Lagrange_EXsubY_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP y_ptsSEXP, SEXP etaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -374,13 +375,47 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type phi(phiSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type y_pts(y_ptsSEXP);
-    rcpp_result_gen = Rcpp::wrap(aux_EXsubgroupY_normal_rcpp(X, alpha, beta, sigma, phi, y_pts));
+    Rcpp::traits::input_parameter< arma::vec >::type eta(etaSEXP);
+    rcpp_result_gen = Rcpp::wrap(aux_Lagrange_EXsubY_normal_rcpp(X, alpha, beta, sigma, phi, y_pts, eta));
     return rcpp_result_gen;
 END_RCPP
 }
-// auxLS_EYsubgroupX_normal_rcpp
-List auxLS_EYsubgroupX_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::vec phi, double LS_beta, arma::umat index);
-RcppExport SEXP _MYHRcpp_auxLS_EYsubgroupX_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP LS_betaSEXP, SEXP indexSEXP) {
+// auxLS_Lagrange_EX_normal_rcpp
+List auxLS_Lagrange_EX_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::vec phi, double LS_beta, arma::vec eta);
+RcppExport SEXP _MYHRcpp_auxLS_Lagrange_EX_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP LS_betaSEXP, SEXP etaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< double >::type LS_beta(LS_betaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type eta(etaSEXP);
+    rcpp_result_gen = Rcpp::wrap(auxLS_Lagrange_EX_normal_rcpp(X, alpha, beta, sigma, phi, LS_beta, eta));
+    return rcpp_result_gen;
+END_RCPP
+}
+// aux_Lagrange_EX_normal_rcpp
+List aux_Lagrange_EX_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::vec phi, arma::vec eta);
+RcppExport SEXP _MYHRcpp_aux_Lagrange_EX_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP etaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type eta(etaSEXP);
+    rcpp_result_gen = Rcpp::wrap(aux_Lagrange_EX_normal_rcpp(X, alpha, beta, sigma, phi, eta));
+    return rcpp_result_gen;
+END_RCPP
+}
+// auxLS_Lagrange_EYsubX_normal_rcpp
+List auxLS_Lagrange_EYsubX_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::vec phi, double LS_beta, arma::umat index, arma::vec eta);
+RcppExport SEXP _MYHRcpp_auxLS_Lagrange_EYsubX_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP LS_betaSEXP, SEXP indexSEXP, SEXP etaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -391,13 +426,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::vec >::type phi(phiSEXP);
     Rcpp::traits::input_parameter< double >::type LS_beta(LS_betaSEXP);
     Rcpp::traits::input_parameter< arma::umat >::type index(indexSEXP);
-    rcpp_result_gen = Rcpp::wrap(auxLS_EYsubgroupX_normal_rcpp(X, alpha, beta, sigma, phi, LS_beta, index));
+    Rcpp::traits::input_parameter< arma::vec >::type eta(etaSEXP);
+    rcpp_result_gen = Rcpp::wrap(auxLS_Lagrange_EYsubX_normal_rcpp(X, alpha, beta, sigma, phi, LS_beta, index, eta));
     return rcpp_result_gen;
 END_RCPP
 }
-// aux_EYsubgroupX_normal_rcpp
-List aux_EYsubgroupX_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::vec phi, arma::umat index);
-RcppExport SEXP _MYHRcpp_aux_EYsubgroupX_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP indexSEXP) {
+// aux_Lagrange_EYsubX_normal_rcpp
+List aux_Lagrange_EYsubX_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::vec phi, arma::umat index, arma::vec eta);
+RcppExport SEXP _MYHRcpp_aux_Lagrange_EYsubX_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP indexSEXP, SEXP etaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -407,7 +443,107 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type phi(phiSEXP);
     Rcpp::traits::input_parameter< arma::umat >::type index(indexSEXP);
-    rcpp_result_gen = Rcpp::wrap(aux_EYsubgroupX_normal_rcpp(X, alpha, beta, sigma, phi, index));
+    Rcpp::traits::input_parameter< arma::vec >::type eta(etaSEXP);
+    rcpp_result_gen = Rcpp::wrap(aux_Lagrange_EYsubX_normal_rcpp(X, alpha, beta, sigma, phi, index, eta));
+    return rcpp_result_gen;
+END_RCPP
+}
+// auxLS_Lagrange_EY_normal_rcpp
+List auxLS_Lagrange_EY_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, double phi, double LS_beta, double eta);
+RcppExport SEXP _MYHRcpp_auxLS_Lagrange_EY_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP LS_betaSEXP, SEXP etaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< double >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< double >::type LS_beta(LS_betaSEXP);
+    Rcpp::traits::input_parameter< double >::type eta(etaSEXP);
+    rcpp_result_gen = Rcpp::wrap(auxLS_Lagrange_EY_normal_rcpp(X, alpha, beta, sigma, phi, LS_beta, eta));
+    return rcpp_result_gen;
+END_RCPP
+}
+// aux_Lagrange_EY_normal_rcpp
+List aux_Lagrange_EY_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, double phi, double eta);
+RcppExport SEXP _MYHRcpp_aux_Lagrange_EY_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP etaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< double >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< double >::type eta(etaSEXP);
+    rcpp_result_gen = Rcpp::wrap(aux_Lagrange_EY_normal_rcpp(X, alpha, beta, sigma, phi, eta));
+    return rcpp_result_gen;
+END_RCPP
+}
+// auxLS_EXsubY_normal_rcpp
+List auxLS_EXsubY_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::mat phi, double LS_beta, arma::mat y_pts);
+RcppExport SEXP _MYHRcpp_auxLS_EXsubY_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP LS_betaSEXP, SEXP y_ptsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< double >::type LS_beta(LS_betaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type y_pts(y_ptsSEXP);
+    rcpp_result_gen = Rcpp::wrap(auxLS_EXsubY_normal_rcpp(X, alpha, beta, sigma, phi, LS_beta, y_pts));
+    return rcpp_result_gen;
+END_RCPP
+}
+// aux_EXsubY_normal_rcpp
+List aux_EXsubY_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::mat phi, arma::mat y_pts);
+RcppExport SEXP _MYHRcpp_aux_EXsubY_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP y_ptsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type y_pts(y_ptsSEXP);
+    rcpp_result_gen = Rcpp::wrap(aux_EXsubY_normal_rcpp(X, alpha, beta, sigma, phi, y_pts));
+    return rcpp_result_gen;
+END_RCPP
+}
+// auxLS_EYsubX_normal_rcpp
+List auxLS_EYsubX_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::vec phi, double LS_beta, arma::umat index);
+RcppExport SEXP _MYHRcpp_auxLS_EYsubX_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP LS_betaSEXP, SEXP indexSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< double >::type LS_beta(LS_betaSEXP);
+    Rcpp::traits::input_parameter< arma::umat >::type index(indexSEXP);
+    rcpp_result_gen = Rcpp::wrap(auxLS_EYsubX_normal_rcpp(X, alpha, beta, sigma, phi, LS_beta, index));
+    return rcpp_result_gen;
+END_RCPP
+}
+// aux_EYsubX_normal_rcpp
+List aux_EYsubX_normal_rcpp(arma::mat X, double alpha, arma::vec beta, double sigma, arma::vec phi, arma::umat index);
+RcppExport SEXP _MYHRcpp_aux_EYsubX_normal_rcpp(SEXP XSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP sigmaSEXP, SEXP phiSEXP, SEXP indexSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< arma::umat >::type index(indexSEXP);
+    rcpp_result_gen = Rcpp::wrap(aux_EYsubX_normal_rcpp(X, alpha, beta, sigma, phi, index));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1650,10 +1786,18 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_lpL_logistic_rcpp", (DL_FUNC) &_MYHRcpp_lpL_logistic_rcpp, 7},
     {"_MYHRcpp_dG1alt_logistic_rcpp", (DL_FUNC) &_MYHRcpp_dG1alt_logistic_rcpp, 8},
     {"_MYHRcpp_lpLalt_logistic_rcpp", (DL_FUNC) &_MYHRcpp_lpLalt_logistic_rcpp, 8},
-    {"_MYHRcpp_auxLS_EXsubgroupY_normal_rcpp", (DL_FUNC) &_MYHRcpp_auxLS_EXsubgroupY_normal_rcpp, 7},
-    {"_MYHRcpp_aux_EXsubgroupY_normal_rcpp", (DL_FUNC) &_MYHRcpp_aux_EXsubgroupY_normal_rcpp, 6},
-    {"_MYHRcpp_auxLS_EYsubgroupX_normal_rcpp", (DL_FUNC) &_MYHRcpp_auxLS_EYsubgroupX_normal_rcpp, 7},
-    {"_MYHRcpp_aux_EYsubgroupX_normal_rcpp", (DL_FUNC) &_MYHRcpp_aux_EYsubgroupX_normal_rcpp, 6},
+    {"_MYHRcpp_auxLS_Lagrange_EXsubY_normal_rcpp", (DL_FUNC) &_MYHRcpp_auxLS_Lagrange_EXsubY_normal_rcpp, 8},
+    {"_MYHRcpp_aux_Lagrange_EXsubY_normal_rcpp", (DL_FUNC) &_MYHRcpp_aux_Lagrange_EXsubY_normal_rcpp, 7},
+    {"_MYHRcpp_auxLS_Lagrange_EX_normal_rcpp", (DL_FUNC) &_MYHRcpp_auxLS_Lagrange_EX_normal_rcpp, 7},
+    {"_MYHRcpp_aux_Lagrange_EX_normal_rcpp", (DL_FUNC) &_MYHRcpp_aux_Lagrange_EX_normal_rcpp, 6},
+    {"_MYHRcpp_auxLS_Lagrange_EYsubX_normal_rcpp", (DL_FUNC) &_MYHRcpp_auxLS_Lagrange_EYsubX_normal_rcpp, 8},
+    {"_MYHRcpp_aux_Lagrange_EYsubX_normal_rcpp", (DL_FUNC) &_MYHRcpp_aux_Lagrange_EYsubX_normal_rcpp, 7},
+    {"_MYHRcpp_auxLS_Lagrange_EY_normal_rcpp", (DL_FUNC) &_MYHRcpp_auxLS_Lagrange_EY_normal_rcpp, 7},
+    {"_MYHRcpp_aux_Lagrange_EY_normal_rcpp", (DL_FUNC) &_MYHRcpp_aux_Lagrange_EY_normal_rcpp, 6},
+    {"_MYHRcpp_auxLS_EXsubY_normal_rcpp", (DL_FUNC) &_MYHRcpp_auxLS_EXsubY_normal_rcpp, 7},
+    {"_MYHRcpp_aux_EXsubY_normal_rcpp", (DL_FUNC) &_MYHRcpp_aux_EXsubY_normal_rcpp, 6},
+    {"_MYHRcpp_auxLS_EYsubX_normal_rcpp", (DL_FUNC) &_MYHRcpp_auxLS_EYsubX_normal_rcpp, 7},
+    {"_MYHRcpp_aux_EYsubX_normal_rcpp", (DL_FUNC) &_MYHRcpp_aux_EYsubX_normal_rcpp, 6},
     {"_MYHRcpp_aux_EXsubgroupY_logistic_rcpp", (DL_FUNC) &_MYHRcpp_aux_EXsubgroupY_logistic_rcpp, 4},
     {"_MYHRcpp_auxLS_EYsubgroupX_logistic_rcpp", (DL_FUNC) &_MYHRcpp_auxLS_EYsubgroupX_logistic_rcpp, 6},
     {"_MYHRcpp_aux_EYsubgroupX_logistic_rcpp", (DL_FUNC) &_MYHRcpp_aux_EYsubgroupX_logistic_rcpp, 5},

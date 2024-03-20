@@ -37,85 +37,158 @@ for (i in 1:N)
 X1_shift <- X_shift[, 1]
 X2_shift <- X_shift[, 2]
 
+MLE.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+           Y = test.data$response, do.SE = FALSE)
+
 ### average of X given Y (auxiliary information)
 
-y.pts <- matrix(0, 1, 2)
+y.pts <- matrix(0, 2, 2)
 y.pts[1, ] <- quantile(Y_shift, c(0.0, 0.5))
+y.pts[2, ] <- quantile(Y_shift, c(0.5, 1.0))
 
-phi <- matrix(0, 1, p)
+phi <- matrix(0, 2, p)
 phi[1, ] <- colMeans(X_shift[(Y_shift > y.pts[1, 1]) & (Y_shift <= y.pts[1, 2]), ])
+phi[2, ] <- colMeans(X_shift[(Y_shift > y.pts[2, 1]) & (Y_shift <= y.pts[2, 2]), ])
 
 auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
-             Y = test.data[, "response"],
-             aux = "EXsubgroupY",
-             control.EXsubgroupY = list(phi = phi, y.pts = y.pts,
-                                        sample.size = N))
+             Y = test.data$response, aux = "EXsubY", shift = TRUE,
+             ext.sample.size = NULL, method = "EL", initial = NULL,
+             info.EXsubY = list(phi = phi, y.pts = y.pts),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
 
 auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
-             Y = test.data[, "response"],
-             aux = "EXsubgroupY", shift = FALSE,
-             control.EXsubgroupY = list(phi = phi, y.pts = y.pts,
-                                        sample.size = N))
-
-auxLS.normal(data = test.data,
-             X.name = paste("covariate.X", 1:p, sep = ""),
-             Y.name = "response",
-             aux = "EXsubgroupY",
-             control.EXsubgroupY = list(phi = phi, y.pts = y.pts,
-                                        sample.size = N))
+             Y = test.data$response, aux = "EXsubY", shift = TRUE,
+             ext.sample.size = N, method = "EL", initial = NULL,
+             info.EXsubY = list(phi = phi, y.pts = y.pts),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
 
 auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
-             Y = test.data[, "response"],
-             aux = "EXsubgroupY", shift = FALSE,
-             control.EXsubgroupY = list(phi = phi, y.pts = y.pts,
-                                        sample.size = N))
-
-y.pts <- matrix(0, 4, 2)
-y.pts[1, ] <- quantile(Y_shift, c(0.00, 0.25))
-y.pts[2, ] <- quantile(Y_shift, c(0.25, 0.5))
-y.pts[3, ] <- quantile(Y_shift, c(0.50, 0.75))
-y.pts[4, ] <- quantile(Y_shift, c(0.75, 1.00))
-
-phi1 <- colMeans(X_shift[(Y_shift > y.pts[1, 1]) & (Y_shift <= y.pts[1, 2]), ])
-phi2 <- colMeans(X_shift[(Y_shift > y.pts[2, 1]) & (Y_shift <= y.pts[2, 2]), ])
-phi3 <- colMeans(X_shift[(Y_shift > y.pts[3, 1]) & (Y_shift <= y.pts[3, 2]), ])
-phi4 <- colMeans(X_shift[(Y_shift > y.pts[4, 1]) & (Y_shift <= y.pts[4, 2]), ])
-
-auxLS.normal(data = test.data,
-             X.name = paste("covariate.X", 1:p, sep = ""),
-             Y.name = "response",
-             aux = "EXsubgroupY",
-             control.EXsubgroupY = list(phi = rbind(phi1, phi2, phi3, phi4),
-                                        y.pts = y.pts,
-                                        sample.size = N))
+             Y = test.data$response, aux = "EXsubY", shift = TRUE,
+             ext.sample.size = N, method = "fast", initial = NULL,
+             info.EXsubY = list(phi = phi, y.pts = y.pts))
 
 auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
-             Y = test.data[, "response"],
-             aux = "EXsubgroupY", shift = FALSE,
-             control.EXsubgroupY = list(phi = rbind(phi1, phi2, phi3, phi4),
-                                        y.pts = y.pts,
-                                        sample.size = N))
+             Y = test.data$response, aux = "EXsubY", shift = FALSE,
+             ext.sample.size = NULL, method = "EL", initial = NULL,
+             info.EXsubY = list(phi = phi, y.pts = y.pts),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
+
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data$response, aux = "EXsubY", shift = FALSE,
+             ext.sample.size = N, method = "EL", initial = NULL,
+             info.EXsubY = list(phi = phi, y.pts = y.pts),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
+
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data$response, aux = "EXsubY", shift = FALSE,
+             ext.sample.size = N, method = "fast", initial = NULL,
+             info.EXsubY = list(phi = phi, y.pts = y.pts),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
+
+### average of X (auxiliary information)
+
+phi <- colMeans(X_shift)
+
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data$response, aux = "EX", shift = TRUE,
+             ext.sample.size = NULL, method = "EL", initial = NULL,
+             info.EX = list(phi = phi),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
+
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data$response, aux = "EX", shift = TRUE,
+             ext.sample.size = N, method = "EL", initial = NULL,
+             info.EX = list(phi = phi),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
+
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data$response, aux = "EX", shift = FALSE,
+             ext.sample.size = NULL, method = "EL", initial = NULL,
+             info.EX = list(phi = phi),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
+
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data$response, aux = "EX", shift = FALSE,
+             ext.sample.size = N, method = "EL", initial = NULL,
+             info.EX = list(phi = phi),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
 
 ### average of Y given X (auxiliary information)
 
 phi1 <- mean(Y_shift[X_shift[, 1] > 0])
 phi2 <- mean(Y_shift[X_shift[, 1] <= 0])
 
-auxLS.normal(data = test.data,
-             X.name = paste("covariate.X", 1:p, sep = ""),
-             Y.name = "response",
-             aux = "EYsubgroupX",
-             control.EYsubgroupX = list(phi = c(phi1, phi2),
-                                        inclusion = cbind(X[, 1] > 0, X[, 1] <= 0),
-                                        sample.size = N))
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data$response, aux = "EYsubX", shift = TRUE,
+             ext.sample.size = NULL, method = "EL", initial = NULL,
+             info.EYsubX = list(phi = c(phi1, phi2),
+                                   inclusion = cbind(X[, 1] > 0, X[, 1] <= 0)),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
 
-auxLS.normal(data = test.data,
-             X.name = paste("covariate.X", 1:p, sep = ""),
-             Y.name = "response",
-             aux = "EYsubgroupX", shift = FALSE,
-             control.EYsubgroupX = list(phi = c(phi1, phi2),
-                                        inclusion = cbind(X[, 1] > 0, X[, 1] <= 0),
-                                        sample.size = N))
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data$response, aux = "EYsubX", shift = TRUE,
+             ext.sample.size = N, method = "EL", initial = NULL,
+             info.EYsubX = list(phi = c(phi1, phi2),
+                                   inclusion = cbind(X[, 1] > 0, X[, 1] <= 0)),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
+
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data$response, aux = "EYsubX", shift = TRUE,
+             ext.sample.size = N, method = "fast", initial = NULL,
+             info.EYsubX = list(phi = c(phi1, phi2),
+                                inclusion = cbind(X[, 1] > 0, X[, 1] <= 0)),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
+
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data$response, aux = "EYsubX", shift = FALSE,
+             ext.sample.size = NULL, method = "EL", initial = NULL,
+             info.EYsubX = list(phi = c(phi1, phi2),
+                                   inclusion = cbind(X[, 1] > 0, X[, 1] <= 0)),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
+
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data$response, aux = "EYsubX", shift = FALSE,
+             ext.sample.size = N, method = "EL", initial = NULL,
+             info.EYsubX = list(phi = c(phi1, phi2),
+                                   inclusion = cbind(X[, 1] > 0, X[, 1] <= 0)),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
+
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data$response, aux = "EYsubX", shift = FALSE,
+             ext.sample.size = N, method = "fast", initial = NULL,
+             info.EYsubX = list(phi = c(phi1, phi2),
+                                inclusion = cbind(X[, 1] > 0, X[, 1] <= 0)),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
+
+### average of Y (auxiliary information)
+
+phi <- mean(Y_shift)
+
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data$response, aux = "EY", shift = TRUE,
+             ext.sample.size = NULL, method = "EL", initial = NULL,
+             info.EY = list(phi = phi),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
+
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data$response, aux = "EY", shift = TRUE,
+             ext.sample.size = N, method = "EL", initial = NULL,
+             info.EY = list(phi = phi),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
+
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data$response, aux = "EY", shift = FALSE,
+             ext.sample.size = NULL, method = "EL", initial = NULL,
+             info.EY = list(phi = phi),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
+
+auxLS.normal(X = test.data[, paste("covariate.X", 1:p, sep = "")],
+             Y = test.data$response, aux = "EY", shift = FALSE,
+             ext.sample.size = N, method = "EL", initial = NULL,
+             info.EY = list(phi = phi),
+             iter.max = 10, step.rate = 2, step.max = 10, tol = 1e-5)
+
+##############################################################################
 
 ##### Logistic regression model #####
 

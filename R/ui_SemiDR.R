@@ -2570,10 +2570,10 @@ CVSDRuniY <- function(data = NULL, X.name = NULL, Y.name = NULL,
     wi.boot <- as.vector(wi.boot)
 
     cvh.table["dim0", "criterion"] <-
-      CVDNWuniY_K2B_rcpp(X = as.matrix(rep(0, length = number_n)),
-                         Y = Y, h = 1,
-                         rank_y_in_Y = rank.y.in.Y, p_y = p.y,
-                         w = wi.boot)
+      CVDNWuniY_K2B_w_rcpp(X = as.matrix(rep(0, length = number_n)),
+                           Y = Y, h = 1,
+                           rank_y_in_Y = rank.y.in.Y, p_y = p.y,
+                           w = wi.boot)
   }
 
   if (do.print)

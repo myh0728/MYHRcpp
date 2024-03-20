@@ -143,7 +143,7 @@ EL.saddle.inner <- function(score.i, wi.boot = NULL,
     {
       step.size <- 1
       direction.step <- solve_rcpp(I.eta.step, as.matrix(S.eta.step))
-      eta.step.new <- eta.step-direction.step
+      eta.step.new <- eta.step - direction.step
       denominator.step.new <- as.vector(1 - score.i %*% eta.step.new)
       denominator.step.new[denominator.step.new < 0] <- 0
       L.step.new <- -sum(log(denominator.step.new))
