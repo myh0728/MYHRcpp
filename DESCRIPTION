@@ -1,7 +1,7 @@
 Package: MYHRcpp
 Type: Package
 Title: Packed codes of Ming-Yueh Huang's work
-Version: 0.5.1
+Version: 0.5.5
 Author: Ming-Yueh Huang
 Maintainer: Ming-Yueh Huang <myh0728@stat.sinica.edu.tw>
 Description: Topics including
@@ -10,7 +10,8 @@ Description: Topics including
     Empirical likelihood estimation
     Survival analysis
     Recurrent event data analysis
-    Prior probability shift
+    Dataset shift
+    Combining auxiliary information
     Nonparametric kernel smoothing
 Depends: R (>= 4.2.1)
 License: None

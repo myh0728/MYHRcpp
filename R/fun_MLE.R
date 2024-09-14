@@ -40,3 +40,19 @@ lL.logistic <- function(X, Y, alpha, beta, wi.boot = NULL)
   return(lL)
 }
 
+lL.gamma <- function(X, Y, alpha, beta, nu, wi.boot = NULL)
+{
+  SI <- alpha + X %*% beta
+  lambda <- nu * exp(-SI)
+  f.cond.y.x <- (lambda ^ nu) * (Y ^ (nu - 1)) * exp(-lambda * Y) / gamma(nu)
+
+  if (is.null(wi.boot))
+  {
+    lL <- sum(log(f.cond.y.x))
+  }else
+  {
+    lL <- sum(log(f.cond.y.x) * wi.boot)
+  }
+
+  return(lL)
+}

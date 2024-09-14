@@ -57,6 +57,142 @@ KME_w_rcpp_n1 <- function(t_stop, is_event, t_event, w) {
     .Call(`_MYHRcpp_KME_w_rcpp_n1`, t_stop, is_event, t_event, w)
 }
 
+aux_Lagrange_EY_normal_rcpp <- function(X, alpha, beta, sigma, phi, eta) {
+    .Call(`_MYHRcpp_aux_Lagrange_EY_normal_rcpp`, X, alpha, beta, sigma, phi, eta)
+}
+
+aux_Lagrange_EXsubY_normal_rcpp <- function(X, alpha, beta, sigma, phi, y_pts, eta) {
+    .Call(`_MYHRcpp_aux_Lagrange_EXsubY_normal_rcpp`, X, alpha, beta, sigma, phi, y_pts, eta)
+}
+
+aux_Lagrange_EYsubX_normal_rcpp <- function(X, alpha, beta, sigma, phi, index, eta) {
+    .Call(`_MYHRcpp_aux_Lagrange_EYsubX_normal_rcpp`, X, alpha, beta, sigma, phi, index, eta)
+}
+
+aux_EY_normal_rcpp <- function(X, alpha, beta, sigma, phi) {
+    .Call(`_MYHRcpp_aux_EY_normal_rcpp`, X, alpha, beta, sigma, phi)
+}
+
+aux_EXsubY_normal_rcpp <- function(X, alpha, beta, sigma, phi, y_pts) {
+    .Call(`_MYHRcpp_aux_EXsubY_normal_rcpp`, X, alpha, beta, sigma, phi, y_pts)
+}
+
+aux_EYsubX_normal_rcpp <- function(X, alpha, beta, sigma, phi, index) {
+    .Call(`_MYHRcpp_aux_EYsubX_normal_rcpp`, X, alpha, beta, sigma, phi, index)
+}
+
+auxLS_Lagrange_EX_normal_rcpp <- function(X, alpha, beta, sigma, phi, LS_beta, eta) {
+    .Call(`_MYHRcpp_auxLS_Lagrange_EX_normal_rcpp`, X, alpha, beta, sigma, phi, LS_beta, eta)
+}
+
+auxLS_Lagrange_EY_normal_rcpp <- function(X, alpha, beta, sigma, phi, LS_beta, eta) {
+    .Call(`_MYHRcpp_auxLS_Lagrange_EY_normal_rcpp`, X, alpha, beta, sigma, phi, LS_beta, eta)
+}
+
+auxLS_Lagrange_EXsubY_normal_rcpp <- function(X, alpha, beta, sigma, phi, LS_beta, y_pts, eta) {
+    .Call(`_MYHRcpp_auxLS_Lagrange_EXsubY_normal_rcpp`, X, alpha, beta, sigma, phi, LS_beta, y_pts, eta)
+}
+
+auxLS_Lagrange_EYsubX_normal_rcpp <- function(X, alpha, beta, sigma, phi, LS_beta, index, eta) {
+    .Call(`_MYHRcpp_auxLS_Lagrange_EYsubX_normal_rcpp`, X, alpha, beta, sigma, phi, LS_beta, index, eta)
+}
+
+auxLS_EX_normal_rcpp <- function(X, alpha, beta, sigma, phi, LS_beta) {
+    .Call(`_MYHRcpp_auxLS_EX_normal_rcpp`, X, alpha, beta, sigma, phi, LS_beta)
+}
+
+auxLS_EY_normal_rcpp <- function(X, alpha, beta, sigma, phi, LS_beta) {
+    .Call(`_MYHRcpp_auxLS_EY_normal_rcpp`, X, alpha, beta, sigma, phi, LS_beta)
+}
+
+auxLS_EXsubY_normal_rcpp <- function(X, alpha, beta, sigma, phi, LS_beta, y_pts) {
+    .Call(`_MYHRcpp_auxLS_EXsubY_normal_rcpp`, X, alpha, beta, sigma, phi, LS_beta, y_pts)
+}
+
+auxLS_EYsubX_normal_rcpp <- function(X, alpha, beta, sigma, phi, LS_beta, index) {
+    .Call(`_MYHRcpp_auxLS_EYsubX_normal_rcpp`, X, alpha, beta, sigma, phi, LS_beta, index)
+}
+
+auxCS_Lagrange_EY_normal_rcpp <- function(X, alpha, beta, sigma, phi, CS_beta, eta) {
+    .Call(`_MYHRcpp_auxCS_Lagrange_EY_normal_rcpp`, X, alpha, beta, sigma, phi, CS_beta, eta)
+}
+
+auxCS_Lagrange_EXsubY_normal_rcpp <- function(X, alpha, beta, sigma, phi, CS_beta, y_pts, eta) {
+    .Call(`_MYHRcpp_auxCS_Lagrange_EXsubY_normal_rcpp`, X, alpha, beta, sigma, phi, CS_beta, y_pts, eta)
+}
+
+auxCS_Lagrange_EYsubX_normal_rcpp <- function(X, alpha, beta, sigma, phi, CS_beta, index, eta) {
+    .Call(`_MYHRcpp_auxCS_Lagrange_EYsubX_normal_rcpp`, X, alpha, beta, sigma, phi, CS_beta, index, eta)
+}
+
+auxCS_EY_normal_rcpp <- function(X, alpha, beta, sigma, phi, CS_beta) {
+    .Call(`_MYHRcpp_auxCS_EY_normal_rcpp`, X, alpha, beta, sigma, phi, CS_beta)
+}
+
+auxCS_EXsubY_normal_rcpp <- function(X, alpha, beta, sigma, phi, CS_beta, y_pts) {
+    .Call(`_MYHRcpp_auxCS_EXsubY_normal_rcpp`, X, alpha, beta, sigma, phi, CS_beta, y_pts)
+}
+
+auxCS_EYsubX_normal_rcpp <- function(X, alpha, beta, sigma, phi, CS_beta, index) {
+    .Call(`_MYHRcpp_auxCS_EYsubX_normal_rcpp`, X, alpha, beta, sigma, phi, CS_beta, index)
+}
+
+aux_Lagrange_EY_gamma_rcpp <- function(X, alpha, beta, nu, phi, eta) {
+    .Call(`_MYHRcpp_aux_Lagrange_EY_gamma_rcpp`, X, alpha, beta, nu, phi, eta)
+}
+
+aux_Lagrange_EXsubY_gamma_rcpp <- function(X, alpha, beta, nu, phi, y_pts, eta) {
+    .Call(`_MYHRcpp_aux_Lagrange_EXsubY_gamma_rcpp`, X, alpha, beta, nu, phi, y_pts, eta)
+}
+
+aux_Lagrange_EYsubX_gamma_rcpp <- function(X, alpha, beta, nu, phi, index, eta) {
+    .Call(`_MYHRcpp_aux_Lagrange_EYsubX_gamma_rcpp`, X, alpha, beta, nu, phi, index, eta)
+}
+
+auxLS_Lagrange_EX_gamma_rcpp <- function(X, alpha, beta, nu, phi, LS_beta, eta) {
+    .Call(`_MYHRcpp_auxLS_Lagrange_EX_gamma_rcpp`, X, alpha, beta, nu, phi, LS_beta, eta)
+}
+
+auxLS_Lagrange_EY_gamma_rcpp <- function(X, alpha, beta, nu, phi, LS_beta, eta) {
+    .Call(`_MYHRcpp_auxLS_Lagrange_EY_gamma_rcpp`, X, alpha, beta, nu, phi, LS_beta, eta)
+}
+
+auxLS_Lagrange_EXsubY_gamma_rcpp <- function(X, alpha, beta, nu, phi, LS_beta, y_pts, eta) {
+    .Call(`_MYHRcpp_auxLS_Lagrange_EXsubY_gamma_rcpp`, X, alpha, beta, nu, phi, LS_beta, y_pts, eta)
+}
+
+auxLS_Lagrange_EYsubX_gamma_rcpp <- function(X, alpha, beta, nu, phi, LS_beta, index, eta) {
+    .Call(`_MYHRcpp_auxLS_Lagrange_EYsubX_gamma_rcpp`, X, alpha, beta, nu, phi, LS_beta, index, eta)
+}
+
+auxCS_Lagrange_EY_gamma_rcpp <- function(X, alpha, beta, nu, phi, CS_beta, eta) {
+    .Call(`_MYHRcpp_auxCS_Lagrange_EY_gamma_rcpp`, X, alpha, beta, nu, phi, CS_beta, eta)
+}
+
+auxCS_Lagrange_EXsubY_gamma_rcpp <- function(X, alpha, beta, nu, phi, CS_beta, y_pts, eta) {
+    .Call(`_MYHRcpp_auxCS_Lagrange_EXsubY_gamma_rcpp`, X, alpha, beta, nu, phi, CS_beta, y_pts, eta)
+}
+
+auxCS_Lagrange_EYsubX_gamma_rcpp <- function(X, alpha, beta, nu, phi, CS_beta, index, eta) {
+    .Call(`_MYHRcpp_auxCS_Lagrange_EYsubX_gamma_rcpp`, X, alpha, beta, nu, phi, CS_beta, index, eta)
+}
+
+pgamma_rcpp <- function(c, shape, rate) {
+    .Call(`_MYHRcpp_pgamma_rcpp`, c, shape, rate)
+}
+
+aux_EXsubgroupY_logistic_rcpp <- function(X, alpha, beta, phi) {
+    .Call(`_MYHRcpp_aux_EXsubgroupY_logistic_rcpp`, X, alpha, beta, phi)
+}
+
+auxLS_EYsubgroupX_logistic_rcpp <- function(X, alpha, beta, phi, LS_beta, index) {
+    .Call(`_MYHRcpp_auxLS_EYsubgroupX_logistic_rcpp`, X, alpha, beta, phi, LS_beta, index)
+}
+
+aux_EYsubgroupX_logistic_rcpp <- function(X, alpha, beta, phi, index) {
+    .Call(`_MYHRcpp_aux_EYsubgroupX_logistic_rcpp`, X, alpha, beta, phi, index)
+}
+
 dG1_normal_rcpp <- function(X, Y, n1, alpha, beta, sigma, iter_max, stop_tol) {
     .Call(`_MYHRcpp_dG1_normal_rcpp`, X, Y, n1, alpha, beta, sigma, iter_max, stop_tol)
 }
@@ -87,66 +223,6 @@ dG1alt_logistic_rcpp <- function(X, Y, n1, alpha, beta, gamma, iter_max, stop_to
 
 lpLalt_logistic_rcpp <- function(X, Y, n1, alpha, beta, gamma, iter_max, stop_tol) {
     .Call(`_MYHRcpp_lpLalt_logistic_rcpp`, X, Y, n1, alpha, beta, gamma, iter_max, stop_tol)
-}
-
-auxLS_Lagrange_EXsubY_normal_rcpp <- function(X, alpha, beta, sigma, phi, LS_beta, y_pts, eta) {
-    .Call(`_MYHRcpp_auxLS_Lagrange_EXsubY_normal_rcpp`, X, alpha, beta, sigma, phi, LS_beta, y_pts, eta)
-}
-
-aux_Lagrange_EXsubY_normal_rcpp <- function(X, alpha, beta, sigma, phi, y_pts, eta) {
-    .Call(`_MYHRcpp_aux_Lagrange_EXsubY_normal_rcpp`, X, alpha, beta, sigma, phi, y_pts, eta)
-}
-
-auxLS_Lagrange_EX_normal_rcpp <- function(X, alpha, beta, sigma, phi, LS_beta, eta) {
-    .Call(`_MYHRcpp_auxLS_Lagrange_EX_normal_rcpp`, X, alpha, beta, sigma, phi, LS_beta, eta)
-}
-
-aux_Lagrange_EX_normal_rcpp <- function(X, alpha, beta, sigma, phi, eta) {
-    .Call(`_MYHRcpp_aux_Lagrange_EX_normal_rcpp`, X, alpha, beta, sigma, phi, eta)
-}
-
-auxLS_Lagrange_EYsubX_normal_rcpp <- function(X, alpha, beta, sigma, phi, LS_beta, index, eta) {
-    .Call(`_MYHRcpp_auxLS_Lagrange_EYsubX_normal_rcpp`, X, alpha, beta, sigma, phi, LS_beta, index, eta)
-}
-
-aux_Lagrange_EYsubX_normal_rcpp <- function(X, alpha, beta, sigma, phi, index, eta) {
-    .Call(`_MYHRcpp_aux_Lagrange_EYsubX_normal_rcpp`, X, alpha, beta, sigma, phi, index, eta)
-}
-
-auxLS_Lagrange_EY_normal_rcpp <- function(X, alpha, beta, sigma, phi, LS_beta, eta) {
-    .Call(`_MYHRcpp_auxLS_Lagrange_EY_normal_rcpp`, X, alpha, beta, sigma, phi, LS_beta, eta)
-}
-
-aux_Lagrange_EY_normal_rcpp <- function(X, alpha, beta, sigma, phi, eta) {
-    .Call(`_MYHRcpp_aux_Lagrange_EY_normal_rcpp`, X, alpha, beta, sigma, phi, eta)
-}
-
-auxLS_EXsubY_normal_rcpp <- function(X, alpha, beta, sigma, phi, LS_beta, y_pts) {
-    .Call(`_MYHRcpp_auxLS_EXsubY_normal_rcpp`, X, alpha, beta, sigma, phi, LS_beta, y_pts)
-}
-
-aux_EXsubY_normal_rcpp <- function(X, alpha, beta, sigma, phi, y_pts) {
-    .Call(`_MYHRcpp_aux_EXsubY_normal_rcpp`, X, alpha, beta, sigma, phi, y_pts)
-}
-
-auxLS_EYsubX_normal_rcpp <- function(X, alpha, beta, sigma, phi, LS_beta, index) {
-    .Call(`_MYHRcpp_auxLS_EYsubX_normal_rcpp`, X, alpha, beta, sigma, phi, LS_beta, index)
-}
-
-aux_EYsubX_normal_rcpp <- function(X, alpha, beta, sigma, phi, index) {
-    .Call(`_MYHRcpp_aux_EYsubX_normal_rcpp`, X, alpha, beta, sigma, phi, index)
-}
-
-aux_EXsubgroupY_logistic_rcpp <- function(X, alpha, beta, phi) {
-    .Call(`_MYHRcpp_aux_EXsubgroupY_logistic_rcpp`, X, alpha, beta, phi)
-}
-
-auxLS_EYsubgroupX_logistic_rcpp <- function(X, alpha, beta, phi, LS_beta, index) {
-    .Call(`_MYHRcpp_auxLS_EYsubgroupX_logistic_rcpp`, X, alpha, beta, phi, LS_beta, index)
-}
-
-aux_EYsubgroupX_logistic_rcpp <- function(X, alpha, beta, phi, index) {
-    .Call(`_MYHRcpp_aux_EYsubgroupX_logistic_rcpp`, X, alpha, beta, phi, index)
 }
 
 diff_lL_normal_rcpp <- function(X, Y, alpha, beta, sigma) {

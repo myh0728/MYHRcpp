@@ -217,3 +217,125 @@ MLE.logistic <- function(data = NULL, X.name = NULL, Y.name = NULL,
 
   return(results)
 }
+
+##### Gamma model #####
+
+# inputs:
+# X: c(number_n, number_p) data.frame
+# Y: c(number_n, 1) data.frame
+# initial: initial values of c(alpha, beta, sigma), c(number_p + 2) vector
+# wi.boot: random weights with sum being 'number_n', c(number_n) vector
+# X.future: c(number_k, number_p) data.frame
+
+MLE.gamma <-function(data = NULL, X.name = NULL, Y.name = NULL,
+                     X = NULL, Y = NULL,
+                     initial = NULL, wi.boot = NULL,
+                     do.SE = TRUE, diff.tol = 1e-5,
+                     X.future = NULL)
+{
+  if (!is.null(data))
+  {
+    X <- as.matrix(data[, X.name])
+    Y <- as.matrix(data[, Y.name])
+  }else
+  {
+    X <- as.matrix(X)
+    Y <- as.matrix(Y)
+  }
+
+  number_n <- dim(Y)[1]
+  number_p <- dim(X)[2]
+
+  if (is.null(initial))
+  {
+    initial.trans <- c(0, rep(0, number_p), 0)
+  }else
+  {
+    initial.trans <- initial
+    initial.trans[number_p + 2] <- log(initial[number_p + 2])
+  }
+
+  nlL.run <- function(theta.trans)
+  {
+    value <- -lL.gamma(X = X, Y = Y,
+                       alpha = theta.trans[1],
+                       beta = theta.trans[2:(number_p + 1)],
+                       nu = exp(theta.trans[number_p + 2]),
+                       wi.boot = wi.boot)
+
+    return(value)
+  }
+
+  theta.trans.hat <- nlminb(start = initial.trans,
+                            objective = nlL.run)$par
+  theta.hat <- theta.trans.hat
+  theta.hat[number_p + 2] <- exp(theta.trans.hat[number_p + 2])
+  names(theta.hat) <- c("alpha", paste("beta", 1:number_p, sep = ""), "nu")
+
+  results <- list(alpha = theta.hat[1],
+                  beta = theta.hat[2:(number_p + 1)],
+                  nu = theta.hat[number_p + 2],
+                  parameter = theta.hat)
+
+  if (do.SE)
+  {
+    Sigma.hat <- array(0, c(number_p + 2, number_p + 2))
+
+    for (i in 1:(number_p + 2))
+    {
+      for (j in 1:i)
+      {
+        if (i==j)
+        {
+          theta.trans.hat.i.r <- theta.hat + diag(number_p + 2)[, i] * diff.tol
+          theta.trans.hat.i.r[number_p + 2] <- log(theta.trans.hat.i.r[number_p + 2])
+          theta.trans.hat.i.l <- theta.hat - diag(number_p + 2)[, i] * diff.tol
+          theta.trans.hat.i.l[number_p + 2] <- log(theta.trans.hat.i.l[number_p + 2])
+
+          Sigma.hat[i, j] <- (nlL.run(theta.trans.hat.i.r) -
+                                2 * nlL.run(theta.trans.hat) +
+                                nlL.run(theta.trans.hat.i.l)) /
+            (number_n * diff.tol ^ 2)
+        }else
+        {
+          theta.trans.hat.i.r <- theta.hat + diag(number_p + 2)[, i] * diff.tol
+          theta.trans.hat.i.r[number_p + 2] <- log(theta.trans.hat.i.r[number_p + 2])
+          theta.trans.hat.j.r <- theta.hat+diag(number_p + 2)[, j]*diff.tol
+          theta.trans.hat.j.r[number_p + 2] <- log(theta.trans.hat.j.r[number_p + 2])
+          theta.trans.hat.ij.r <- theta.hat+
+            diag(number_p + 2)[, i] * diff.tol + diag(number_p + 2)[, j] * diff.tol
+          theta.trans.hat.ij.r[number_p + 2] <- log(theta.trans.hat.ij.r[number_p + 2])
+
+          Sigma.hat[i, j] <-
+            (Sigma.hat[j, i] <-
+               nlL.run(theta.trans.hat.ij.r) -
+               nlL.run(theta.trans.hat.i.r) -
+               nlL.run(theta.trans.hat.j.r) +
+               nlL.run(theta.trans.hat)) / (number_n * diff.tol ^ 2)
+        }
+      }
+    }
+    Vhat <- solve(Sigma.hat)
+    dimnames(Vhat) <- list(c("alpha", paste("beta", 1:number_p, sep = ""), "nu"),
+                           c("alpha", paste("beta", 1:number_p, sep = ""), "nu"))
+
+    results$Cov.coef <- Vhat / number_n
+  }
+
+  if (!is.null(X.future))
+  {
+    X.future <- as.matrix(X.future)
+
+    Y.predict <- theta.hat[number_p + 2] / exp(
+      theta.hat[1] + X.future %*% theta.hat[2:(number_p + 1)])
+
+    results$Y.predict <- Y.predict
+  }
+
+  return(results)
+}
+
+
+
+
+
