@@ -1465,13 +1465,13 @@ List auxCS_Lagrange_EXsubY_gamma_rcpp(arma::mat X,
 
 // [[Rcpp::export]]
 List auxCS_Lagrange_EYsubX_gamma_rcpp(arma::mat X,
-                                       double alpha,
-                                       arma::vec beta,
-                                       double nu,
-                                       arma::vec phi,
-                                       arma::vec CS_beta,
-                                       arma::umat index,
-                                       arma::vec eta){
+                                      double alpha,
+                                      arma::vec beta,
+                                      double nu,
+                                      arma::vec phi,
+                                      arma::vec CS_beta,
+                                      arma::umat index,
+                                      arma::vec eta){
 
   arma::uword n_n = X.n_rows;
   arma::uword n_m = phi.n_elem;

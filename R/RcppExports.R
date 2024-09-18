@@ -309,6 +309,10 @@ outer_geq_rcpp <- function(a, b) {
     .Call(`_MYHRcpp_outer_geq_rcpp`, a, b)
 }
 
+rcond_rcpp <- function(A) {
+    .Call(`_MYHRcpp_rcond_rcpp`, A)
+}
+
 atRisk_integral_rcpp <- function(integrand, t_start, t_stop, t_event) {
     .Call(`_MYHRcpp_atRisk_integral_rcpp`, integrand, t_start, t_stop, t_event)
 }

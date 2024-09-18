@@ -2,6 +2,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                              X = NULL, Y = NULL, shift = "NS",                  # "NS": no shift, "PPS": prior probability shift, "CS": covariate shift
                              distribution = "normal",                           # "normal", "Gamma", "Bernoulli"
                              ext.sample.size = NULL,                            # NULL: no uncertainty
+                             ext.var = NULL,
                              method = "fast",                                   # "EL", "fast"
                              initial = NULL, initial.DR = NULL,
                              info.EX = list(phi = NULL),
@@ -62,6 +63,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
         results.EY <- NULL
       }else
       {
+        if (is.null(ext.var))
+        {
+          ext.var <- 1
+        }
+
         if (method == "fast")
         {
           if (is.null(ext.sample.size))
@@ -109,7 +115,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
             JV[1:(number_all - 1), number_all:number_all] <- t(
               JV[number_all, 1:(number_all - 1)])
             JV[number_all, number_all] <- -aux_Psi$score_square
-            JV[number_p + 3, number_p + 3] <- ext.sample.size / number_n
+            JV[number_p + 3, number_p + 3] <- ext.sample.size / number_n / ext.var
 
             thetahat <- as.vector(c(alpha.initial, beta.initial, sigma.initial) + invH %*%
                                     t(matrix(aux_Psi$score_gradient[ , 1:(number_p + 2)],
@@ -167,7 +173,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   X = X, alpha = alpha, beta = beta, sigma = sigma, phi = phi.par,
                   eta.initial = 0, iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * (info.EY$phi - phi.par) ^ 2 / 2
+                ext.sample.size * (info.EY$phi - phi.par) ^ 2 / ext.var / 2
 
               return(-ll)
             }
@@ -191,6 +197,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
       {
         number_k <- dim(info.EXsubY$phi)[1]
         number_m <- number_k * number_p
+
+        if (is.null(ext.var))
+        {
+          ext.var <- diag(number_m)
+        }
 
         if (method == "fast")
         {
@@ -251,7 +262,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
             JV[(number_all - number_m + 1):number_all,
                (number_all - number_m + 1):number_all] <- -aux_Psi$score_square
             JV[(number_p + 3):(number_m + number_p + 2),
-               (number_p + 3):(number_m + number_p + 2)] <- diag(number_m) *
+               (number_p + 3):(number_m + number_p + 2)] <- solve(ext.var) *
               ext.sample.size / number_n
 
             thetahat <- as.vector(c(alpha.initial, beta.initial, sigma.initial) + invH %*%
@@ -305,6 +316,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
               sigma <- exp(theta.beta.phi[number_p + 2])
               phi.par <- matrix(theta.beta.phi[(number_p + 3):(number_p + 2 + number_m)],
                                 number_k, number_p)
+              phi.diff <- as.vector(info.EXsubY$phi - phi.par)
 
               ll <- lL.normal(X = X, Y = Y,
                               alpha = alpha, beta = beta, sigma = sigma) -
@@ -313,7 +325,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   phi = phi.par, y.pts = info.EXsubY$y.pts,
                   eta.initial = rep(0, number_m), iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * sum((info.EXsubY$phi - phi.par) ^ 2) / 2
+                ext.sample.size * sum(t(solve(ext.var) * phi.diff) * phi.diff) / 2
 
               return(-ll)
             }
@@ -338,6 +350,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
       }else
       {
         number_k <- number_m <- length(info.EYsubX$phi)
+
+        if (is.null(ext.var))
+        {
+          ext.var <- diag(number_m)
+        }
 
         if (method == "fast")
         {
@@ -398,7 +415,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
             JV[(number_all - number_k + 1):number_all,
                (number_all - number_k + 1):number_all] <- -aux_Psi$score_square
             JV[(number_p + 3):(number_k + number_p + 2),
-               (number_p + 3):(number_k + number_p + 2)] <- diag(number_k) *
+               (number_p + 3):(number_k + number_p + 2)] <- solve(ext.var) *
               ext.sample.size / number_n
 
             thetahat <- as.vector(c(alpha.initial, beta.initial, sigma.initial) + invH %*%
@@ -451,6 +468,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
               beta <- theta.beta.phi[2:(number_p + 1)]
               sigma <- exp(theta.beta.phi[number_p + 2])
               phi.par <- theta.beta.phi[(number_p + 3):(number_p + 2 + number_m)]
+              phi.diff <- as.vector(info.EYsubX$phi - phi.par)
 
               ll <- lL.normal(X = X, Y = Y,
                               alpha = alpha, beta = beta, sigma = sigma) -
@@ -459,7 +477,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   phi = phi.par, index = info.EYsubX$inclusion,
                   eta.initial = rep(0, number_m), iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * sum((info.EYsubX$phi - phi.par) ^ 2) / 2
+                ext.sample.size * sum(t(solve(ext.var) * phi.diff) * phi.diff) / 2
 
               return(-ll)
             }
@@ -485,6 +503,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
         results.EX <- NULL
       }else
       {
+        if (is.null(ext.var))
+        {
+          ext.var <- diag(number_p)
+        }
+
         if (method == "fast")
         {
           if (is.null(initial.DR))
@@ -562,7 +585,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
             JV[(number_all - number_p + 1):number_all,
                (number_all - number_p + 1):number_all] <- -aux_Psi$score_square
             JV[(number_p + 3):(number_p * 2 + 2),
-               (number_p + 3):(number_p * 2 + 2)] <- diag(number_p) *
+               (number_p + 3):(number_p * 2 + 2)] <- solve(ext.var) *
               ext.sample.size / number_n
 
             thetahat <- as.vector(c(alpha.initial, beta.initial, sigma.initial) + invH %*%
@@ -623,6 +646,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
               sigma <- exp(theta.beta.phi[number_p + 2])
               LS.beta <- theta.beta.phi[number_p + 3]
               phi.par <- theta.beta.phi[(number_p + 4):(number_p + 3 + number_p)]
+              phi.diff <- as.vector(info.EX$phi - phi.par)
 
               ll <- lL.normal(X = X, Y = Y,
                               alpha = alpha, beta = beta, sigma = sigma) -
@@ -631,7 +655,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   phi = phi.par, LS.beta = LS.beta,
                   eta.initial = rep(0, number_p), iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * sum((info.EX$phi - phi.par) ^ 2) / 2
+                ext.sample.size * sum(t(solve(ext.var) * phi.diff) * phi.diff) / 2
 
               return(-ll)
             }
@@ -656,6 +680,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
         results.EY <- NULL
       }else
       {
+        if (is.null(ext.var))
+        {
+          ext.var <- 1
+        }
+
         if (method == "fast")
         {
           if (is.null(initial.DR))
@@ -723,7 +752,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
             JV[1:(number_all - 1), number_all:number_all] <- t(
                  JV[number_all, 1:(number_all - 1)])
             JV[number_all, number_all] <- -aux_Psi$score_square
-            JV[number_p + 3, number_p + 3] <- ext.sample.size / number_n
+            JV[number_p + 3, number_p + 3] <- ext.sample.size / number_n / ext.var
 
             thetahat <- as.vector(c(alpha.initial, beta.initial, sigma.initial) + invH %*%
                                     t(matrix(aux_Psi$score_gradient[ , 1:(number_p + 2)],
@@ -790,7 +819,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   phi = phi.par, LS.beta = LS.beta,
                   eta.initial = 0, iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * (info.EY$phi - phi.par) ^ 2 / 2
+                ext.sample.size * (info.EY$phi - phi.par) ^ 2 / ext.var / 2
 
               return(-ll)
             }
@@ -816,6 +845,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
       {
         number_k <- dim(info.EXsubY$phi)[1]
         number_m <- number_k * number_p
+
+        if (is.null(ext.var))
+        {
+          ext.var <- diag(number_m)
+        }
 
         if (method == "fast")
         {
@@ -897,7 +931,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
             JV[(number_all - number_m + 1):number_all,
                (number_all - number_m + 1):number_all] <- -aux_Psi$score_square
             JV[(number_p + 3):(number_m + number_p + 2),
-               (number_p + 3):(number_m + number_p + 2)] <- diag(number_m) *
+               (number_p + 3):(number_m + number_p + 2)] <- solve(ext.var) *
               ext.sample.size / number_n
 
             thetahat <- as.vector(c(alpha.initial, beta.initial, sigma.initial) + invH %*%
@@ -960,6 +994,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
               LS.beta <- theta.beta.phi[number_p + 3]
               phi.par <- matrix(theta.beta.phi[(number_p + 4):(number_p + 3 + number_m)],
                                 number_k, number_p)
+              phi.diff <- as.vector(info.EXsubY$phi - phi.par)
 
               ll <- lL.normal(X = X, Y = Y,
                               alpha = alpha, beta = beta, sigma = sigma) -
@@ -969,7 +1004,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   y.pts = info.EXsubY$y.pts,
                   eta.initial = rep(0, number_m), iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * sum((info.EXsubY$phi - phi.par) ^ 2) / 2
+                ext.sample.size * sum(t(solve(ext.var) * phi.diff) * phi.diff) / 2
 
               return(-ll)
             }
@@ -995,6 +1030,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
       }else
       {
         number_k <- number_m <- length(info.EYsubX$phi)
+
+        if (is.null(ext.var))
+        {
+          ext.var <- diag(number_m)
+        }
 
         if (method == "fast")
         {
@@ -1076,7 +1116,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
             JV[(number_all - number_k + 1):number_all,
                (number_all - number_k + 1):number_all] <- -aux_Psi$score_square
             JV[(number_p + 3):(number_k + number_p + 2),
-               (number_p + 3):(number_k + number_p + 2)] <- diag(number_k) *
+               (number_p + 3):(number_k + number_p + 2)] <- solve(ext.var) *
               ext.sample.size / number_n
 
             thetahat <- as.vector(c(alpha.initial, beta.initial, sigma.initial) + invH %*%
@@ -1138,6 +1178,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
               sigma <- exp(theta.beta.phi[number_p + 2])
               LS.beta <- theta.beta.phi[number_p + 3]
               phi.par <- theta.beta.phi[(number_p + 4):(number_p + 3 + number_m)]
+              phi.diff <- as.vector(info.EYsubX$phi - phi.par)
 
               ll <- lL.normal(X = X, Y = Y,
                               alpha = alpha, beta = beta, sigma = sigma) -
@@ -1147,7 +1188,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   index = info.EYsubX$inclusion,
                   eta.initial = rep(0, number_m), iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * sum((info.EYsubX$phi - phi.par) ^ 2) / 2
+                ext.sample.size * sum(t(solve(ext.var) * phi.diff) * phi.diff) / 2
 
               return(-ll)
             }
@@ -1176,6 +1217,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
         results.EY <- NULL
       }else
       {
+        if (is.null(ext.var))
+        {
+          ext.var <- 1
+        }
+
         if (method == "fast")
         {
           if (is.null(initial.DR))
@@ -1244,7 +1290,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
             JV[1:(number_all - 1), number_all:number_all] <- t(
               JV[number_all, 1:(number_all - 1)])
             JV[number_all, number_all] <- -aux_Psi$score_square
-            JV[number_p + 3, number_p + 3] <- ext.sample.size / number_n
+            JV[number_p + 3, number_p + 3] <- ext.sample.size / number_n / ext.var
 
             thetahat <- as.vector(c(alpha.initial, beta.initial, sigma.initial) + invH %*%
                                     t(matrix(aux_Psi$score_gradient[ , 1:(number_p + 2)],
@@ -1311,7 +1357,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   phi = phi.par, CS.beta = CS.beta,
                   eta.initial = 0, iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * (info.EY$phi - phi.par) ^ 2 / 2
+                ext.sample.size * (info.EY$phi - phi.par) ^ 2 / ext.var / 2
 
               return(-ll)
             }
@@ -1337,6 +1383,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
       {
         number_k <- dim(info.EXsubY$phi)[1]
         number_m <- number_k * number_p
+
+        if (is.null(ext.var))
+        {
+          ext.var <- diag(number_m)
+        }
 
         if (method == "fast")
         {
@@ -1419,7 +1470,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
             JV[(number_all - number_m + 1):number_all,
                (number_all - number_m + 1):number_all] <- -aux_Psi$score_square
             JV[(number_p + 3):(number_m + number_p + 2),
-               (number_p + 3):(number_m + number_p + 2)] <- diag(number_m) *
+               (number_p + 3):(number_m + number_p + 2)] <- solve(ext.var) *
               ext.sample.size / number_n
 
             thetahat <- as.vector(c(alpha.initial, beta.initial, sigma.initial) + invH %*%
@@ -1483,6 +1534,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
               phi.par <- matrix(
                 theta.beta.phi[(2 * number_p + 3):(2 * number_p + 2 + number_m)],
                 number_k, number_p)
+              phi.diff <- as.vector(info.EXsubY$phi - phi.par)
 
               ll <- lL.normal(X = X, Y = Y,
                               alpha = alpha, beta = beta, sigma = sigma) -
@@ -1492,7 +1544,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   y.pts = info.EXsubY$y.pts,
                   eta.initial = rep(0, number_m), iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * sum((info.EXsubY$phi - phi.par) ^ 2) / 2
+                ext.sample.size * sum(t(solve(ext.var) * phi.diff) * phi.diff) / 2
 
               return(-ll)
             }
@@ -1519,6 +1571,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
       }else
       {
         number_k <- number_m <- length(info.EYsubX$phi)
+
+        if (is.null(ext.var))
+        {
+          ext.var <- diag(number_m)
+        }
 
         if (method == "fast")
         {
@@ -1601,7 +1658,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
             JV[(number_all - number_k + 1):number_all,
                (number_all - number_k + 1):number_all] <- -aux_Psi$score_square
             JV[(number_p + 3):(number_k + number_p + 2),
-               (number_p + 3):(number_k + number_p + 2)] <- diag(number_k) *
+               (number_p + 3):(number_k + number_p + 2)] <- solve(ext.var) *
               ext.sample.size / number_n
 
             thetahat <- as.vector(c(alpha.initial, beta.initial, sigma.initial) + invH %*%
@@ -1664,6 +1721,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
               sigma <- exp(theta.beta.phi[number_p + 2])
               CS.beta <- theta.beta.phi[(number_p + 3):(2 * number_p + 2)]
               phi.par <- theta.beta.phi[(2 * number_p + 3):(2 * number_p + 2 + number_m)]
+              phi.diff <- as.vector(info.EYsubX$phi - phi.par)
 
               ll <- lL.normal(X = X, Y = Y,
                               alpha = alpha, beta = beta, sigma = sigma) -
@@ -1673,7 +1731,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   index = info.EYsubX$inclusion,
                   eta.initial = rep(0, number_m), iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * sum((info.EYsubX$phi - phi.par) ^ 2) / 2
+                ext.sample.size * sum(t(solve(ext.var) * phi.diff) * phi.diff) / 2
 
               return(-ll)
             }
@@ -1726,6 +1784,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
         results.EY <- NULL
       }else
       {
+        if (is.null(ext.var))
+        {
+          ext.var <- 1
+        }
+
         if (method == "fast")
         {
 
@@ -1774,7 +1837,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   X = X, alpha = alpha, beta = beta, nu = nu, phi = phi.par,
                   eta.initial = 0, iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * (info.EY$phi - phi.par) ^ 2 / 2
+                ext.sample.size * (info.EY$phi - phi.par) ^ 2 / ext.var / 2
 
               return(-ll)
             }
@@ -1798,6 +1861,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
       {
         number_k <- dim(info.EXsubY$phi)[1]
         number_m <- number_k * number_p
+
+        if (is.null(ext.var))
+        {
+          ext.var <- diag(number_m)
+        }
 
         if (method == "fast")
         {
@@ -1841,6 +1909,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
               nu <- exp(theta.beta.phi[number_p + 2])
               phi.par <- matrix(theta.beta.phi[(number_p + 3):(number_p + 2 + number_m)],
                                 number_k, number_p)
+              phi.diff <- as.vector(info.EXsubY$phi - phi.par)
 
               ll <- lL.gamma(X = X, Y = Y,
                               alpha = alpha, beta = beta, nu = nu) -
@@ -1849,7 +1918,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   phi = phi.par, y.pts = info.EXsubY$y.pts,
                   eta.initial = rep(0, number_m), iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * sum((info.EXsubY$phi - phi.par) ^ 2) / 2
+                ext.sample.size * sum(t(solve(ext.var) * phi.diff) * phi.diff) / 2
 
               return(-ll)
             }
@@ -1874,6 +1943,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
       }else
       {
         number_k <- number_m <- length(info.EYsubX$phi)
+
+        if (is.null(ext.var))
+        {
+          ext.var <- diag(number_m)
+        }
 
         if (method == "fast")
         {
@@ -1916,6 +1990,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
               beta <- theta.beta.phi[2:(number_p + 1)]
               nu <- exp(theta.beta.phi[number_p + 2])
               phi.par <- theta.beta.phi[(number_p + 3):(number_p + 2 + number_m)]
+              phi.diff <- as.vector(info.EYsubX$phi - phi.par)
 
               ll <- lL.gamma(X = X, Y = Y,
                               alpha = alpha, beta = beta, nu = nu) -
@@ -1924,7 +1999,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   phi = phi.par, index = info.EYsubX$inclusion,
                   eta.initial = rep(0, number_m), iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * sum((info.EYsubX$phi - phi.par) ^ 2) / 2
+                ext.sample.size * sum(t(solve(ext.var) * phi.diff) * phi.diff) / 2
 
               return(-ll)
             }
@@ -1950,6 +2025,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
         results.EX <- NULL
       }else
       {
+        if (is.null(ext.var))
+        {
+          ext.var <- diag(number_p)
+        }
+
         if (method == "fast")
         {
 
@@ -1999,6 +2079,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
               nu <- exp(theta.beta.phi[number_p + 2])
               LS.beta <- theta.beta.phi[number_p + 3]
               phi.par <- theta.beta.phi[(number_p + 4):(number_p + 3 + number_p)]
+              phi.diff <- as.vector(info.EX$phi - phi.par)
 
               ll <- lL.gamma(X = X, Y = Y,
                               alpha = alpha, beta = beta, nu = nu) -
@@ -2007,7 +2088,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   phi = phi.par, LS.beta = LS.beta,
                   eta.initial = rep(0, number_p), iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * sum((info.EX$phi - phi.par) ^ 2) / 2
+                ext.sample.size * sum(t(solve(ext.var) * phi.diff) * phi.diff) / 2
 
               return(-ll)
             }
@@ -2032,6 +2113,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
         results.EY <- NULL
       }else
       {
+        if (is.null(ext.var))
+        {
+          ext.var <- 1
+        }
+
         if (method == "fast")
         {
 
@@ -2089,7 +2175,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   phi = phi.par, LS.beta = LS.beta,
                   eta.initial = 0, iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * (info.EY$phi - phi.par) ^ 2 / 2
+                ext.sample.size * (info.EY$phi - phi.par) ^ 2 / ext.var / 2
 
               return(-ll)
             }
@@ -2115,6 +2201,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
       {
         number_k <- dim(info.EXsubY$phi)[1]
         number_m <- number_k * number_p
+
+        if (is.null(ext.var))
+        {
+          ext.var <- diag(number_m)
+        }
 
         if (method == "fast")
         {
@@ -2167,6 +2258,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
               LS.beta <- theta.beta.phi[number_p + 3]
               phi.par <- matrix(theta.beta.phi[(number_p + 4):(number_p + 3 + number_m)],
                                 number_k, number_p)
+              phi.diff <- as.vector(info.EXsubY$phi - phi.par)
 
               ll <- lL.gamma(X = X, Y = Y,
                              alpha = alpha, beta = beta, nu = nu) -
@@ -2176,7 +2268,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   y.pts = info.EXsubY$y.pts,
                   eta.initial = rep(0, number_m), iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * sum((info.EXsubY$phi - phi.par) ^ 2) / 2
+                ext.sample.size * sum(t(solve(ext.var) * phi.diff) * phi.diff) / 2
 
               return(-ll)
             }
@@ -2202,6 +2294,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
       }else
       {
         number_k <- number_m <- length(info.EYsubX$phi)
+
+        if (is.null(ext.var))
+        {
+          ext.var <- diag(number_m)
+        }
 
         if (method == "fast")
         {
@@ -2253,6 +2350,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
               nu <- exp(theta.beta.phi[number_p + 2])
               LS.beta <- theta.beta.phi[number_p + 3]
               phi.par <- theta.beta.phi[(number_p + 4):(number_p + 3 + number_m)]
+              phi.diff <- as.vector(info.EYsubX$phi - phi.par)
 
               ll <- lL.gamma(X = X, Y = Y,
                               alpha = alpha, beta = beta, nu = nu) -
@@ -2262,7 +2360,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   index = info.EYsubX$inclusion,
                   eta.initial = rep(0, number_m), iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * sum((info.EYsubX$phi - phi.par) ^ 2) / 2
+                ext.sample.size * sum(t(solve(ext.var) * phi.diff) * phi.diff) / 2
 
               return(-ll)
             }
@@ -2291,6 +2389,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
         results.EY <- NULL
       }else
       {
+        if (is.null(ext.var))
+        {
+          ext.var <- 1
+        }
+
         if (method == "fast")
         {
 
@@ -2348,7 +2451,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   phi = phi.par, CS.beta = CS.beta,
                   eta.initial = 0, iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * (info.EY$phi - phi.par) ^ 2 / 2
+                ext.sample.size * (info.EY$phi - phi.par) ^ 2 / ext.var / 2
 
               return(-ll)
             }
@@ -2374,6 +2477,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
       {
         number_k <- dim(info.EXsubY$phi)[1]
         number_m <- number_k * number_p
+
+        if (is.null(ext.var))
+        {
+          ext.var <- diag(number_m)
+        }
 
         if (method == "fast")
         {
@@ -2427,6 +2535,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
               phi.par <- matrix(
                 theta.beta.phi[(2 * number_p + 3):(2 * number_p + 2 + number_m)],
                 number_k, number_p)
+              phi.diff <- as.vector(info.EXsubY$phi - phi.par)
 
               ll <- lL.gamma(X = X, Y = Y,
                               alpha = alpha, beta = beta, nu = nu) -
@@ -2436,7 +2545,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   y.pts = info.EXsubY$y.pts,
                   eta.initial = rep(0, number_m), iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * sum((info.EXsubY$phi - phi.par) ^ 2) / 2
+                ext.sample.size * sum(t(solve(ext.var) * phi.diff) * phi.diff) / 2
 
               return(-ll)
             }
@@ -2463,6 +2572,11 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
       }else
       {
         number_k <- number_m <- length(info.EYsubX$phi)
+
+        if (is.null(ext.var))
+        {
+          ext.var <- diag(number_m)
+        }
 
         if (method == "fast")
         {
@@ -2515,6 +2629,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
               nu <- exp(theta.beta.phi[number_p + 2])
               CS.beta <- theta.beta.phi[(number_p + 3):(2 * number_p + 2)]
               phi.par <- theta.beta.phi[(2 * number_p + 3):(2 * number_p + 2 + number_m)]
+              phi.diff <- as.vector(info.EYsubX$phi - phi.par)
 
               ll <- lL.gamma(X = X, Y = Y,
                               alpha = alpha, beta = beta, nu = nu) -
@@ -2524,7 +2639,7 @@ auxShift.combine <- function(data = NULL, X.name = NULL, Y.name = NULL,
                   index = info.EYsubX$inclusion,
                   eta.initial = rep(0, number_m), iter.max = iter.max,
                   step.rate = step.rate, step.max = step.max, tol = tol)$value -
-                ext.sample.size * sum((info.EYsubX$phi - phi.par) ^ 2) / 2
+                ext.sample.size * sum(t(solve(ext.var) * phi.diff) * phi.diff) / 2
 
               return(-ll)
             }

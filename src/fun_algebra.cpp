@@ -217,4 +217,10 @@ arma::mat outer_geq_rcpp(arma::vec a,
   return outer;
 }
 
+// [[Rcpp::export]]
+double rcond_rcpp(arma::mat A){
 
+  double value = arma::rcond(A);
+
+  return value;
+}

@@ -1164,6 +1164,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcond_rcpp
+double rcond_rcpp(arma::mat A);
+RcppExport SEXP _MYHRcpp_rcond_rcpp(SEXP ASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type A(ASEXP);
+    rcpp_result_gen = Rcpp::wrap(rcond_rcpp(A));
+    return rcpp_result_gen;
+END_RCPP
+}
 // atRisk_integral_rcpp
 arma::mat atRisk_integral_rcpp(arma::mat integrand, arma::vec t_start, arma::vec t_stop, arma::vec t_event);
 RcppExport SEXP _MYHRcpp_atRisk_integral_rcpp(SEXP integrandSEXP, SEXP t_startSEXP, SEXP t_stopSEXP, SEXP t_eventSEXP) {
@@ -2161,6 +2172,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MYHRcpp_outer_plus_rcpp", (DL_FUNC) &_MYHRcpp_outer_plus_rcpp, 2},
     {"_MYHRcpp_outer_leq_rcpp", (DL_FUNC) &_MYHRcpp_outer_leq_rcpp, 2},
     {"_MYHRcpp_outer_geq_rcpp", (DL_FUNC) &_MYHRcpp_outer_geq_rcpp, 2},
+    {"_MYHRcpp_rcond_rcpp", (DL_FUNC) &_MYHRcpp_rcond_rcpp, 1},
     {"_MYHRcpp_atRisk_integral_rcpp", (DL_FUNC) &_MYHRcpp_atRisk_integral_rcpp, 4},
     {"_MYHRcpp_sum_atRisk_rcpp", (DL_FUNC) &_MYHRcpp_sum_atRisk_rcpp, 4},
     {"_MYHRcpp_KDE_K2B_rcpp", (DL_FUNC) &_MYHRcpp_KDE_K2B_rcpp, 3},

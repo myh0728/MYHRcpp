@@ -7,31 +7,32 @@ aux_solveLagrange_EY_normal <- function(X, alpha, beta, sigma, phi,
   eta <- eta.initial
   step <- aux_Lagrange_EY_normal_rcpp(
     X = X, alpha = alpha, beta = beta, sigma = sigma,
-    phi = phi, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- step$gradient / step$hessian
+    if (step$hessian != 0)
+    {
+      direction.step <- step$gradient / step$hessian
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- aux_Lagrange_EY_normal_rcpp(
       X = X, alpha = alpha, beta = beta, sigma = sigma,
       phi = phi, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- aux_Lagrange_EY_normal_rcpp(
           X = X, alpha = alpha, beta = beta, sigma = sigma,
           phi = phi, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -39,12 +40,10 @@ aux_solveLagrange_EY_normal <- function(X, alpha, beta, sigma, phi,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -53,9 +52,9 @@ aux_solveLagrange_EY_normal <- function(X, alpha, beta, sigma, phi,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -67,32 +66,37 @@ aux_solveLagrange_EXsubY_normal <- function(X, alpha, beta, sigma,
   eta <- eta.initial
   step <- aux_Lagrange_EXsubY_normal_rcpp(
     X = X, alpha = alpha, beta = beta, sigma = sigma,
-    phi = phi, y_pts = y.pts, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, y_pts = y.pts, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- pinv_rcpp(as.matrix(step$hessian)) %*%
-      as.matrix(step$gradient)
+    ind.NT.GD <- rcond_rcpp(step$hessian)
+    if (is.na(ind.NT.GD))
+    {
+      ind.NT.GD <- 0
+    }
+    if (ind.NT.GD > tol)
+    {
+      direction.step <- solve_rcpp(step$hessian, step$gradient)
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- aux_Lagrange_EXsubY_normal_rcpp(
       X = X, alpha = alpha, beta = beta, sigma = sigma,
       phi = phi, y_pts = y.pts, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- aux_Lagrange_EXsubY_normal_rcpp(
           X = X, alpha = alpha, beta = beta, sigma = sigma,
           phi = phi, y_pts = y.pts, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -100,12 +104,10 @@ aux_solveLagrange_EXsubY_normal <- function(X, alpha, beta, sigma,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -114,9 +116,9 @@ aux_solveLagrange_EXsubY_normal <- function(X, alpha, beta, sigma,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -128,32 +130,37 @@ aux_solveLagrange_EYsubX_normal <- function(X, alpha, beta, sigma,
   eta <- eta.initial
   step <- aux_Lagrange_EYsubX_normal_rcpp(
     X = X, alpha = alpha, beta = beta, sigma = sigma,
-    phi = phi, index = index, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, index = index, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- pinv_rcpp(as.matrix(step$hessian)) %*%
-      as.matrix(step$gradient)
+    ind.NT.GD <- rcond_rcpp(step$hessian)
+    if (is.na(ind.NT.GD))
+    {
+      ind.NT.GD <- 0
+    }
+    if (ind.NT.GD > tol)
+    {
+      direction.step <- solve_rcpp(step$hessian, step$gradient)
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- aux_Lagrange_EYsubX_normal_rcpp(
       X = X, alpha = alpha, beta = beta, sigma = sigma,
       phi = phi, index = index, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- aux_Lagrange_EYsubX_normal_rcpp(
           X = X, alpha = alpha, beta = beta, sigma = sigma,
           phi = phi, index = index, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -161,12 +168,10 @@ aux_solveLagrange_EYsubX_normal <- function(X, alpha, beta, sigma,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -175,9 +180,9 @@ aux_solveLagrange_EYsubX_normal <- function(X, alpha, beta, sigma,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -188,31 +193,32 @@ aux_solveLagrange_EY_gamma <- function(X, alpha, beta, nu, phi,
   eta <- eta.initial
   step <- aux_Lagrange_EY_gamma_rcpp(
     X = X, alpha = alpha, beta = beta, nu = nu,
-    phi = phi, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- step$gradient / step$hessian
+    if (step$hessian != 0)
+    {
+      direction.step <- step$gradient / step$hessian
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- aux_Lagrange_EY_gamma_rcpp(
       X = X, alpha = alpha, beta = beta, nu = nu,
       phi = phi, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- aux_Lagrange_EY_gamma_rcpp(
           X = X, alpha = alpha, beta = beta, nu = nu,
           phi = phi, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -220,12 +226,10 @@ aux_solveLagrange_EY_gamma <- function(X, alpha, beta, nu, phi,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -234,9 +238,9 @@ aux_solveLagrange_EY_gamma <- function(X, alpha, beta, nu, phi,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -248,32 +252,37 @@ aux_solveLagrange_EXsubY_gamma <- function(X, alpha, beta, nu,
   eta <- eta.initial
   step <- aux_Lagrange_EXsubY_gamma_rcpp(
     X = X, alpha = alpha, beta = beta, nu = nu,
-    phi = phi, y_pts = y.pts, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, y_pts = y.pts, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- pinv_rcpp(as.matrix(step$hessian)) %*%
-      as.matrix(step$gradient)
+    ind.NT.GD <- rcond_rcpp(step$hessian)
+    if (is.na(ind.NT.GD))
+    {
+      ind.NT.GD <- 0
+    }
+    if (ind.NT.GD > tol)
+    {
+      direction.step <- solve_rcpp(step$hessian, step$gradient)
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- aux_Lagrange_EXsubY_gamma_rcpp(
       X = X, alpha = alpha, beta = beta, nu = nu,
       phi = phi, y_pts = y.pts, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- aux_Lagrange_EXsubY_gamma_rcpp(
           X = X, alpha = alpha, beta = beta, nu = nu,
           phi = phi, y_pts = y.pts, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -281,12 +290,10 @@ aux_solveLagrange_EXsubY_gamma <- function(X, alpha, beta, nu,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -295,9 +302,9 @@ aux_solveLagrange_EXsubY_gamma <- function(X, alpha, beta, nu,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -309,32 +316,37 @@ aux_solveLagrange_EYsubX_gamma <- function(X, alpha, beta, nu,
   eta <- eta.initial
   step <- aux_Lagrange_EYsubX_gamma_rcpp(
     X = X, alpha = alpha, beta = beta, nu = nu,
-    phi = phi, index = index, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, index = index, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- pinv_rcpp(as.matrix(step$hessian)) %*%
-      as.matrix(step$gradient)
+    ind.NT.GD <- rcond_rcpp(step$hessian)
+    if (is.na(ind.NT.GD))
+    {
+      ind.NT.GD <- 0
+    }
+    if (ind.NT.GD > tol)
+    {
+      direction.step <- solve_rcpp(step$hessian, step$gradient)
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- aux_Lagrange_EYsubX_gamma_rcpp(
       X = X, alpha = alpha, beta = beta, nu = nu,
       phi = phi, index = index, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- aux_Lagrange_EYsubX_gamma_rcpp(
           X = X, alpha = alpha, beta = beta, nu = nu,
           phi = phi, index = index, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -342,12 +354,10 @@ aux_solveLagrange_EYsubX_gamma <- function(X, alpha, beta, nu,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -356,9 +366,9 @@ aux_solveLagrange_EYsubX_gamma <- function(X, alpha, beta, nu,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -372,32 +382,37 @@ auxLS_solveLagrange_EX_normal <- function(X, alpha, beta, sigma,
   eta <- eta.initial
   step <- auxLS_Lagrange_EX_normal_rcpp(
     X = X, alpha = alpha, beta = beta, sigma = sigma,
-    phi = phi, LS_beta = LS.beta, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, LS_beta = LS.beta, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- pinv_rcpp(as.matrix(step$hessian)) %*%
-      as.matrix(step$gradient)
+    ind.NT.GD <- rcond_rcpp(step$hessian)
+    if (is.na(ind.NT.GD))
+    {
+      ind.NT.GD <- 0
+    }
+    if (ind.NT.GD > tol)
+    {
+      direction.step <- solve_rcpp(step$hessian, step$gradient)
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- auxLS_Lagrange_EX_normal_rcpp(
       X = X, alpha = alpha, beta = beta, sigma = sigma,
       phi = phi, LS_beta = LS.beta, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- auxLS_Lagrange_EX_normal_rcpp(
           X = X, alpha = alpha, beta = beta, sigma = sigma,
           phi = phi, LS_beta = LS.beta, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -405,12 +420,10 @@ auxLS_solveLagrange_EX_normal <- function(X, alpha, beta, sigma,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -419,9 +432,9 @@ auxLS_solveLagrange_EX_normal <- function(X, alpha, beta, sigma,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -433,31 +446,32 @@ auxLS_solveLagrange_EY_normal <- function(X, alpha, beta, sigma,
   eta <- eta.initial
   step <- auxLS_Lagrange_EY_normal_rcpp(
     X = X, alpha = alpha, beta = beta, sigma = sigma,
-    phi = phi, LS_beta = LS.beta, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, LS_beta = LS.beta, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- step$gradient / step$hessian
+    if (step$hessian != 0)
+    {
+      direction.step <- step$gradient / step$hessian
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- auxLS_Lagrange_EY_normal_rcpp(
       X = X, alpha = alpha, beta = beta, sigma = sigma,
       phi = phi, LS_beta = LS.beta, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- auxLS_Lagrange_EY_normal_rcpp(
           X = X, alpha = alpha, beta = beta, sigma = sigma,
           phi = phi, LS_beta = LS.beta, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -465,12 +479,10 @@ auxLS_solveLagrange_EY_normal <- function(X, alpha, beta, sigma,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -479,9 +491,9 @@ auxLS_solveLagrange_EY_normal <- function(X, alpha, beta, sigma,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -493,32 +505,37 @@ auxLS_solveLagrange_EXsubY_normal <- function(X, alpha, beta, sigma,
   eta <- eta.initial
   step <- auxLS_Lagrange_EXsubY_normal_rcpp(
     X = X, alpha = alpha, beta = beta, sigma = sigma,
-    phi = phi, LS_beta = LS.beta, y_pts = y.pts, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, LS_beta = LS.beta, y_pts = y.pts, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- pinv_rcpp(as.matrix(step$hessian)) %*%
-      as.matrix(step$gradient)
+    ind.NT.GD <- rcond_rcpp(step$hessian)
+    if (is.na(ind.NT.GD))
+    {
+      ind.NT.GD <- 0
+    }
+    if (ind.NT.GD > tol)
+    {
+      direction.step <- solve_rcpp(step$hessian, step$gradient)
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- auxLS_Lagrange_EXsubY_normal_rcpp(
       X = X, alpha = alpha, beta = beta, sigma = sigma,
       phi = phi, LS_beta = LS.beta, y_pts = y.pts, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- auxLS_Lagrange_EXsubY_normal_rcpp(
           X = X, alpha = alpha, beta = beta, sigma = sigma,
           phi = phi, LS_beta = LS.beta, y_pts = y.pts, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -526,12 +543,10 @@ auxLS_solveLagrange_EXsubY_normal <- function(X, alpha, beta, sigma,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -540,9 +555,9 @@ auxLS_solveLagrange_EXsubY_normal <- function(X, alpha, beta, sigma,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -554,32 +569,37 @@ auxLS_solveLagrange_EYsubX_normal <- function(X, alpha, beta, sigma,
   eta <- eta.initial
   step <- auxLS_Lagrange_EYsubX_normal_rcpp(
     X = X, alpha = alpha, beta = beta, sigma = sigma,
-    phi = phi, LS_beta = LS.beta, index = index, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, LS_beta = LS.beta, index = index, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- pinv_rcpp(as.matrix(step$hessian)) %*%
-      as.matrix(step$gradient)
+    ind.NT.GD <- rcond_rcpp(step$hessian)
+    if (is.na(ind.NT.GD))
+    {
+      ind.NT.GD <- 0
+    }
+    if (ind.NT.GD > tol)
+    {
+      direction.step <- solve_rcpp(step$hessian, step$gradient)
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- auxLS_Lagrange_EYsubX_normal_rcpp(
       X = X, alpha = alpha, beta = beta, sigma = sigma,
       phi = phi, LS_beta = LS.beta, index = index, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- auxLS_Lagrange_EYsubX_normal_rcpp(
           X = X, alpha = alpha, beta = beta, sigma = sigma,
           phi = phi, LS_beta = LS.beta, index = index, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -587,12 +607,10 @@ auxLS_solveLagrange_EYsubX_normal <- function(X, alpha, beta, sigma,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -601,9 +619,9 @@ auxLS_solveLagrange_EYsubX_normal <- function(X, alpha, beta, sigma,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -615,32 +633,37 @@ auxLS_solveLagrange_EX_gamma <- function(X, alpha, beta, nu,
   eta <- eta.initial
   step <- auxLS_Lagrange_EX_gamma_rcpp(
     X = X, alpha = alpha, beta = beta, nu = nu,
-    phi = phi, LS_beta = LS.beta, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, LS_beta = LS.beta, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- pinv_rcpp(as.matrix(step$hessian)) %*%
-      as.matrix(step$gradient)
+    ind.NT.GD <- rcond_rcpp(step$hessian)
+    if (is.na(ind.NT.GD))
+    {
+      ind.NT.GD <- 0
+    }
+    if (ind.NT.GD > tol)
+    {
+      direction.step <- solve_rcpp(step$hessian, step$gradient)
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- auxLS_Lagrange_EX_gamma_rcpp(
       X = X, alpha = alpha, beta = beta, nu = nu,
       phi = phi, LS_beta = LS.beta, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- auxLS_Lagrange_EX_gamma_rcpp(
           X = X, alpha = alpha, beta = beta, nu = nu,
           phi = phi, LS_beta = LS.beta, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -648,12 +671,10 @@ auxLS_solveLagrange_EX_gamma <- function(X, alpha, beta, nu,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -662,9 +683,9 @@ auxLS_solveLagrange_EX_gamma <- function(X, alpha, beta, nu,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -676,31 +697,32 @@ auxLS_solveLagrange_EY_gamma <- function(X, alpha, beta, nu,
   eta <- eta.initial
   step <- auxLS_Lagrange_EY_gamma_rcpp(
     X = X, alpha = alpha, beta = beta, nu = nu,
-    phi = phi, LS_beta = LS.beta, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, LS_beta = LS.beta, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- step$gradient / step$hessian
+    if (step$hessian != 0)
+    {
+      direction.step <- step$gradient / step$hessian
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- auxLS_Lagrange_EY_gamma_rcpp(
       X = X, alpha = alpha, beta = beta, nu = nu,
       phi = phi, LS_beta = LS.beta, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- auxLS_Lagrange_EY_gamma_rcpp(
           X = X, alpha = alpha, beta = beta, nu = nu,
           phi = phi, LS_beta = LS.beta, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -708,12 +730,10 @@ auxLS_solveLagrange_EY_gamma <- function(X, alpha, beta, nu,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -722,9 +742,9 @@ auxLS_solveLagrange_EY_gamma <- function(X, alpha, beta, nu,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -736,32 +756,37 @@ auxLS_solveLagrange_EXsubY_gamma <- function(X, alpha, beta, nu,
   eta <- eta.initial
   step <- auxLS_Lagrange_EXsubY_gamma_rcpp(
     X = X, alpha = alpha, beta = beta, nu = nu,
-    phi = phi, LS_beta = LS.beta, y_pts = y.pts, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, LS_beta = LS.beta, y_pts = y.pts, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- pinv_rcpp(as.matrix(step$hessian)) %*%
-      as.matrix(step$gradient)
+    ind.NT.GD <- rcond_rcpp(step$hessian)
+    if (is.na(ind.NT.GD))
+    {
+      ind.NT.GD <- 0
+    }
+    if (ind.NT.GD > tol)
+    {
+      direction.step <- solve_rcpp(step$hessian, step$gradient)
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- auxLS_Lagrange_EXsubY_gamma_rcpp(
       X = X, alpha = alpha, beta = beta, nu = nu,
       phi = phi, LS_beta = LS.beta, y_pts = y.pts, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- auxLS_Lagrange_EXsubY_gamma_rcpp(
           X = X, alpha = alpha, beta = beta, nu = nu,
           phi = phi, LS_beta = LS.beta, y_pts = y.pts, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -769,12 +794,10 @@ auxLS_solveLagrange_EXsubY_gamma <- function(X, alpha, beta, nu,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -783,9 +806,9 @@ auxLS_solveLagrange_EXsubY_gamma <- function(X, alpha, beta, nu,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -797,32 +820,37 @@ auxLS_solveLagrange_EYsubX_gamma <- function(X, alpha, beta, nu,
   eta <- eta.initial
   step <- auxLS_Lagrange_EYsubX_gamma_rcpp(
     X = X, alpha = alpha, beta = beta, nu = nu,
-    phi = phi, LS_beta = LS.beta, index = index, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, LS_beta = LS.beta, index = index, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- pinv_rcpp(as.matrix(step$hessian)) %*%
-      as.matrix(step$gradient)
+    ind.NT.GD <- rcond_rcpp(step$hessian)
+    if (is.na(ind.NT.GD))
+    {
+      ind.NT.GD <- 0
+    }
+    if (ind.NT.GD > tol)
+    {
+      direction.step <- solve_rcpp(step$hessian, step$gradient)
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- auxLS_Lagrange_EYsubX_gamma_rcpp(
       X = X, alpha = alpha, beta = beta, nu = nu,
       phi = phi, LS_beta = LS.beta, index = index, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- auxLS_Lagrange_EYsubX_gamma_rcpp(
           X = X, alpha = alpha, beta = beta, nu = nu,
           phi = phi, LS_beta = LS.beta, index = index, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -830,12 +858,10 @@ auxLS_solveLagrange_EYsubX_gamma <- function(X, alpha, beta, nu,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -844,9 +870,9 @@ auxLS_solveLagrange_EYsubX_gamma <- function(X, alpha, beta, nu,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -860,31 +886,32 @@ auxCS_solveLagrange_EY_normal <- function(X, alpha, beta, sigma,
   eta <- eta.initial
   step <- auxCS_Lagrange_EY_normal_rcpp(
     X = X, alpha = alpha, beta = beta, sigma = sigma,
-    phi = phi, CS_beta = CS.beta, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, CS_beta = CS.beta, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- step$gradient / step$hessian
+    if (step$hessian != 0)
+    {
+      direction.step <- step$gradient / step$hessian
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- auxCS_Lagrange_EY_normal_rcpp(
       X = X, alpha = alpha, beta = beta, sigma = sigma,
       phi = phi, CS_beta = CS.beta, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- auxCS_Lagrange_EY_normal_rcpp(
           X = X, alpha = alpha, beta = beta, sigma = sigma,
           phi = phi, CS_beta = CS.beta, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -892,12 +919,10 @@ auxCS_solveLagrange_EY_normal <- function(X, alpha, beta, sigma,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -906,9 +931,9 @@ auxCS_solveLagrange_EY_normal <- function(X, alpha, beta, sigma,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -920,32 +945,37 @@ auxCS_solveLagrange_EXsubY_normal <- function(X, alpha, beta, sigma,
   eta <- eta.initial
   step <- auxCS_Lagrange_EXsubY_normal_rcpp(
     X = X, alpha = alpha, beta = beta, sigma = sigma,
-    phi = phi, CS_beta = CS.beta, y_pts = y.pts, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, CS_beta = CS.beta, y_pts = y.pts, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- pinv_rcpp(as.matrix(step$hessian)) %*%
-      as.matrix(step$gradient)
+    ind.NT.GD <- rcond_rcpp(step$hessian)
+    if (is.na(ind.NT.GD))
+    {
+      ind.NT.GD <- 0
+    }
+    if (ind.NT.GD > tol)
+    {
+      direction.step <- solve_rcpp(step$hessian, step$gradient)
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- auxCS_Lagrange_EXsubY_normal_rcpp(
       X = X, alpha = alpha, beta = beta, sigma = sigma,
       phi = phi, CS_beta = CS.beta, y_pts = y.pts, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- auxCS_Lagrange_EXsubY_normal_rcpp(
           X = X, alpha = alpha, beta = beta, sigma = sigma,
           phi = phi, CS_beta = CS.beta, y_pts = y.pts, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -953,12 +983,10 @@ auxCS_solveLagrange_EXsubY_normal <- function(X, alpha, beta, sigma,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -967,9 +995,9 @@ auxCS_solveLagrange_EXsubY_normal <- function(X, alpha, beta, sigma,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -981,32 +1009,37 @@ auxCS_solveLagrange_EYsubX_normal <- function(X, alpha, beta, sigma,
   eta <- eta.initial
   step <- auxCS_Lagrange_EYsubX_normal_rcpp(
     X = X, alpha = alpha, beta = beta, sigma = sigma,
-    phi = phi, CS_beta = CS.beta, index = index, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, CS_beta = CS.beta, index = index, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- pinv_rcpp(as.matrix(step$hessian)) %*%
-      as.matrix(step$gradient)
+    ind.NT.GD <- rcond_rcpp(step$hessian)
+    if (is.na(ind.NT.GD))
+    {
+      ind.NT.GD <- 0
+    }
+    if (ind.NT.GD > tol)
+    {
+      direction.step <- solve_rcpp(step$hessian, step$gradient)
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- auxCS_Lagrange_EYsubX_normal_rcpp(
       X = X, alpha = alpha, beta = beta, sigma = sigma,
       phi = phi, CS_beta = CS.beta, index = index, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- auxCS_Lagrange_EYsubX_normal_rcpp(
           X = X, alpha = alpha, beta = beta, sigma = sigma,
           phi = phi, CS_beta = CS.beta, index = index, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -1014,12 +1047,10 @@ auxCS_solveLagrange_EYsubX_normal <- function(X, alpha, beta, sigma,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -1028,9 +1059,9 @@ auxCS_solveLagrange_EYsubX_normal <- function(X, alpha, beta, sigma,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -1042,31 +1073,32 @@ auxCS_solveLagrange_EY_gamma <- function(X, alpha, beta, nu,
   eta <- eta.initial
   step <- auxCS_Lagrange_EY_gamma_rcpp(
     X = X, alpha = alpha, beta = beta, nu = nu,
-    phi = phi, CS_beta = CS.beta, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, CS_beta = CS.beta, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- step$gradient / step$hessian
+    if (step$hessian != 0)
+    {
+      direction.step <- step$gradient / step$hessian
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- auxCS_Lagrange_EY_gamma_rcpp(
       X = X, alpha = alpha, beta = beta, nu = nu,
       phi = phi, CS_beta = CS.beta, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- auxCS_Lagrange_EY_gamma_rcpp(
           X = X, alpha = alpha, beta = beta, nu = nu,
           phi = phi, CS_beta = CS.beta, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -1074,12 +1106,10 @@ auxCS_solveLagrange_EY_gamma <- function(X, alpha, beta, nu,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -1088,9 +1118,9 @@ auxCS_solveLagrange_EY_gamma <- function(X, alpha, beta, nu,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -1102,32 +1132,37 @@ auxCS_solveLagrange_EXsubY_gamma <- function(X, alpha, beta, nu,
   eta <- eta.initial
   step <- auxCS_Lagrange_EXsubY_gamma_rcpp(
     X = X, alpha = alpha, beta = beta, nu = nu,
-    phi = phi, CS_beta = CS.beta, y_pts = y.pts, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, CS_beta = CS.beta, y_pts = y.pts, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- pinv_rcpp(as.matrix(step$hessian)) %*%
-      as.matrix(step$gradient)
+    ind.NT.GD <- rcond_rcpp(step$hessian)
+    if (is.na(ind.NT.GD))
+    {
+      ind.NT.GD <- 0
+    }
+    if (ind.NT.GD > tol)
+    {
+      direction.step <- solve_rcpp(step$hessian, step$gradient)
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- auxCS_Lagrange_EXsubY_gamma_rcpp(
       X = X, alpha = alpha, beta = beta, nu = nu,
       phi = phi, CS_beta = CS.beta, y_pts = y.pts, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- auxCS_Lagrange_EXsubY_gamma_rcpp(
           X = X, alpha = alpha, beta = beta, nu = nu,
           phi = phi, CS_beta = CS.beta, y_pts = y.pts, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -1135,12 +1170,10 @@ auxCS_solveLagrange_EXsubY_gamma <- function(X, alpha, beta, nu,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -1149,9 +1182,9 @@ auxCS_solveLagrange_EXsubY_gamma <- function(X, alpha, beta, nu,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
 
@@ -1163,32 +1196,37 @@ auxCS_solveLagrange_EYsubX_gamma <- function(X, alpha, beta, nu,
   eta <- eta.initial
   step <- auxCS_Lagrange_EYsubX_gamma_rcpp(
     X = X, alpha = alpha, beta = beta, nu = nu,
-    phi = phi, CS_beta = CS.beta, index = index, eta = eta.initial)
-  value <- step$value
-  gradient <- step$gradient
-  hessian <- step$hessian
+    phi = phi, CS_beta = CS.beta, index = index, eta = eta)
 
   for (k in 1:iter.max)
   {
     step.size <- 1
-    direction.step <- pinv_rcpp(as.matrix(step$hessian)) %*%
-      as.matrix(step$gradient)
+    ind.NT.GD <- rcond_rcpp(step$hessian)
+    if (is.na(ind.NT.GD))
+    {
+      ind.NT.GD <- 0
+    }
+    if (ind.NT.GD > tol)
+    {
+      direction.step <- solve_rcpp(step$hessian, step$gradient)
+    }else
+    {
+      direction.step <- -step$gradient
+    }
     eta.new <- eta - direction.step
     step.new <- auxCS_Lagrange_EYsubX_gamma_rcpp(
       X = X, alpha = alpha, beta = beta, nu = nu,
       phi = phi, CS_beta = CS.beta, index = index, eta = eta.new)
-    value.new <- step.new$value
 
     for (iter.step in 1:step.max)
     {
-      if (value.new <= value)
+      if (step.new$value <= step$value)
       {
         step.size <- step.size / step.rate
         eta.new <- eta - direction.step * step.size
         step.new <- auxCS_Lagrange_EYsubX_gamma_rcpp(
           X = X, alpha = alpha, beta = beta, nu = nu,
           phi = phi, CS_beta = CS.beta, index = index, eta = eta.new)
-        value.new <- step.new$value
 
         #print(paste("step=", k, " value=", value.new, sep = ","))
 
@@ -1196,12 +1234,10 @@ auxCS_solveLagrange_EYsubX_gamma <- function(X, alpha, beta, nu,
         break
     }
 
-    if (value.new > value + tol)
+    if (step.new$value > step$value + tol)
     {
       eta <- eta.new
-      value <- value.new
-      gradient <- step.new$gradient
-      hessian <- step.new$hessian
+      step <- step.new
 
       #print(paste("step=", k, " value=", value, sep = ","))
 
@@ -1210,11 +1246,9 @@ auxCS_solveLagrange_EYsubX_gamma <- function(X, alpha, beta, nu,
   }
 
   results <- list(eta = eta,
-                  value = value,
-                  gradient = gradient,
-                  hessian = hessian)
+                  value = step$value,
+                  gradient = step$gradient,
+                  hessian = step$hessian)
   return(results)
 }
-
-
 
